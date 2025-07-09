@@ -461,7 +461,164 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Signup Form Functionality
+function initializeSignupForm() {
+    const signupForm = document.getElementById('signupForm');
+    if (signupForm) {
+        signupForm.addEventListener('submit', handleSignup);
+    }
+}
+
+function handleSignup(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const role = document.getElementById('role').value;
+    const device = navigator.userAgent;
+    
+    // Basic validation
+    if (!name || !email || !password || !role) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showNotification('Password must be at least 6 characters long', 'error');
+        return;
+    }
+    
+    // Show loading state
+    const signupBtn = document.getElementById('signupBtn');
+    const btnText = signupBtn.querySelector('.btn-text');
+    const btnLoading = signupBtn.querySelector('.btn-loading');
+    
+    signupBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    
+    // Note: Replace 'PASTE_YOUR_WEBAPP_URL' with your actual Google Apps Script URL
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwlB97B3v6B0YK-OyApzf5n8CZ-nqGXySLWZDwYpu9RA3-FOL681OwWrl4TIvNKG2Ze/exec';
+    
+    fetch(webAppUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, role, device })
+    })
+    .then(res => res.text())
+    .then(response => {
+        showNotification('✅ Account created successfully! Welcome to HustleHack AI!', 'success');
+        document.getElementById('signupForm').reset();
+        
+        // Close modal after successful signup
+        const modal = document.getElementById('signup-modal');
+        closeModal(modal);
+        
+        // Optionally redirect to dashboard or show welcome message
+        setTimeout(() => {
+            showNotification('🎉 Check your email for next steps!', 'info');
+        }, 2000);
+    })
+    .catch(error => {
+        console.error('Signup error:', error);
+        showNotification('❌ Something went wrong. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Reset button state
+        signupBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+    });
+}
+
+// Enhanced Form Validation
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePassword(password) {
+    return password.length >= 6;
+}
+
+// Add real-time validation
+function addRealTimeValidation() {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    if (nameInput) {
+        nameInput.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                showInputError(this, 'Name is required');
+            } else {
+                clearInputError(this);
+            }
+        });
+    }
+    
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                showInputError(this, 'Email is required');
+            } else if (!validateEmail(this.value)) {
+                showInputError(this, 'Please enter a valid email address');
+            } else {
+                clearInputError(this);
+            }
+        });
+    }
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                showInputError(this, 'Password is required');
+            } else if (!validatePassword(this.value)) {
+                showInputError(this, 'Password must be at least 6 characters long');
+            } else {
+                clearInputError(this);
+            }
+        });
+    }
+}
+
+function showInputError(input, message) {
+    clearInputError(input);
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'input-error';
+    errorDiv.textContent = message;
+    errorDiv.style.color = '#EF4444';
+    errorDiv.style.fontSize = '0.875rem';
+    errorDiv.style.marginTop = '0.25rem';
+    
+    input.parentNode.appendChild(errorDiv);
+    input.style.borderColor = '#EF4444';
+}
+
+function clearInputError(input) {
+    const errorDiv = input.parentNode.querySelector('.input-error');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+    input.style.borderColor = '';
+}
+
+// Initialize signup form when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNavigation();
+    initializeModals();
+    initializeAnimations();
+    initializeForms();
+    initializeScrollEffects();
+    initializeLoadingStates();
+    initializeSignupForm(); // Add this line
+    addRealTimeValidation(); // Add this line
+});
+
 // Export functions for global use
 window.toggleFAQ = toggleFAQ;
 window.toggleTheme = toggleTheme;
 window.showNotification = showNotification;
+window.handleSignup = handleSignup;

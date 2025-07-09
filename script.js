@@ -479,38 +479,82 @@ async function handleSignup(e) {
     const device = navigator.userAgent;
     const timestamp = new Date().toISOString();
 
+    // Validate inputs
     if (!name || !email || !password || !role) {
         showNotification('Please fill in all fields', 'error');
         return;
     }
 
-    // Show loading
-    const signupBtn = document.getElementById('signupBtn');
-    signupBtn.disabled = true;
-    signupBtn.querySelector('.btn-text').style.display = 'none';
-    signupBtn.querySelector('.btn-loading').style.display = 'inline';
-
-    const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-            data: { name, role, device, timestamp }
-        }
-    });
-
-    if (error) {
-        showNotification('❌ ' + error.message, 'error');
-    } else {
-        showNotification('✅ Account created! Check your email.', 'success');
-        document.getElementById('signupForm').reset();
-        closeModal(document.getElementById('signup-modal'));
+    if (password.length < 6) {
+        showNotification('Password must be at least 6 characters long', 'error');
+        return;
     }
 
-    // Reset button
-    signupBtn.disabled = false;
-    signupBtn.querySelector('.btn-text').style.display = 'inline';
-    signupBtn.querySelector('.btn-loading').style.display = 'none';
+    // Button loading state
+    const signupBtn = document.getElementById('signupBtn');
+    const btnText = signupBtn.querySelector('.btn-text');
+    const btnLoading = signupBtn.querySelector('.btn-loading');
+    signupBtn.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoading) btnLoading.style.display = 'inline';
+
+    try {
+        // Step 1: Supabase Auth Signup
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { name, role, device, timestamp }
+            }
+        });
+
+        if (error) {
+            showNotification(`❌ ${error.message}`, 'error');
+            return;
+        }
+
+        const user = data?.user;
+        if (!user) {
+            showNotification('❌ Signup failed. Please try again.', 'error');
+            return;
+        }
+
+        // Step 2: Insert into `users` table
+        const { error: dbError } = await supabase.from('users').insert([
+            {
+                id: user.id,
+                name,
+                role,
+                device,
+                timestamp
+            }
+        ]);
+
+        if (dbError) {
+            showNotification('⚠️ Signup worked, but DB insert failed.', 'warning');
+            console.error('DB Error:', dbError);
+        } else {
+            showNotification('✅ Account created successfully!', 'success');
+        }
+
+        // Optional follow-up
+        document.getElementById('signupForm').reset();
+        closeModal(document.getElementById('signup-modal'));
+
+        setTimeout(() => {
+            showNotification('🎉 Check your email for next steps!', 'info');
+        }, 2000);
+    } catch (err) {
+        console.error('Signup Error:', err);
+        showNotification('❌ An unexpected error occurred.', 'error');
+    } finally {
+        // Reset button state
+        signupBtn.disabled = false;
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoading) btnLoading.style.display = 'none';
+    }
 }
+
 
 
 // Enhanced Form Validation

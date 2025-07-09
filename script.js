@@ -9,15 +9,13 @@ const modalTriggers = document.querySelectorAll('[data-modal]');
 const modalCloses = document.querySelectorAll('.modal-close');
 
 // Initialize everything when DOM is loaded
-window.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     initializeNavigation();
     initializeModals();
     initializeAnimations();
     initializeForms();
     initializeScrollEffects();
     initializeLoadingStates();
-    initializeSignupForm();
-    addRealTimeValidation();
 });
 
 // Navigation Functions
@@ -479,6 +477,7 @@ function handleSignup(e) {
     const password = document.getElementById('password').value.trim();
     const role = document.getElementById('role').value;
     const device = navigator.userAgent;
+    const timestamp = new Date().toISOString();
     
     // Basic validation
     if (!name || !email || !password || !role) {
@@ -500,27 +499,42 @@ function handleSignup(e) {
     btnText.style.display = 'none';
     btnLoading.style.display = 'inline';
     
-    // Note: Replace 'PASTE_YOUR_WEBAPP_URL' with your actual Google Apps Script URL
-    const webAppUrl = 'https://script.google.com/macros/s/PASTE_YOUR_WEBAPP_URL/exec';
+    // Prepare payload
+    const payload = {
+        name,
+        email,
+        password,
+        role,
+        device,
+        timestamp
+    };
+    
+    // Replace YOUR_DEPLOYMENT_ID with your actual deployed Web App URL
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwlB97B3v6B0YK-OyApzf5n8CZ-nqGXySLWZDwYpu9RA3-FOL681OwWrl4TIvNKG2Ze/exec';
     
     fetch(webAppUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role, device })
+        body: JSON.stringify(payload),
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
-    .then(res => res.text())
     .then(response => {
-        showNotification('✅ Account created successfully! Welcome to HustleHack AI!', 'success');
-        document.getElementById('signupForm').reset();
-        
-        // Close modal after successful signup
-        const modal = document.getElementById('signup-modal');
-        closeModal(modal);
-        
-        // Optionally redirect to dashboard or show welcome message
-        setTimeout(() => {
-            showNotification('🎉 Check your email for next steps!', 'info');
-        }, 2000);
+        if (response.ok) {
+            showNotification('✅ Account created successfully! Welcome to HustleHack AI!', 'success');
+            document.getElementById('signupForm').reset();
+            
+            // Close modal after successful signup
+            const modal = document.getElementById('signup-modal');
+            closeModal(modal);
+            
+            // Optionally redirect to dashboard or show welcome message
+            setTimeout(() => {
+                showNotification('🎉 Check your email for next steps!', 'info');
+            }, 2000);
+        } else {
+            throw new Error('Server responded with error');
+        }
     })
     .catch(error => {
         console.error('Signup error:', error);

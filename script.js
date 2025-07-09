@@ -513,11 +513,13 @@ function handleSignup(e) {
 
     fetch(webAppUrl, {
         method: 'POST',
+        mode: 'no-cors', // optional if you're seeing CORS issues
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
-    })
+    });
+
     .then(response => {
         if (response.ok) {
             showNotification('✅ Account created successfully! Welcome to HustleHack AI!', 'success');

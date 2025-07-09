@@ -33,17 +33,19 @@ function initializeNavigation() {
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+
+        // Ignore links whose href is just "#" (or "#!")
+        if (!href || href === '#' || href === '#!') return;
+
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          const offsetTop = target.offsetTop - 80;   // compensate for fixed navbar
+            window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+        }
+      });
     });
 
     // Close mobile menu when clicking outside

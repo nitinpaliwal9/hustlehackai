@@ -157,17 +157,38 @@ function initializeAnimations() {
     };
 
     const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
+        entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-fadeInUp');
+                // Add varied animations based on element type and position
+                const element = entry.target;
+                
+                if (element.classList.contains('card')) {
+                    // Alternate between different card animations
+                    const cardIndex = Array.from(element.parentElement.children).indexOf(element);
+                    const animations = ['animate-fadeInUp', 'animate-fadeInLeft', 'animate-fadeInRight', 'animate-scaleIn'];
+                    element.classList.add(animations[cardIndex % animations.length]);
+                } else if (element.classList.contains('pricing-card')) {
+                    // Pricing cards get scale-in animation
+                    element.classList.add('animate-scaleIn');
+                } else if (element.classList.contains('section')) {
+                    // Sections get fade-in animation
+                    element.classList.add('animate-fadeIn');
+                } else if (element.classList.contains('faq-item')) {
+                    // FAQ items get slide-in animation
+                    element.classList.add('animate-slideInDown');
+                } else {
+                    // Default animation
+                    element.classList.add('animate-fadeInUp');
+                }
             }
         });
     }, observerOptions);
 
-    // Observe all cards and sections
-    document.querySelectorAll('.card, .section, .pricing-card').forEach(el => {
-        observer.observe(el);
-    });
+    // Observe different elements with appropriate animations
+    document.querySelectorAll('.card').forEach(el => observer.observe(el));
+    document.querySelectorAll('.pricing-card').forEach(el => observer.observe(el));
+    document.querySelectorAll('.section').forEach(el => observer.observe(el));
+    document.querySelectorAll('.faq-item').forEach(el => observer.observe(el));
 
     // Typing animation for hero title
     const heroTitle = document.querySelector('.hero-title');
@@ -385,8 +406,17 @@ function initializeScrollEffects() {
 
 // Loading States
 function initializeLoadingStates() {
-    // Add loading states to buttons
+    // Skip loading states for auth buttons and navigation
+    // They have their own specific loading handlers
+    // This prevents conflicts with form submissions
+    
+    // Add loading states only to non-auth buttons
     document.querySelectorAll('.btn').forEach(btn => {
+        // Skip buttons that are part of auth forms or navigation
+        if (btn.closest('form') || btn.hasAttribute('data-modal') || btn.id === 'loginBtn' || btn.id === 'signupBtn') {
+            return;
+        }
+        
         btn.addEventListener('click', function() {
             if (this.classList.contains('btn-loading')) return;
             
@@ -716,7 +746,29 @@ async function handleSignup(e) {
     if (btnLoading) btnLoading.style.display = 'inline';
 
     try {
-        // Step 1: Sign up the user
+        // Step 1: Check if user already exists
+        const { data: existingUsers, error: checkError } = await supabase
+            .from('users')
+            .select('email')
+            .eq('email', email)
+            .limit(1);
+        
+        if (checkError) {
+            console.warn('Could not check user existence:', checkError);
+        } else if (existingUsers && existingUsers.length > 0) {
+            showNotification('⚠️ This email is already registered. Please sign in instead.', 'warning');
+            
+            // Auto-switch to login modal
+            setTimeout(() => {
+                closeModal(document.getElementById('signup-modal'));
+                openModal(document.getElementById('login-modal'));
+                document.getElementById('loginEmail').value = email;
+                document.getElementById('loginPassword').focus();
+            }, 2000);
+            return;
+        }
+        
+        // Step 2: Sign up the user
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
             email,
             password,
@@ -735,6 +787,7 @@ async function handleSignup(e) {
                     closeModal(document.getElementById('signup-modal'));
                     openModal(document.getElementById('login-modal'));
                     document.getElementById('loginEmail').value = email;
+                    document.getElementById('loginPassword').focus();
                 }, 2000);
             } else {
                 showNotification(`❌ ${signUpError.message}`, 'error');

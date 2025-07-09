@@ -505,8 +505,8 @@ async function handleSignup(e) {
     if (btnLoading) btnLoading.style.display = 'inline';
 
     try {
-        // Step 1: Supabase Auth Signup
-        const { data, error } = await supabase.auth.signUp({
+        // Step 1: Sign up the user
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -514,18 +514,22 @@ async function handleSignup(e) {
             }
         });
 
-        if (error) {
-            showNotification(`❌ ${error.message}`, 'error');
+        if (signUpError) {
+            showNotification(`❌ ${signUpError.message}`, 'error');
             return;
         }
 
-        const user = data?.user;
-        if (!user) {
-            showNotification('❌ Signup failed. Please try again.', 'error');
+        // Step 2: Wait for session (for RLS insert)
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        const user = sessionData?.session?.user;
+
+        if (!user || sessionError) {
+            showNotification("⚠️ Signup succeeded, but login session not ready. Check your email.", 'warning');
+            console.error("Session Error:", sessionError);
             return;
         }
 
-        // Step 2: Insert into `users` table
+        // Step 3: Insert user into 'users' table
         const { error: dbError } = await supabase.from('users').insert([
             {
                 id: user.id,
@@ -543,7 +547,7 @@ async function handleSignup(e) {
             showNotification('✅ Account created successfully!', 'success');
         }
 
-        // Optional follow-up
+        // Cleanup
         document.getElementById('signupForm').reset();
         closeModal(document.getElementById('signup-modal'));
 
@@ -554,7 +558,6 @@ async function handleSignup(e) {
         console.error('Signup Error:', err);
         showNotification('❌ An unexpected error occurred.', 'error');
     } finally {
-        // Reset button state
         signupBtn.disabled = false;
         if (btnText) btnText.style.display = 'inline';
         if (btnLoading) btnLoading.style.display = 'none';

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeForms();
     initializeScrollEffects();
     initializeLoadingStates();
-});
+}); 
 
 // Navigation Functions
 function initializeNavigation() {

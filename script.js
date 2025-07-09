@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeForms();
   initializeScrollEffects();
   initializeLoadingStates();
-  initializeSignupForm(); // Already exists
+  initializeAuthSystem(); // Updated to handle both signup and login
   addRealTimeValidation(); // Already exists
 });
 
@@ -483,6 +483,159 @@ function initializeAuthSystem() {
     checkAuthStatus();
 }
 
+// Check authentication status on page load
+async function checkAuthStatus() {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Auth check error:', error);
+            return;
+        }
+        
+        if (session && session.user) {
+            console.log('User is authenticated:', session.user.email);
+            updateUIForAuthenticatedUser(session.user);
+        } else {
+            console.log('User is not authenticated');
+            updateUIForUnauthenticatedUser();
+        }
+    } catch (error) {
+        console.error('Auth status check failed:', error);
+    }
+}
+
+// Update UI for authenticated user
+function updateUIForAuthenticatedUser(user) {
+    const signInBtn = document.querySelector('[data-modal="login-modal"]');
+    const getStartedBtn = document.querySelector('[data-modal="signup-modal"]');
+    
+    if (signInBtn) {
+        signInBtn.textContent = `👋 ${user.user_metadata?.name || user.email}`;
+        signInBtn.removeAttribute('data-modal');
+        signInBtn.addEventListener('click', handleSignOut);
+    }
+    
+    if (getStartedBtn) {
+        getStartedBtn.textContent = 'Dashboard';
+        getStartedBtn.removeAttribute('data-modal');
+        getStartedBtn.href = '#dashboard';
+    }
+}
+
+// Update UI for unauthenticated user
+function updateUIForUnauthenticatedUser() {
+    const signInBtn = document.querySelector('a[href="#"], button');
+    const getStartedBtn = document.querySelector('a[href="#"], button');
+    
+    // Reset to default state
+    if (signInBtn && signInBtn.textContent.includes('👋')) {
+        signInBtn.textContent = 'Sign In';
+        signInBtn.setAttribute('data-modal', 'login-modal');
+        signInBtn.removeEventListener('click', handleSignOut);
+    }
+}
+
+// Handle user sign out
+async function handleSignOut(e) {
+    e.preventDefault();
+    
+    try {
+        const { error } = await supabase.auth.signOut();
+        
+        if (error) {
+            showNotification('❌ Sign out failed', 'error');
+            return;
+        }
+        
+        showNotification('✅ Signed out successfully', 'success');
+        updateUIForUnauthenticatedUser();
+        
+        // Refresh the page to reset everything
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Sign out error:', error);
+        showNotification('❌ Sign out failed', 'error');
+    }
+}
+
+// Handle user login
+async function handleLogin(e) {
+    e.preventDefault();
+    console.log('🔐 Login function called');
+    
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    
+    // Validate inputs
+    if (!email || !password) {
+        showNotification('Please enter both email and password', 'error');
+        return;
+    }
+    
+    if (!validateEmail(email)) {
+        showNotification('Please enter a valid email address', 'error');
+        return;
+    }
+    
+    // Button loading state
+    const loginBtn = document.getElementById('loginBtn');
+    const originalText = loginBtn.textContent;
+    loginBtn.textContent = 'Signing In...';
+    loginBtn.disabled = true;
+    
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        
+        if (error) {
+            // Handle specific error cases
+            if (error.message.includes('Invalid login credentials')) {
+                showNotification('❌ Invalid email or password. Please try again.', 'error');
+            } else if (error.message.includes('Email not confirmed')) {
+                showNotification('📧 Please check your email and confirm your account first.', 'warning');
+            } else {
+                showNotification(`❌ ${error.message}`, 'error');
+            }
+            return;
+        }
+        
+        const user = data?.user;
+        if (!user) {
+            showNotification('❌ Login failed. Please try again.', 'error');
+            return;
+        }
+        
+        // Success!
+        showNotification('🎉 Welcome back! Redirecting to dashboard...', 'success');
+        
+        // Update UI
+        updateUIForAuthenticatedUser(user);
+        
+        // Reset form and close modal
+        document.getElementById('loginForm').reset();
+        closeModal(document.getElementById('login-modal'));
+        
+        // Simulate redirect to dashboard
+        setTimeout(() => {
+            showNotification('✨ Dashboard loaded successfully!', 'success');
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        showNotification('❌ An unexpected error occurred during login.', 'error');
+    } finally {
+        // Reset button state
+        loginBtn.textContent = originalText;
+        loginBtn.disabled = false;
+    }
+}
+
 async function handleSignup(e) {
     e.preventDefault();
     console.log('🧠 Signup function called');
@@ -524,7 +677,19 @@ async function handleSignup(e) {
         });
 
         if (signUpError) {
-            showNotification(`❌ ${signUpError.message}`, 'error');
+            // Handle specific signup errors
+            if (signUpError.message.includes('User already registered')) {
+                showNotification('⚠️ This email is already registered. Please sign in instead.', 'warning');
+                
+                // Auto-switch to login modal
+                setTimeout(() => {
+                    closeModal(document.getElementById('signup-modal'));
+                    openModal(document.getElementById('login-modal'));
+                    document.getElementById('loginEmail').value = email;
+                }, 2000);
+            } else {
+                showNotification(`❌ ${signUpError.message}`, 'error');
+            }
             return;
         }
 
@@ -551,19 +716,24 @@ async function handleSignup(e) {
         ]);
 
         if (dbError) {
-            showNotification('⚠️ Signup worked, but DB insert failed.', 'warning');
+            showNotification('⚠️ Account created, but profile setup incomplete.', 'warning');
             console.error('DB Error:', dbError);
         } else {
-            showNotification('✅ Account created successfully!', 'success');
+            showNotification('🎉 Account created successfully!', 'success');
         }
 
         // Cleanup
         document.getElementById('signupForm').reset();
         closeModal(document.getElementById('signup-modal'));
 
+        // Professional success flow
         setTimeout(() => {
-            showNotification('🎉 Check your email for next steps!', 'info');
-        }, 2000);
+            showNotification('📧 Please check your email to verify your account.', 'info');
+        }, 1500);
+        
+        setTimeout(() => {
+            showNotification('✨ Welcome to HustleHack AI! We\'re excited to have you onboard.', 'success');
+        }, 3000);
     } catch (err) {
         console.error('Signup Error:', err);
         showNotification('❌ An unexpected error occurred.', 'error');

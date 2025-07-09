@@ -1,16 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HustleHack AI</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HustleHack AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Additional custom styles can go here */
+    </style>
 </head>
-<body>
-  <div class="container">
-    <h1>🚀 Welcome to HustleHack AI</h1>
-    <p>Your AI-powered productivity toolkit is coming soon...</p>
-  </div>
-  <script src="script.js"></script>
+<body class="bg-gradient-to-r from-purple-500 to-cyan-500 text-white">
+    <!-- Hero Section -->
+    <header class="py-20 flex flex-col items-center justify-center">
+        <h1 class="text-5xl font-bold">Unleash AI. Build Faster. Learn Smarter.</h1>
+        <p class="mt-4 text-xl text-center">AI tools, templates, prompts & guides to help you grow faster — all in one toolkit.</p>
+        <div class="mt-8 flex space-x-4">
+            <button class="px-6 py-2 bg-purple-700 hover:bg-purple-800 rounded-full">Explore Toolkit</button>
+            <button class="px-6 py-2 bg-cyan-700 hover:bg-cyan-800 rounded-full">See Plans</button>
+        </div>
+    </header>
+
+    <!-- How It Works Section -->
+    <section class="py-20 text-center">
+        <h2 class="text-4xl font-bold">How It Works</h2>
+        <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-8 px-4">
+            <div class="rounded-lg shadow-lg bg-white text-black py-10">
+                <span>🔍</span>
+                <h3 class="text-xl font-bold">Pick Your Plan</h3>
+            </div>
+            <div class="rounded-lg shadow-lg bg-white text-black py-10">
+                <span>🎁</span>
+                <h3 class="text-xl font-bold">Unlock Tools, Prompts & AI Projects</h3>
+            </div>
+            <div class="rounded-lg shadow-lg bg-white text-black py-10">
+                <span>🚀</span>
+                <h3 class="text-xl font-bold">Grow Your Skills & Side Hustles</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why HustleHack AI? -->
+    <section class="py-20 bg-black text-white">
+        <h2 class="text-4xl font-bold text-center">Why HustleHack AI?</h2>
+        <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4">
+            <div class="rounded-lg shadow-lg bg-purple-700 py-10">
+                <span>✨</span>
+                <h3 class="text-xl font-bold">Weekly AI Drops</h3>
+            </div>
+            <div class="rounded-lg shadow-lg bg-cyan-700 py-10">
+                <span>🛠️</span>
+                <h3 class="text-xl font-bold">Tools, Templates, Blueprints</h3>
+            </div>
+            <div class="rounded-lg shadow-lg bg-purple-700 py-10">
+                <span>📚</span>
+                <h3 class="text-xl font-bold">Study & Creator Resources</h3>
+            </div>
+            <div class="rounded-lg shadow-lg bg-cyan-700 py-10">
+                <span>🧠</span>
+                <h3 class="text-xl font-bold">Learn AI on the Go</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Snapshot -->
+    <section class="py-20">
+        <h2 class="text-4xl font-bold text-center">Pricing Snapshot</h2>
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+            <div class="rounded-lg shadow-lg bg-white text-black py-10 flex flex-col items-center">
+                <h3 class="text-xl font-bold">Starter</h3>
+                <p class="text-lg">₹99</p>
+                <button class="mt-4 px-6 py-2 bg-purple-700 hover:bg-purple-800 rounded-full">Choose Starter</button>
+            </div>
+            <div class="rounded-lg shadow-lg bg-cyan-700 text-white py-10 flex flex-col items-center border-4 border-purple-500">
+                <h3 class="text-xl font-bold">Creator</h3>
+                <p class="text-lg">₹199</p>
+                <p class="font-semibold">Recommended</p>
+                <button class="mt-4 px-6 py-2 bg-purple-700 hover:bg-purple-800 rounded-full">Choose Creator</button>
+            </div>
+            <div class="rounded-lg shadow-lg bg-white text-black py-10 flex flex-col items-center">
+                <h3 class="text-xl font-bold">Pro</h3>
+                <p class="text-lg">₹299</p>
+                <button class="mt-4 px-6 py-2 bg-purple-700 hover:bg-purple-800 rounded-full">Choose Pro</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-black text-white">
+        <h2 class="text-4xl font-bold text-center">Testimonials</h2>
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+            <div class="rounded-lg shadow-lg bg-purple-700 py-10 px-8">
+                <p>"HustleHack has transformed the way I learn and grow my business!"</p>
+                <p class="mt-4 font-bold">– Student</p>
+            </div>
+            <div class="rounded-lg shadow-lg bg-cyan-700 py-10 px-8">
+                <p>"Amazing resources and support, absolutely love the community!"</p>
+                <p class="mt-4 font-bold">– Young Creator</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20">
+        <h2 class="text-4xl font-bold text-center">FAQ</h2>
+        <div class="mt-10 max-w-xl mx-auto px-4">
+            <div class="bg-white rounded-lg shadow-lg">
+                <button class="faq-question w-full text-left px-6 py-4 font-bold" onclick="toggleFaq(this)">What is HustleHack AI?<span class="float-right">+</span></button>
+                <div class="faq-answer px-6 py-4 hidden">
+                    <p>HustleHack AI is a platform designed to help you grow fast using AI tools and resources.</p>
+                </div>
+            </div>
+            <!-- Add more FAQ items as needed -->
+        </div>
+    </section>
+
+    <!-- Final Call to Action -->
+    <section class="py-20 bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-center">
+        <h2 class="text-4xl font-bold">Ready to unlock AI superpowers?</h2>
+        <div class="mt-8 flex justify-center space-x-4">
+            <button class="px-6 py-2 bg-purple-700 hover:bg-purple-800 rounded-full">Start for ₹99</button>
+            <button class="px-6 py-2 bg-cyan-700 hover:bg-cyan-800 rounded-full">Compare Plans</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 bg-black text-white text-center">
+        <div class="space-y-2">
+            <a href="#" class="block">About</a>
+            <a href="#" class="block">Terms</a>
+            <a href="#" class="block">Privacy</a>
+            <a href="#" class="block">Contact</a>
+        </div>
+        <div class="mt-4 flex justify-center space-x-4">
+            <a href="#" class="text-purple-500">Instagram</a>
+            <a href="#" class="text-purple-500">Telegram</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+            } else {
+                answer.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>

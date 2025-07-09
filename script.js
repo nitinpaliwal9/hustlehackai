@@ -634,17 +634,6 @@ function clearInputError(input) {
     input.style.borderColor = '';
 }
 
-// Initialize signup form when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeNavigation();
-    initializeModals();
-    initializeAnimations();
-    initializeForms();
-    initializeScrollEffects();
-    initializeLoadingStates();
-    initializeSignupForm(); // Add this line
-    addRealTimeValidation(); // Add this line
-});
 
 // Export functions for global use
 window.toggleFAQ = toggleFAQ;

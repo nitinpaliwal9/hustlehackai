@@ -216,6 +216,19 @@ p {
   color: var(--text-light);
   font-size: 1.5rem;
   cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent);
 }
 
 /* Buttons */
@@ -657,7 +670,7 @@ p {
   }
   
   .mobile-menu-toggle {
-    display: block;
+    display: flex;
   }
   
   .hero {

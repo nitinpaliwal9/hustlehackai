@@ -510,7 +510,7 @@ function handleSignup(e) {
     };
     
     // Replace YOUR_DEPLOYMENT_ID with your actual deployed Web App URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7Nh5n0xqwU18P0okeyKToi2ZriZ1Fjf7NYh2Gt3b7NDH9bypMUk9EtfOeIoAntCUd/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxGP3LBv95cc7VC0ciOFBor-Pc_4RLDcxWm4IFsGe-0wJcF5cUWqzsDom6tBIqppbqKYA/exec';
     
     fetch(webAppUrl, {
         method: 'POST',

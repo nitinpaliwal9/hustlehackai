@@ -598,9 +598,28 @@ p {
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .nav-actions {
+    gap: var(--spacing-sm);
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
 @media (max-width: 768px) {
   :root {
     --spacing-3xl: 2rem;
+  }
+  
+  .nav-container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .nav-actions {
+    display: none;
   }
   
   .nav-menu {
@@ -624,21 +643,44 @@ p {
     visibility: visible;
   }
   
+  .nav-menu.active .nav-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
   .mobile-menu-toggle {
     display: block;
   }
   
+  .hero {
+    padding-top: 80px;
+    min-height: calc(100vh - 80px);
+  }
+  
   .hero-title {
     font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: var(--spacing-md);
   }
   
   .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-xl);
   }
   
   .hero-actions {
     flex-direction: column;
     align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  .hero-actions .btn {
+    width: 100%;
+    max-width: 300px;
   }
   
   .grid-2,
@@ -654,6 +696,10 @@ p {
   h1 { font-size: 2.5rem; }
   h2 { font-size: 2rem; }
   h3 { font-size: 1.5rem; }
+  
+  .section {
+    padding: var(--spacing-2xl) 0;
+  }
 }
 
 @media (max-width: 480px) {
@@ -661,17 +707,74 @@ p {
     padding: 0 var(--spacing-sm);
   }
   
+  .logo {
+    font-size: 1.25rem;
+  }
+  
   .hero-title {
     font-size: 2rem;
+    line-height: 1.1;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.5;
   }
   
   .btn {
-    width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
   }
   
   .hero-actions .btn {
-    width: auto;
-    min-width: 200px;
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .card {
+    padding: var(--spacing-lg);
+  }
+  
+  .card-icon {
+    font-size: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.875rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  
+  .pricing-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .pricing-price {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+  
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.875rem;
+  }
+  
+  .logo {
+    font-size: 1.125rem;
+  }
+  
+  .mobile-menu-toggle {
+    font-size: 1.25rem;
   }
 }
 

@@ -471,35 +471,34 @@ function initializeSignupForm() {
 
 function handleSignup(e) {
     e.preventDefault();
-    
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const role = document.getElementById('role').value;
+
+    const name = document.getElementById('name')?.value.trim();
+    const email = document.getElementById('email')?.value.trim();
+    const password = document.getElementById('password')?.value.trim();
+    const role = document.getElementById('role')?.value;
     const device = navigator.userAgent;
     const timestamp = new Date().toISOString();
-    
-    // Basic validation
+
+    // Basic Validation
     if (!name || !email || !password || !role) {
-        showNotification('Please fill in all fields', 'error');
+        showNotification('⚠️ Please fill in all fields', 'error');
         return;
     }
-    
+
     if (password.length < 6) {
-        showNotification('Password must be at least 6 characters long', 'error');
+        showNotification('🔒 Password must be at least 6 characters long', 'error');
         return;
     }
-    
-    // Show loading state
+
+    // Loading UI
     const signupBtn = document.getElementById('signupBtn');
-    const btnText = signupBtn.querySelector('.btn-text');
-    const btnLoading = signupBtn.querySelector('.btn-loading');
-    
-    signupBtn.disabled = true;
-    btnText.style.display = 'none';
-    btnLoading.style.display = 'inline';
-    
-    // Prepare payload
+    const btnText = signupBtn?.querySelector('.btn-text');
+    const btnLoading = signupBtn?.querySelector('.btn-loading');
+
+    if (signupBtn) signupBtn.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoading) btnLoading.style.display = 'inline';
+
     const payload = {
         name,
         email,
@@ -508,43 +507,43 @@ function handleSignup(e) {
         device,
         timestamp
     };
-    
-    // Replace YOUR_DEPLOYMENT_ID with your actual deployed Web App URL
+
+    // ✅ Replace with your actual Apps Script Web App URL
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbxGP3LBv95cc7VC0ciOFBor-Pc_4RLDcxWm4IFsGe-0wJcF5cUWqzsDom6tBIqppbqKYA/exec';
-    
+
     fetch(webAppUrl, {
         method: 'POST',
-        body: JSON.stringify(payload),
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(payload)
     })
     .then(response => {
         if (response.ok) {
             showNotification('✅ Account created successfully! Welcome to HustleHack AI!', 'success');
-            document.getElementById('signupForm').reset();
-            
-            // Close modal after successful signup
+            document.getElementById('signupForm')?.reset();
+
+            // Optionally close modal if needed
             const modal = document.getElementById('signup-modal');
-            closeModal(modal);
-            
-            // Optionally redirect to dashboard or show welcome message
+            if (modal) closeModal(modal);
+
+            // Follow-up CTA
             setTimeout(() => {
-                showNotification('🎉 Check your email for next steps!', 'info');
+                showNotification('📬 Check your email for next steps!', 'info');
             }, 2000);
         } else {
-            throw new Error('Server responded with error');
+            throw new Error('⚠️ Server error – please try again.');
         }
     })
     .catch(error => {
-        console.error('Signup error:', error);
-        showNotification('❌ Something went wrong. Please try again.', 'error');
+        console.error('Signup Error:', error);
+        showNotification('❌ Signup failed. Please try again later.', 'error');
     })
     .finally(() => {
-        // Reset button state
-        signupBtn.disabled = false;
-        btnText.style.display = 'inline';
-        btnLoading.style.display = 'none';
+        // Reset loading state
+        if (signupBtn) signupBtn.disabled = false;
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoading) btnLoading.style.display = 'none';
     });
 }
 

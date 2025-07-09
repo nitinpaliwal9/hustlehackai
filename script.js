@@ -466,12 +466,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Signup Form Functionality
-function initializeSignupForm() {
+// Authentication System Initialization
+function initializeAuthSystem() {
     const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
+    
     if (signupForm) {
         signupForm.addEventListener('submit', handleSignup);
     }
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // Check if user is already logged in
+    checkAuthStatus();
 }
 
 async function handleSignup(e) {

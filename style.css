@@ -154,6 +154,8 @@ p {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
+  min-height: 60px;
+  flex-wrap: nowrap;
 }
 
 .logo {

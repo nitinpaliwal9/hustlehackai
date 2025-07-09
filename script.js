@@ -9,13 +9,15 @@ const modalTriggers = document.querySelectorAll('[data-modal]');
 const modalCloses = document.querySelectorAll('.modal-close');
 
 // Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function() {
     initializeNavigation();
     initializeModals();
     initializeAnimations();
     initializeForms();
     initializeScrollEffects();
     initializeLoadingStates();
+    initializeSignupForm();
+    addRealTimeValidation();
 });
 
 // Navigation Functions
@@ -499,7 +501,7 @@ function handleSignup(e) {
     btnLoading.style.display = 'inline';
     
     // Note: Replace 'PASTE_YOUR_WEBAPP_URL' with your actual Google Apps Script URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwlB97B3v6B0YK-OyApzf5n8CZ-nqGXySLWZDwYpu9RA3-FOL681OwWrl4TIvNKG2Ze/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/PASTE_YOUR_WEBAPP_URL/exec';
     
     fetch(webAppUrl, {
         method: 'POST',

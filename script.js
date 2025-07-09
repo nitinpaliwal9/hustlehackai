@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeForms();
     initializeScrollEffects();
     initializeLoadingStates();
-}); 
+});
 
 // Navigation Functions
 function initializeNavigation() {
@@ -54,11 +54,27 @@ function initializeNavigation() {
 function toggleMobileMenu() {
     navMenu.classList.toggle('active');
     mobileMenuToggle.textContent = navMenu.classList.contains('active') ? '✕' : '☰';
+    
+    // Add nav-actions to mobile menu when active
+    if (navMenu.classList.contains('active')) {
+        const navActions = document.querySelector('.nav-actions');
+        if (navActions && !navMenu.contains(navActions)) {
+            const navActionsClone = navActions.cloneNode(true);
+            navActionsClone.style.display = 'flex';
+            navMenu.appendChild(navActionsClone);
+        }
+    }
 }
 
 function closeMobileMenu() {
     navMenu.classList.remove('active');
     mobileMenuToggle.textContent = '☰';
+    
+    // Remove cloned nav-actions from mobile menu
+    const clonedNavActions = navMenu.querySelector('.nav-actions');
+    if (clonedNavActions) {
+        clonedNavActions.remove();
+    }
 }
 
 function handleNavbarScroll() {

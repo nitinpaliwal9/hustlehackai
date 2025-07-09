@@ -820,8 +820,37 @@ function clearInputError(input) {
 }
 
 
+// Modal switching functions
+function switchToSignup() {
+    closeModal(document.getElementById('login-modal'));
+    setTimeout(() => {
+        openModal(document.getElementById('signup-modal'));
+    }, 300);
+}
+
+function switchToLogin() {
+    closeModal(document.getElementById('signup-modal'));
+    setTimeout(() => {
+        openModal(document.getElementById('login-modal'));
+    }, 300);
+}
+
+// Listen for auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth state changed:', event, session?.user?.email);
+    
+    if (event === 'SIGNED_IN') {
+        updateUIForAuthenticatedUser(session.user);
+    } else if (event === 'SIGNED_OUT') {
+        updateUIForUnauthenticatedUser();
+    }
+});
+
 // Export functions for global use
 window.toggleFAQ = toggleFAQ;
 window.toggleTheme = toggleTheme;
 window.showNotification = showNotification;
 window.handleSignup = handleSignup;
+window.handleLogin = handleLogin;
+window.switchToSignup = switchToSignup;
+window.switchToLogin = switchToLogin;

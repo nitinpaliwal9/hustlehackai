@@ -10,13 +10,16 @@ const modalCloses = document.querySelectorAll('.modal-close');
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initializeNavigation();
-    initializeModals();
-    initializeAnimations();
-    initializeForms();
-    initializeScrollEffects();
-    initializeLoadingStates();
+  initializeNavigation();
+  initializeModals();
+  initializeAnimations();
+  initializeForms();
+  initializeScrollEffects();
+  initializeLoadingStates();
+  initializeSignupForm(); // Already exists
+  addRealTimeValidation(); // Already exists
 });
+
 
 // Navigation Functions
 function initializeNavigation() {

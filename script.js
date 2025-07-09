@@ -474,7 +474,16 @@ function initializeSignupForm() {
 
 async function handleSignup(e) {
     e.preventDefault();
+    console.log('🧠 Signup function called');
 
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const role = document.getElementById('role').value;
+    const device = navigator.userAgent;
+    const timestamp = new Date().toISOString();
+
+    console.log({ name, email, role, device });
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();

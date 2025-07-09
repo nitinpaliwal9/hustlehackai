@@ -522,6 +522,7 @@ async function handleSignup(e) {
         // Step 2: Wait for session (for RLS insert)
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         const user = sessionData?.session?.user;
+        console.log("👤 Session user ID:", user?.id);
 
         if (!user || sessionError) {
             showNotification("⚠️ Signup succeeded, but login session not ready. Check your email.", 'warning');

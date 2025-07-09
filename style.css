@@ -601,6 +601,57 @@ p {
   color: var(--gray-400);
 }
 
+/* Select dropdown specific styles */
+select.form-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23ffffff" d="M6 9L1.5 4.5h9L6 9z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+/* Style the select options */
+select.form-input option {
+  background-color: var(--dark-bg);
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  font-size: 1rem;
+}
+
+/* Ensure dropdown options are visible */
+select.form-input option:hover,
+select.form-input option:focus,
+select.form-input option:checked {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Fix for better dropdown visibility */
+select.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(127, 90, 240, 0.2);
+  z-index: 10;
+}
+
+/* Make sure the select dropdown appears above other elements */
+.form-group {
+  position: relative;
+  z-index: 1;
+}
+
+.form-group select {
+  position: relative;
+  z-index: 2;
+}
+
 /* FAQ Styling */
 .faq-container {
   max-width: 800px;

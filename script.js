@@ -469,85 +469,49 @@ function initializeSignupForm() {
     }
 }
 
-function handleSignup(e) {
+async function handleSignup(e) {
     e.preventDefault();
 
-    const name = document.getElementById('name')?.value.trim();
-    const email = document.getElementById('email')?.value.trim();
-    const password = document.getElementById('password')?.value.trim();
-    const role = document.getElementById('role')?.value;
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const role = document.getElementById('role').value;
     const device = navigator.userAgent;
     const timestamp = new Date().toISOString();
 
-    // Basic Validation
     if (!name || !email || !password || !role) {
-        showNotification('⚠️ Please fill in all fields', 'error');
+        showNotification('Please fill in all fields', 'error');
         return;
     }
 
-    if (password.length < 6) {
-        showNotification('🔒 Password must be at least 6 characters long', 'error');
-        return;
-    }
-
-    // Loading UI
+    // Show loading
     const signupBtn = document.getElementById('signupBtn');
-    const btnText = signupBtn?.querySelector('.btn-text');
-    const btnLoading = signupBtn?.querySelector('.btn-loading');
+    signupBtn.disabled = true;
+    signupBtn.querySelector('.btn-text').style.display = 'none';
+    signupBtn.querySelector('.btn-loading').style.display = 'inline';
 
-    if (signupBtn) signupBtn.disabled = true;
-    if (btnText) btnText.style.display = 'none';
-    if (btnLoading) btnLoading.style.display = 'inline';
-
-    const payload = {
-        name,
+    const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        role,
-        device,
-        timestamp
-    };
-
-    // ✅ Replace with your actual Apps Script Web App URL
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxGP3LBv95cc7VC0ciOFBor-Pc_4RLDcxWm4IFsGe-0wJcF5cUWqzsDom6tBIqppbqKYA/exec';
-
-    fetch(webAppUrl, {
-        method: 'POST',
-        mode: 'no-cors', // optional if you're seeing CORS issues
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    });
-
-    .then(response => {
-        if (response.ok) {
-            showNotification('✅ Account created successfully! Welcome to HustleHack AI!', 'success');
-            document.getElementById('signupForm')?.reset();
-
-            // Optionally close modal if needed
-            const modal = document.getElementById('signup-modal');
-            if (modal) closeModal(modal);
-
-            // Follow-up CTA
-            setTimeout(() => {
-                showNotification('📬 Check your email for next steps!', 'info');
-            }, 2000);
-        } else {
-            throw new Error('⚠️ Server error – please try again.');
+        options: {
+            data: { name, role, device, timestamp }
         }
-    })
-    .catch(error => {
-        console.error('Signup Error:', error);
-        showNotification('❌ Signup failed. Please try again later.', 'error');
-    })
-    .finally(() => {
-        // Reset loading state
-        if (signupBtn) signupBtn.disabled = false;
-        if (btnText) btnText.style.display = 'inline';
-        if (btnLoading) btnLoading.style.display = 'none';
     });
+
+    if (error) {
+        showNotification('❌ ' + error.message, 'error');
+    } else {
+        showNotification('✅ Account created! Check your email.', 'success');
+        document.getElementById('signupForm').reset();
+        closeModal(document.getElementById('signup-modal'));
+    }
+
+    // Reset button
+    signupBtn.disabled = false;
+    signupBtn.querySelector('.btn-text').style.display = 'inline';
+    signupBtn.querySelector('.btn-loading').style.display = 'none';
 }
+
 
 // Enhanced Form Validation
 function validateEmail(email) {

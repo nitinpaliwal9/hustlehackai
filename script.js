@@ -197,6 +197,11 @@ function initializeForms() {
     const forms = document.querySelectorAll('form');
     
     forms.forEach(form => {
+        // Skip auth forms as they have their own handlers
+        if (form.id === 'loginForm' || form.id === 'signupForm') {
+            return;
+        }
+        
         form.addEventListener('submit', handleFormSubmit);
         
         // Input validation
@@ -507,33 +512,65 @@ async function checkAuthStatus() {
 
 // Update UI for authenticated user
 function updateUIForAuthenticatedUser(user) {
+    // Update Sign In button
     const signInBtn = document.querySelector('[data-modal="login-modal"]');
-    const getStartedBtn = document.querySelector('[data-modal="signup-modal"]');
-    
     if (signInBtn) {
-        signInBtn.textContent = `👋 ${user.user_metadata?.name || user.email}`;
+        const userName = user.user_metadata?.name || user.email.split('@')[0];
+        signInBtn.textContent = `👋 ${userName}`;
         signInBtn.removeAttribute('data-modal');
+        signInBtn.classList.add('user-menu');
         signInBtn.addEventListener('click', handleSignOut);
     }
     
+    // Update Get Started button
+    const getStartedBtn = document.querySelector('[data-modal="signup-modal"]');
     if (getStartedBtn) {
-        getStartedBtn.textContent = 'Dashboard';
+        getStartedBtn.textContent = '🎯 Dashboard';
         getStartedBtn.removeAttribute('data-modal');
         getStartedBtn.href = '#dashboard';
+        getStartedBtn.classList.add('dashboard-btn');
     }
+    
+    // Update all other signup buttons
+    const allSignupBtns = document.querySelectorAll('[data-modal="signup-modal"]');
+    allSignupBtns.forEach(btn => {
+        if (btn !== getStartedBtn) {
+            btn.textContent = '✨ Dashboard';
+            btn.removeAttribute('data-modal');
+            btn.href = '#dashboard';
+        }
+    });
 }
 
 // Update UI for unauthenticated user
 function updateUIForUnauthenticatedUser() {
-    const signInBtn = document.querySelector('a[href="#"], button');
-    const getStartedBtn = document.querySelector('a[href="#"], button');
-    
-    // Reset to default state
+    // Reset Sign In button
+    const signInBtn = document.querySelector('.user-menu') || document.querySelector('a[href="#"]');
     if (signInBtn && signInBtn.textContent.includes('👋')) {
         signInBtn.textContent = 'Sign In';
         signInBtn.setAttribute('data-modal', 'login-modal');
+        signInBtn.classList.remove('user-menu');
         signInBtn.removeEventListener('click', handleSignOut);
     }
+    
+    // Reset Get Started button
+    const getStartedBtn = document.querySelector('.dashboard-btn');
+    if (getStartedBtn) {
+        getStartedBtn.textContent = 'Get Started';
+        getStartedBtn.setAttribute('data-modal', 'signup-modal');
+        getStartedBtn.classList.remove('dashboard-btn');
+        getStartedBtn.removeAttribute('href');
+    }
+    
+    // Reset all other buttons
+    const allDashboardBtns = document.querySelectorAll('a[href="#dashboard"]');
+    allDashboardBtns.forEach(btn => {
+        if (btn.textContent.includes('Dashboard')) {
+            btn.textContent = 'Get Started';
+            btn.setAttribute('data-modal', 'signup-modal');
+            btn.removeAttribute('href');
+        }
+    });
 }
 
 // Handle user sign out
@@ -611,8 +648,20 @@ async function handleLogin(e) {
             return;
         }
         
+        // Fetch user profile data from database
+        const { data: userProfile, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+        
+        if (profileError) {
+            console.warn('Could not fetch user profile:', profileError);
+        }
+        
         // Success!
-        showNotification('🎉 Welcome back! Redirecting to dashboard...', 'success');
+        const userName = userProfile?.name || user.user_metadata?.name || user.email.split('@')[0];
+        showNotification(`🎉 Welcome back, ${userName}!`, 'success');
         
         // Update UI
         updateUIForAuthenticatedUser(user);
@@ -621,9 +670,9 @@ async function handleLogin(e) {
         document.getElementById('loginForm').reset();
         closeModal(document.getElementById('login-modal'));
         
-        // Simulate redirect to dashboard
+        // Success follow-up
         setTimeout(() => {
-            showNotification('✨ Dashboard loaded successfully!', 'success');
+            showNotification('✨ You are now signed in and ready to explore!', 'success');
         }, 1500);
         
     } catch (error) {

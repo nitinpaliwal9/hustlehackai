@@ -1510,6 +1510,119 @@ select.form-input:focus {
   animation: pulse 1.5s infinite;
 }
 
+/* Terms and Conditions Content Styles */
+.terms-content {
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.terms-content h1 {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.terms-content h2 {
+  color: var(--accent);
+  font-size: 1.75rem;
+  margin: 3rem 0 1rem 0;
+  font-weight: 700;
+  position: relative;
+  padding-left: 20px;
+}
+
+.terms-content h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.terms-content h3 {
+  color: var(--primary);
+  font-size: 1.25rem;
+  margin: 2rem 0 0.75rem 0;
+  font-weight: 600;
+}
+
+.terms-content p {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.terms-content ul, .terms-content ol {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+}
+
+.terms-content li {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.terms-content strong {
+  color: white;
+  font-weight: 600;
+}
+
+.terms-content .contact-email {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  border: 2px solid var(--primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.terms-content .contact-email:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(127, 90, 240, 0.3);
+}
+
+.terms-content .back-to-home {
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.terms-content .back-to-home a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.terms-content .back-to-home a:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(127, 90, 240, 0.3);
+}
+
 /* Selection */
 ::selection {
   background: var(--primary);

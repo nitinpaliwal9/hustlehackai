@@ -559,6 +559,7 @@ function initializeProfileDropdown() {
 
 // Open User Profile/Dashboard
 function openUserProfile() {
+    console.log('Dashboard button clicked');
     closeProfileDropdown();
     
     // Check if user is authenticated
@@ -574,6 +575,7 @@ function closeProfileDropdown() {
 
 // Check authentication and open appropriate interface
 async function checkAuthenticationAndOpenDashboard() {
+    console.log('Checking authentication status...');
     try {
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -601,6 +603,7 @@ async function checkAuthenticationAndOpenDashboard() {
 
 // Open Dashboard Interface
 function openDashboard(user) {
+    console.log('Opening dashboard for user:', user.email);
     showNotification('🎯 Opening your dashboard...', 'info');
     
     // Create dashboard modal/overlay

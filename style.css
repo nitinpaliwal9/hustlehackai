@@ -398,25 +398,27 @@ p {
   color: var(--accent);
 }
 
-/* Buttons */
+/* Unified Button System */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 16px 32px;
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: var(--transition-nor  line-height: 1.5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  line-height: 1.2;
   position: relative;
   overflow: hidden;
-ative;
-  overflow: hidden;
-  letter-spacing: 0.5px;
-  box-shadow: var(--shadow-md);
--shadow-md);
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  font-family: var(--font-primary);
+  min-height: 52px;
+  gap: 12px;
 }
 
 .btn-primary {
@@ -427,33 +429,33 @@ ative;
 
 .btn-primary:hover {
   background: linear-gradient(135deg, #6B46C1, var(--primary));
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(127, 90, 240, 0.4);
 }
 
 .btn-accent {
   background: var(--accent);
   color: var(--dark-bg);
+  font-weight: 700;
 }
 
 .btn-accent:hover {
   background: #00E5B8;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 25px rgba(0, 255, 194, 0.3);
 }
 
 .btn-outline {
   background: transparent;
   border: 2px solid var(--primary);
   color: var(--primary);
+}
 
-  background-size: 200% 200%;
-  transition: var(--transition-normal);
-
-.btn-outline:hover {
 .btn-outline:hover {
   background: var(--primary);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(127, 90, 240, 0.3);
 }
 
 .btn-ghost {
@@ -471,14 +473,19 @@ ative;
 }
 
 .btn-lg {
-  padding: 18px 36px;
+  padding: 20px 40px;
   font-size: 18px;
   border-radius: 16px;
+  min-height: 60px;
+  font-weight: 700;
 }
 
 .btn-sm {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 10px;
+  min-height: 40px;
+  font-weight: 600;
 }
 
 /* Hero Section */
@@ -539,10 +546,11 @@ ative;
 
 .hero-actions {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 48px;
+  align-items: center;
 }
 
 /* Cards */
@@ -1627,33 +1635,34 @@ select.form-input:focus {
   box-shadow: 0 4px 12px rgba(127, 90, 240, 0.3);
 }
 
-/* Google Sign-In Button Styles */
+/* Unified Google Sign-In Button */
 .btn-google {
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
+  gap: 12px;
+  padding: 16px 32px;
   background: #ffffff;
   color: #444444;
   border: 2px solid #dadce0;
-  border-radius: var(--radius-lg);
-  font-size: 1rem;
+  border-radius: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition-normal);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  margin-bottom: var(--spacing-lg);
   font-family: var(--font-primary);
+  min-height: 52px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .btn-google:hover {
   background: #f8f9fa;
   border-color: #c4c7c5;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .btn-google:active {
@@ -1661,9 +1670,11 @@ select.form-input:focus {
 }
 
 .btn-google.btn-lg {
-  padding: var(--spacing-xl);
-  font-size: 1.125rem;
-  border-radius: var(--radius-xl);
+  padding: 20px 40px;
+  font-size: 18px;
+  border-radius: 16px;
+  min-height: 60px;
+  font-weight: 700;
 }
 
 .google-icon {
@@ -1738,13 +1749,9 @@ select.form-input:focus {
   margin: var(--spacing-lg) 0;
 }
 
-/* Hero section Google button adjustments */
-.hero-actions {
-  display: flex;
-  gap: var(--spacing-lg);
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: var(--spacing-2xl);
+/* Hero section button adjustments */
+.hero-actions .btn {
+  min-width: 280px;
 }
 
 .hero-actions .btn-google {
@@ -1752,12 +1759,12 @@ select.form-input:focus {
   min-width: 280px;
 }
 
-/* Mobile responsiveness for Google buttons */
+/* Mobile responsiveness for all buttons */
 @media (max-width: 768px) {
   .hero-actions {
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: 16px;
   }
   
   .hero-actions .btn {
@@ -1765,14 +1772,28 @@ select.form-input:focus {
     max-width: 320px;
   }
   
+  .btn {
+    padding: 14px 24px;
+    font-size: 15px;
+    min-height: 48px;
+  }
+  
+  .btn-lg {
+    padding: 18px 32px;
+    font-size: 17px;
+    min-height: 56px;
+  }
+  
   .btn-google {
-    padding: var(--spacing-md);
-    font-size: 0.875rem;
+    padding: 14px 24px;
+    font-size: 15px;
+    min-height: 48px;
   }
   
   .btn-google.btn-lg {
-    padding: var(--spacing-lg);
-    font-size: 1rem;
+    padding: 18px 32px;
+    font-size: 17px;
+    min-height: 56px;
   }
 }
 
@@ -1781,8 +1802,28 @@ select.form-input:focus {
     max-width: 280px;
   }
   
+  .btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+  
+  .btn-lg {
+    padding: 16px 28px;
+    font-size: 16px;
+    min-height: 52px;
+  }
+  
   .btn-google {
-    padding: var(--spacing-md);
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+  
+  .btn-google.btn-lg {
+    padding: 16px 28px;
+    font-size: 16px;
+    min-height: 52px;
   }
   
   .google-icon {

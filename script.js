@@ -1193,6 +1193,7 @@ async function handleSignup(e) {
             {
                 id: user.id,
                 name,
+                email,
                 role,
                 device,
                 timestamp

@@ -962,6 +962,13 @@ function updateAuthUI() {
     }
 }
 
+async function handleGoogleLogin() {
+    const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+    if (error && error.message) {
+        console.error("OAuth Error:", error.message);
+        showNotification('An error occurred during Google login', 'error');
+    }
+}
 // Handle Google Sign-In
 async function handleGoogleSignIn() {
     try {
@@ -1085,6 +1092,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize profile dropdown
     initializeProfileDropdown();
+});
+
+supabase.auth.getSession().then(({ data }) => {
+    if (data.session) {
+        // Hide login button
+        document.getElementById('google-login-btn').style.display = 'none';
+        // Assuming you have an element with id 'user-profile' to show user info
+        document.getElementById('user-profile').style.display = 'flex';
+    }
 });
 
 // Authentication System Initialization

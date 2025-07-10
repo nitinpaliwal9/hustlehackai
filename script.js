@@ -1036,6 +1036,15 @@ async function handleGoogleSignIn() {
 
     } catch (error) {
         console.error('❌ Google login error:', error);
+        
+        // Skip toast if error is just the OAuth redirect notice
+        if (error.message && error.message.includes('redirect')) {
+            // This is just a normal redirect, not a real error
+            console.log('ℹ️ OAuth redirect initiated, this is normal');
+            return;
+        }
+        
+        // Only show error toast for genuine errors
         showNotification('An error occurred during Google login.', 'error');
         const button = event.target.closest('.btn-google') || event.target;
         setButtonLoading(button, false);

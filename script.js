@@ -1131,6 +1131,12 @@ function initializeAuthSystem() {
             
             // Close any open modals
             closeAllModals();
+            
+            // Redirect to dashboard after successful login
+            setTimeout(() => {
+                showNotification('🎯 Redirecting to your dashboard...', 'info');
+                window.location.href = 'dashboard.html';
+            }, 2000);
         }
         
         if (event === 'SIGNED_OUT') {
@@ -1369,9 +1375,10 @@ async function handleLogin(e) {
         document.getElementById('loginForm').reset();
         closeModal(document.getElementById('login-modal'));
         
-        // Success follow-up
+        // Redirect to dashboard
         setTimeout(() => {
-            showNotification('✨ You are now signed in and ready to explore!', 'success');
+            showNotification('🎯 Redirecting to your dashboard...', 'info');
+            window.location.href = 'dashboard.html';
         }, 1500);
         
     } catch (error) {
@@ -1504,7 +1511,8 @@ async function handleSignup(e) {
         }, 1500);
         
         setTimeout(() => {
-            showNotification('✨ Welcome to HustleHack AI! We\'re excited to have you onboard.', 'success');
+            showNotification('✨ Welcome to HustleHack AI! Redirecting to dashboard...', 'success');
+            window.location.href = 'dashboard.html';
         }, 3000);
     } catch (err) {
         console.error('Signup Error:', err);

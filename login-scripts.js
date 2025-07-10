@@ -129,6 +129,9 @@ async function checkAuthState() {
 function handleGoogleLogin() {
     setButtonLoading(googleLoginBtn, true);
     
+    // Set OAuth flag to prevent false notifications
+    isOAuthInProgress = true;
+    
     // Initiate Google login without any error handling
     window.supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -141,8 +144,11 @@ function handleGoogleLogin() {
         }
     });
     
-    // Fallback to reset loading state after timeout
-    setTimeout(() => setButtonLoading(googleLoginBtn, false), 3000);
+    // Fallback to reset loading state and OAuth flag after timeout
+    setTimeout(() => {
+        setButtonLoading(googleLoginBtn, false);
+        isOAuthInProgress = false;
+    }, 3000);
 }
 
 // Email Sign-In Handler

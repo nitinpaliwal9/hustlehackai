@@ -1,6 +1,12 @@
 // Dashboard Script - HustleHack AI
 
+let currentUser = null;
+let userProfile = null;
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication status
+    checkAuthenticationStatus();
+    
     // Initialize Dashboard Navigation
     const links = document.querySelectorAll('.sidebar-link');
     links.forEach(link => {
@@ -22,7 +28,141 @@ document.addEventListener('DOMContentLoaded', function() {
     if (passwordForm) {
         passwordForm.addEventListener('submit', handlePasswordFormSubmit);
     }
+    
+    // Load initial data
+    loadDashboardData();
 });
+
+// Check if user is authenticated and redirect if not
+async function checkAuthenticationStatus() {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Auth check error:', error);
+            redirectToLogin();
+            return;
+        }
+        
+        if (!session || !session.user) {
+            redirectToLogin();
+            return;
+        }
+        
+        currentUser = session.user;
+        
+        // Load user profile data
+        await loadUserProfile();
+        
+        // Update UI with user data
+        updateUserInterface();
+        
+    } catch (error) {
+        console.error('Authentication check failed:', error);
+        redirectToLogin();
+    }
+}
+
+function redirectToLogin() {
+    window.location.href = 'index.html';
+}
+
+// Load user profile from database
+async function loadUserProfile() {
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+        
+        if (error) {
+            console.error('Error loading user profile:', error);
+            return;
+        }
+        
+        userProfile = data;
+        
+    } catch (error) {
+        console.error('Failed to load user profile:', error);
+    }
+}
+
+// Update UI with user data
+function updateUserInterface() {
+    if (!currentUser) return;
+    
+    const userName = userProfile?.name || currentUser.user_metadata?.name || currentUser.email.split('@')[0];
+    const userEmail = currentUser.email;
+    
+    // Update profile name in header
+    const profileNameEl = document.getElementById('userProfileName');
+    if (profileNameEl) {
+        profileNameEl.textContent = userName;
+    }
+    
+    // Update profile form fields
+    const profileNameInput = document.getElementById('profileName');
+    const profileEmailInput = document.getElementById('profileEmail');
+    const profileRoleSelect = document.getElementById('profileRole');
+    
+    if (profileNameInput) profileNameInput.value = userName;
+    if (profileEmailInput) profileEmailInput.value = userEmail;
+    if (profileRoleSelect && userProfile?.role) {
+        profileRoleSelect.value = userProfile.role;
+    }
+    
+    // Update dashboard stats
+    updateDashboardStats();
+}
+
+// Load dashboard data
+async function loadDashboardData() {
+    try {
+        // Load user activity logs
+        await loadUserActivity();
+        
+        // Load user resource usage
+        await loadResourceUsage();
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+    }
+}
+
+// Update dashboard statistics
+function updateDashboardStats() {
+    // Calculate days since joining
+    const joinDate = userProfile?.timestamp || currentUser.created_at;
+    if (joinDate) {
+        const daysSinceJoin = Math.floor((new Date() - new Date(joinDate)) / (1000 * 60 * 60 * 24));
+        const daysSinceJoinEl = document.getElementById('daysSinceJoin');
+        if (daysSinceJoinEl) {
+            daysSinceJoinEl.textContent = daysSinceJoin;
+        }
+    }
+    
+    // Update plan name
+    const currentPlanEl = document.getElementById('currentPlan');
+    const planNameEl = document.getElementById('planName');
+    const plan = userProfile?.plan || 'Pro';
+    
+    if (currentPlanEl) currentPlanEl.textContent = plan;
+    if (planNameEl) planNameEl.textContent = `${plan} Plan`;
+}
+
+// Load user activity logs
+async function loadUserActivity() {
+    // This would typically load from a user_activity table
+    // For now, we'll use static data but structure it for real implementation
+    console.log('Loading user activity...');
+}
+
+// Load resource usage data
+async function loadResourceUsage() {
+    // This would load from a user_resource_usage table
+    console.log('Loading resource usage...');
+}
 
 function showDashboardSection(sectionId) {
     // Hide all sections

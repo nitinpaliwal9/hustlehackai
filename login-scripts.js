@@ -283,6 +283,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Track if OAuth is in progress
+let isOAuthInProgress = false;
+
 // Listen for auth state changes
 window.supabase.auth.onAuthStateChange((event, session) => {
     console.log('🔄 Auth state changed:', event, session?.user?.email);
@@ -293,8 +296,10 @@ window.supabase.auth.onAuthStateChange((event, session) => {
         // Save user to database
         saveUserToDatabase(session.user);
         
-        // Show success message
-        showToast('Login successful! Welcome back!', 'success');
+        // Only show toast if NOT during OAuth flow (to prevent false notifications)
+        if (!isOAuthInProgress) {
+            showToast('Login successful! Welcome back!', 'success');
+        }
         
         // Redirect to main page
         setTimeout(() => {

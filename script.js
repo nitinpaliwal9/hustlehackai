@@ -474,7 +474,7 @@ function toggleFAQ(element) {
     }
 }
 
-// Dark/Light Mode Toggle (if needed)
+// Dark/Light Mode Toggle (Enhanced)
 function toggleTheme() {
     const currentTheme = localStorage.getItem('theme') || 'dark';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -482,10 +482,78 @@ function toggleTheme() {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     
-    // Update toggle button text
+    // Update toggle button text with smooth animation
     const themeToggle = document.querySelector('.theme-toggle');
     if (themeToggle) {
-        themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        themeToggle.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            themeToggle.style.transform = 'scale(1)';
+        }, 150);
+    }
+    
+    // Show notification
+    showNotification(`🎨 Switched to ${newTheme} mode`, 'success');
+}
+
+// Password Visibility Toggle
+function togglePasswordVisibility(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleButton = passwordInput.nextElementSibling;
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleButton.textContent = '🙈';
+        toggleButton.setAttribute('aria-label', 'Hide password');
+    } else {
+        passwordInput.type = 'password';
+        toggleButton.textContent = '👁️';
+        toggleButton.setAttribute('aria-label', 'Show password');
+    }
+    
+    // Add a small animation
+    toggleButton.style.transform = 'scale(0.8)';
+    setTimeout(() => {
+        toggleButton.style.transform = 'scale(1)';
+    }, 150);
+}
+
+// Profile Dropdown Toggle
+function toggleProfileDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    const isActive = dropdown.classList.contains('active');
+    
+    if (isActive) {
+        dropdown.classList.remove('active');
+    } else {
+        dropdown.classList.add('active');
+    }
+    
+    // Close dropdown when clicking outside
+    if (!isActive) {
+        document.addEventListener('click', closeProfileDropdownOnClickOutside);
+    }
+}
+
+function closeProfileDropdownOnClickOutside(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profileBtn = document.getElementById('profileBtn');
+    
+    if (dropdown && !dropdown.contains(event.target) && !profileBtn.contains(event.target)) {
+        dropdown.classList.remove('active');
+        document.removeEventListener('click', closeProfileDropdownOnClickOutside);
+    }
+}
+
+// Initialize Profile Dropdown
+function initializeProfileDropdown() {
+    const profileBtn = document.getElementById('profileBtn');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleProfileDropdown();
+        });
     }
 }
 
@@ -499,6 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
         themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
         themeToggle.addEventListener('click', toggleTheme);
     }
+    
+    // Initialize profile dropdown
+    initializeProfileDropdown();
 });
 
 // Authentication System Initialization

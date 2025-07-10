@@ -1153,94 +1153,116 @@ async function checkAuthStatus() {
     if (error) throw error;
 
     if (session && session.user) {
-      // Hide Sign In & Get Started buttons
-      document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]')
-              .forEach(el => el.style.display = 'none');
-
-      // Show profile dropdown
-      const pd = document.getElementById('profileDropdown');
-      if (pd) pd.style.display = 'inline-block';
-
-      // Update dropdown name/avatar
-      const nameSpan = pd.querySelector('.profile-name');
-      if (nameSpan) nameSpan.textContent = session.user.user_metadata?.name || session.user.email.split('@')[0];
+      console.log('✅ User is authenticated:', session.user.email);
+      updateUIForAuthenticatedUser(session.user);
     } else {
-      // Reverse the UI for signed out state
-      document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]')
-              .forEach(el => el.style.display = '');
-      const pd = document.getElementById('profileDropdown');
-      if (pd) pd.style.display = 'none';
+      console.log('ℹ️ User is not authenticated');
+      updateUIForUnauthenticatedUser();
     }
   } catch (err) {
     console.error('Auth check failed', err);
+    updateUIForUnauthenticatedUser();
   }
 }
 
 // Update UI for authenticated user
 function updateUIForAuthenticatedUser(user) {
-    // Update Sign In button
-    const signInBtn = document.querySelector('[data-modal="login-modal"]');
-    if (signInBtn) {
-        const userName = user.user_metadata?.name || user.email.split('@')[0];
-        signInBtn.textContent = `👋 ${userName}`;
-        signInBtn.removeAttribute('data-modal');
-        signInBtn.classList.add('user-menu');
-        signInBtn.removeEventListener('click', handleSignOut);
-        // Show profile button instead of login
-        const profileWrapper = document.querySelector('.profile-wrapper');
-        profileWrapper.style.display = 'block';
-    }
+    console.log('🔄 Updating UI for authenticated user:', user.email);
     
-    // Update Get Started button
-    const getStartedBtn = document.querySelector('[data-modal="signup-modal"]');
-    if (getStartedBtn) {
-        getStartedBtn.textContent = '🎯 Dashboard';
-        getStartedBtn.removeAttribute('data-modal');
-        getStartedBtn.href = '#dashboard';
-        getStartedBtn.classList.add('dashboard-btn');
-        getStartedBtn.addEventListener('click', openUserProfile);
-    }
+    const userName = user.user_metadata?.name || user.email.split('@')[0];
     
-    // Update all other signup buttons
-    const allSignupBtns = document.querySelectorAll('[data-modal="signup-modal"]');
-    allSignupBtns.forEach(btn => {
-        if (btn !== getStartedBtn) {
-            btn.textContent = '✨ Dashboard';
-            btn.removeAttribute('data-modal');
-            btn.href = '#dashboard';
-        }
+    // Hide Google login buttons
+    document.querySelectorAll('.btn-google, #google-login-btn-hero').forEach(btn => {
+        btn.style.display = 'none';
     });
+    
+    // Hide login/signup modal buttons
+    document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]').forEach(btn => {
+        btn.style.display = 'none';
+    });
+    
+    // Show and update profile dropdown
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileDropdown) {
+        profileDropdown.style.display = 'inline-block';
+        
+        // Update profile name
+        const profileName = profileDropdown.querySelector('.profile-name');
+        if (profileName) {
+            profileName.textContent = userName;
+        }
+        
+        // Update dashboard link in profile menu
+        const dashboardLink = profileDropdown.querySelector('.profile-menu-item[href="dashboard.html"]');
+        if (dashboardLink) {
+            dashboardLink.style.display = 'flex';
+        }
+    }
+    
+    // Update hero actions - replace login buttons with dashboard button
+    const heroActions = document.querySelector('.hero-actions');
+    if (heroActions) {
+        // Hide Google login button in hero
+        const heroGoogleBtn = heroActions.querySelector('#google-login-btn-hero');
+        if (heroGoogleBtn) {
+            heroGoogleBtn.style.display = 'none';
+        }
+        
+        // Update signup button to dashboard button
+        const heroSignupBtn = heroActions.querySelector('[data-modal="signup-modal"]');
+        if (heroSignupBtn) {
+            heroSignupBtn.textContent = '🎯 Go to Dashboard';
+            heroSignupBtn.removeAttribute('data-modal');
+            heroSignupBtn.href = 'dashboard.html';
+            heroSignupBtn.onclick = function() {
+                window.location.href = 'dashboard.html';
+            };
+        }
+    }
+    
+    console.log('✅ UI updated for authenticated user');
 }
 
 // Update UI for unauthenticated user
 function updateUIForUnauthenticatedUser() {
-    // Reset Sign In button
-    const signInBtn = document.querySelector('.user-menu') || document.querySelector('a[href="#"]');
-    if (signInBtn && signInBtn.textContent.includes('👋')) {
-        signInBtn.textContent = 'Sign In';
-        signInBtn.setAttribute('data-modal', 'login-modal');
-        signInBtn.classList.remove('user-menu');
-        signInBtn.removeEventListener('click', handleSignOut);
-    }
+    console.log('🔄 Updating UI for unauthenticated user');
     
-    // Reset Get Started button
-    const getStartedBtn = document.querySelector('.dashboard-btn');
-    if (getStartedBtn) {
-        getStartedBtn.textContent = 'Get Started';
-        getStartedBtn.setAttribute('data-modal', 'signup-modal');
-        getStartedBtn.classList.remove('dashboard-btn');
-        getStartedBtn.removeAttribute('href');
-    }
-    
-    // Reset all other buttons
-    const allDashboardBtns = document.querySelectorAll('a[href="#dashboard"]');
-    allDashboardBtns.forEach(btn => {
-        if (btn.textContent.includes('Dashboard')) {
-            btn.textContent = 'Get Started';
-            btn.setAttribute('data-modal', 'signup-modal');
-            btn.removeAttribute('href');
-        }
+    // Show Google login buttons
+    document.querySelectorAll('.btn-google, #google-login-btn-hero').forEach(btn => {
+        btn.style.display = 'inline-flex';
     });
+    
+    // Show login/signup modal buttons
+    document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]').forEach(btn => {
+        btn.style.display = 'inline-flex';
+    });
+    
+    // Hide profile dropdown
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileDropdown) {
+        profileDropdown.style.display = 'none';
+    }
+    
+    // Reset hero actions
+    const heroActions = document.querySelector('.hero-actions');
+    if (heroActions) {
+        // Show Google login button in hero
+        const heroGoogleBtn = heroActions.querySelector('#google-login-btn-hero');
+        if (heroGoogleBtn) {
+            heroGoogleBtn.style.display = 'inline-flex';
+        }
+        
+        // Reset signup button
+        const heroSignupBtn = heroActions.querySelector('a');
+        if (heroSignupBtn && heroSignupBtn.textContent.includes('Dashboard')) {
+            heroSignupBtn.textContent = '📧 Sign Up with Email';
+            heroSignupBtn.setAttribute('data-modal', 'signup-modal');
+            heroSignupBtn.removeAttribute('href');
+            heroSignupBtn.onclick = null;
+        }
+    }
+    
+    console.log('✅ UI updated for unauthenticated user');
 }
 
 // Handle user sign out - ENHANCED

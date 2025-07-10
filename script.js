@@ -866,9 +866,12 @@ function initializeGoogleSignIn() {
     if (googleBtnHero) {
         googleBtnHero.addEventListener('click', handleGoogleSignIn);
     }
-    
+
     // Modal Google buttons (we'll add these to modals)
     addGoogleButtonsToModals();
+
+    // Initial UI update based on authentication state
+    updateAuthUI();
 }
 
 // Add Google Sign-In buttons to existing modals
@@ -932,7 +935,31 @@ function createGoogleButton(id) {
     `;
     
     button.addEventListener('click', handleGoogleSignIn);
-    return button;
+return button;
+}
+
+// Update UI based on authentication state
+function updateAuthUI() {
+    const user = supabase.auth.user();
+    const isAuthenticated = !!user;
+
+    // Toggle visibility of Google buttons and other auth elements
+    document.querySelectorAll('.btn-google').forEach(btn => {
+        btn.style.display = isAuthenticated ? 'none' : 'inline-block';
+    });
+
+    // Example: Toggle visibility of nav buttons
+    const navSignIn = document.getElementById('nav-sign-in');
+    const navGetStarted = document.getElementById('nav-get-started');
+    const navProfile = document.getElementById('nav-profile');
+
+    if (navSignIn && navGetStarted) {
+        navSignIn.style.display = isAuthenticated ? 'none' : 'inline-block';
+        navGetStarted.style.display = isAuthenticated ? 'none' : 'inline-block';
+    }
+    if (navProfile) {
+        navProfile.style.display = isAuthenticated ? 'inline-block' : 'none';
+    }
 }
 
 // Handle Google Sign-In
@@ -941,7 +968,7 @@ async function handleGoogleSignIn() {
         console.log('🔑 Starting Google login...');
         const button = event.target.closest('.btn-google') || event.target;
         setButtonLoading(button, true);
-        
+
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -959,10 +986,11 @@ async function handleGoogleSignIn() {
             setButtonLoading(button, false);
             return;
         }
-        
+
         console.log('✅ Google OAuth flow started...');
         // Note: User will be redirected to Google, so button state will reset automatically
-        
+        updateAuthUI();
+
     } catch (error) {
         console.error('❌ Google login error:', error);
         showNotification('An error occurred during Google login.', 'error');

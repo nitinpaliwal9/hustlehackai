@@ -666,7 +666,16 @@ p {
 
 .pricing-title {
   color: white;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pricing-subtitle {
+  color: var(--gray-400);
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+  font-weight: 500;
 }
 
 .pricing-price {
@@ -694,6 +703,16 @@ p {
   left: 0;
   color: var(--accent);
   font-weight: bold;
+}
+
+.pricing-note {
+  color: var(--gray-400);
+  font-size: 0.75rem;
+  margin-top: 16px;
+  margin-bottom: 0;
+  font-style: italic;
+  text-align: center;
+  opacity: 0.8;
 }
 
 /* Modal */

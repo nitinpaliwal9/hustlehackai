@@ -127,13 +127,8 @@ async function checkAuthState() {
 
 // Google Sign-In Handler
 function handleGoogleLogin() {
-    console.log('🔑 Starting Google login...');
+    setButtonLoading(googleLoginBtn, true);
     
-    // Show redirecting message
-    showToast('🔐 Redirecting to Google...', 'info');
-    
-    // Call Supabase signInWithOAuth WITHOUT await or catch
-    // Supabase handles everything internally via redirect
     window.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -143,9 +138,12 @@ function handleGoogleLogin() {
                 prompt: 'consent',
             }
         }
+    }).then(({ error }) => {
+        if (error) {
+            showToast(`An error occurred during Google login: ${error.message || 'Please try again later.'}`, 'error');
+        }
+        setButtonLoading(googleLoginBtn, false);
     });
-    
-    // Do NOT handle response or error — Supabase handles it via redirect
 }
 
 // Email Sign-In Handler

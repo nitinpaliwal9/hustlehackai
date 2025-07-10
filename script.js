@@ -1131,12 +1131,6 @@ function initializeAuthSystem() {
             
             // Close any open modals
             closeAllModals();
-            
-            // Redirect to dashboard after successful login
-            setTimeout(() => {
-                showNotification('🎯 Redirecting to your dashboard...', 'info');
-                window.location.href = 'dashboard.html';
-            }, 2000);
         }
         
         if (event === 'SIGNED_OUT') {

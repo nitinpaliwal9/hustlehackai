@@ -557,12 +557,302 @@ function initializeProfileDropdown() {
     }
 }
 
-// Open User Profile
+// Open User Profile/Dashboard
 function openUserProfile() {
-    toggleProfileDropdown();
-    // Implementation for opening a user profile panel or page
-    showNotification('👤 Opening user profile...', 'info');
-    // Add relevant logic here
+    closeProfileDropdown();
+    
+    // Check if user is authenticated
+    checkAuthenticationAndOpenDashboard();
+}
+
+function closeProfileDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('active');
+    }
+}
+
+// Check authentication and open appropriate interface
+async function checkAuthenticationAndOpenDashboard() {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Auth check error:', error);
+            showNotification('❌ Authentication check failed', 'error');
+            return;
+        }
+        
+        if (session && session.user) {
+            // User is authenticated - open dashboard
+            openDashboard(session.user);
+        } else {
+            // User not authenticated - show signup modal
+            showNotification('🔐 Please sign in to access your dashboard', 'warning');
+            setTimeout(() => {
+                openModal(document.getElementById('signup-modal'));
+            }, 1000);
+        }
+    } catch (error) {
+        console.error('Dashboard access error:', error);
+        showNotification('❌ Failed to access dashboard', 'error');
+    }
+}
+
+// Open Dashboard Interface
+function openDashboard(user) {
+    showNotification('🎯 Opening your dashboard...', 'info');
+    
+    // Create dashboard modal/overlay
+    createDashboardModal(user);
+}
+
+// Create Dashboard Modal
+function createDashboardModal(user) {
+    // Remove existing dashboard if any
+    const existingDashboard = document.getElementById('dashboard-modal');
+    if (existingDashboard) {
+        existingDashboard.remove();
+    }
+    
+    // Create dashboard modal
+    const dashboardModal = document.createElement('div');
+    dashboardModal.id = 'dashboard-modal';
+    dashboardModal.className = 'modal active';
+    
+    const userName = user.user_metadata?.name || user.email.split('@')[0];
+    const userEmail = user.email;
+    
+    dashboardModal.innerHTML = `
+        <div class="modal-content dashboard-content">
+            <button class="modal-close" onclick="closeDashboard()">&times;</button>
+            
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar-large">👤</div>
+                    <div class="user-details">
+                        <h2 class="user-name">Welcome back, ${userName}!</h2>
+                        <p class="user-email">${userEmail}</p>
+                        <span class="user-plan">Pro Plan</span>
+                    </div>
+                </div>
+                <div class="dashboard-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">47</span>
+                        <span class="stat-label">Tools Used</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">23</span>
+                        <span class="stat-label">Templates Downloaded</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Projects Created</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Navigation -->
+            <div class="dashboard-nav">
+                <button class="dash-nav-btn active" onclick="showDashboardSection('overview')">📊 Overview</button>
+                <button class="dash-nav-btn" onclick="showDashboardSection('tools')">🛠️ AI Tools</button>
+                <button class="dash-nav-btn" onclick="showDashboardSection('templates')">📄 Templates</button>
+                <button class="dash-nav-btn" onclick="showDashboardSection('learning')">📚 Learning</button>
+                <button class="dash-nav-btn" onclick="showDashboardSection('billing')">💳 Billing</button>
+                <button class="dash-nav-btn" onclick="showDashboardSection('settings')">⚙️ Settings</button>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content-area">
+                <!-- Overview Section -->
+                <div id="dash-overview" class="dashboard-section active">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-grid">
+                        <div class="activity-card">
+                            <span class="activity-icon">🎯</span>
+                            <div class="activity-info">
+                                <h4>AI Content Generator</h4>
+                                <p>Used 2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-card">
+                            <span class="activity-icon">📝</span>
+                            <div class="activity-info">
+                                <h4>Blog Post Template</h4>
+                                <p>Downloaded yesterday</p>
+                            </div>
+                        </div>
+                        <div class="activity-card">
+                            <span class="activity-icon">🚀</span>
+                            <div class="activity-info">
+                                <h4>Startup Pitch Deck</h4>
+                                <p>Created 3 days ago</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Quick Actions</h3>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="showNotification('🎯 Opening AI Content Generator...', 'info')">
+                            <span class="action-icon">✨</span>
+                            Generate Content
+                        </button>
+                        <button class="action-btn" onclick="showNotification('📄 Opening Templates Library...', 'info')">
+                            <span class="action-icon">📄</span>
+                            Browse Templates
+                        </button>
+                        <button class="action-btn" onclick="showNotification('📚 Opening Learning Resources...', 'info')">
+                            <span class="action-icon">📚</span>
+                            Continue Learning
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- AI Tools Section -->
+                <div id="dash-tools" class="dashboard-section">
+                    <h3>Available AI Tools</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <span class="tool-icon">✍️</span>
+                            <h4>Content Writer</h4>
+                            <p>Generate high-quality content for blogs, social media, and more</p>
+                            <button class="btn btn-primary btn-sm">Use Tool</button>
+                        </div>
+                        <div class="tool-card">
+                            <span class="tool-icon">🎨</span>
+                            <h4>Image Generator</h4>
+                            <p>Create stunning visuals with AI-powered image generation</p>
+                            <button class="btn btn-primary btn-sm">Use Tool</button>
+                        </div>
+                        <div class="tool-card">
+                            <span class="tool-icon">📊</span>
+                            <h4>Data Analyzer</h4>
+                            <p>Analyze and visualize your data with AI insights</p>
+                            <button class="btn btn-primary btn-sm">Use Tool</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Templates Section -->
+                <div id="dash-templates" class="dashboard-section">
+                    <h3>Template Library</h3>
+                    <div class="templates-grid">
+                        <div class="template-card">
+                            <h4>Business Proposal</h4>
+                            <p>Professional business proposal template</p>
+                            <button class="btn btn-outline btn-sm">Download</button>
+                        </div>
+                        <div class="template-card">
+                            <h4>Social Media Kit</h4>
+                            <p>Complete social media content templates</p>
+                            <button class="btn btn-outline btn-sm">Download</button>
+                        </div>
+                        <div class="template-card">
+                            <h4>Resume Builder</h4>
+                            <p>ATS-friendly resume templates</p>
+                            <button class="btn btn-outline btn-sm">Download</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Learning Section -->
+                <div id="dash-learning" class="dashboard-section">
+                    <h3>Your Learning Journey</h3>
+                    <div class="learning-progress">
+                        <div class="progress-item">
+                            <h4>AI Fundamentals</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <span class="progress-text">75% Complete</span>
+                        </div>
+                        <div class="progress-item">
+                            <h4>Prompt Engineering</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                            <span class="progress-text">45% Complete</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Billing Section -->
+                <div id="dash-billing" class="dashboard-section">
+                    <h3>Subscription & Billing</h3>
+                    <div class="billing-info">
+                        <div class="current-plan">
+                            <h4>Current Plan: Creator Pro</h4>
+                            <p>Next billing: January 15, 2024</p>
+                            <p>₹199/month</p>
+                            <button class="btn btn-primary">Upgrade Plan</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div id="dash-settings" class="dashboard-section">
+                    <h3>Account Settings</h3>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label class="form-label">Display Name</label>
+                            <input type="text" class="form-input" value="${userName}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" value="${userEmail}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Theme Preference</label>
+                            <select class="form-input">
+                                <option value="dark">Dark Mode</option>
+                                <option value="light">Light Mode</option>
+                                <option value="auto">Auto</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(dashboardModal);
+    document.body.style.overflow = 'hidden';
+    
+    showNotification('✨ Dashboard loaded successfully!', 'success');
+}
+
+// Dashboard Navigation
+function showDashboardSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('.dashboard-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Remove active class from all nav buttons
+    document.querySelectorAll('.dash-nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected section
+    const targetSection = document.getElementById(`dash-${sectionName}`);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // Add active class to clicked nav button
+    event.target.classList.add('active');
+}
+
+// Close Dashboard
+function closeDashboard() {
+    const dashboardModal = document.getElementById('dashboard-modal');
+    if (dashboardModal) {
+        dashboardModal.remove();
+        document.body.style.overflow = '';
+        showNotification('👋 Dashboard closed', 'info');
+    }
 }
 
 // Load saved theme

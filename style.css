@@ -403,19 +403,20 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 28px;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: none;
-  border-radius: 12px;
-  font-weight: 700;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 16px;
-  line-height: 1;
+  transition: var(--transition-nor  line-height: 1.5;
   position: relative;
   overflow: hidden;
+ative;
+  overflow: hidden;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
+-shadow-md);
 }
 
 .btn-primary {
@@ -445,8 +446,11 @@ p {
   background: transparent;
   border: 2px solid var(--primary);
   color: var(--primary);
-}
 
+  background-size: 200% 200%;
+  transition: var(--transition-normal);
+
+.btn-outline:hover {
 .btn-outline:hover {
   background: var(--primary);
   color: white;

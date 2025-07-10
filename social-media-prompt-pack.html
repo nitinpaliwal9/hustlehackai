@@ -21,6 +21,20 @@
             max-width: 1000px;
             margin: 0 auto;
             line-height: 1.8;
+            padding: 0 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .prompt-pack-content {
+                max-width: 100%;
+                padding: 0 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .prompt-pack-content {
+                padding: 0 1rem;
+            }
         }
         
         .pack-hero {
@@ -294,18 +308,34 @@
             display: flex;
             flex-wrap: wrap;
             overflow: visible;
-            white-space: nowrap;
             align-items: center;
+            gap: 4px;
+            word-break: break-word;
+            min-height: 24px;
         }
         
         .breadcrumb-wrapper {
-            overflow-x: auto;
+            overflow: visible;
+            width: 100%;
+            padding: 8px 0;
         }
 
         @media (max-width: 768px) {
             .breadcrumb {
                 font-size: 0.8rem;
-                justify-content: center;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .breadcrumb {
+                font-size: 0.75rem;
+                gap: 2px;
+            }
+            
+            .breadcrumb span[style*="margin"] {
+                margin: 0 4px !important;
             }
         }
         
@@ -387,8 +417,14 @@
         <div class="container">
             <div class="prompt-pack-content">
                 <!-- Breadcrumb -->
-                <div class="breadcrumb">
-                    <a href="index.html">Home</a> / <a href="resources.html">Resources</a> / Social Media Prompt Pack
+                <div class="breadcrumb-wrapper">
+                    <div class="breadcrumb">
+                        <a href="index.html">Home</a> 
+                        <span style="margin: 0 8px; color: var(--gray-500);">/</span>
+                        <a href="resources.html">Resources</a> 
+                        <span style="margin: 0 8px; color: var(--gray-500);">/</span>
+                        <span style="color: var(--gray-300);">Social Media Prompt Pack</span>
+                    </div>
                 </div>
 
                 <!-- Hero Section -->

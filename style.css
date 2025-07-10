@@ -1355,6 +1355,66 @@ select.form-input:focus {
   100% { background-position: 200% 0; }
 }
 
+/* Breadcrumb Navigation */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  overflow: visible;
+  word-break: break-word;
+  min-height: 24px;
+}
+
+.breadcrumb-wrapper {
+  overflow: visible;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.breadcrumb a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+  color: var(--accent);
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: var(--gray-500);
+}
+
+.breadcrumb-current {
+  color: var(--gray-300);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .breadcrumb {
+    font-size: 0.8rem;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .breadcrumb {
+    font-size: 0.75rem;
+    gap: 2px;
+  }
+  
+  .breadcrumb-separator {
+    margin: 0 4px;
+  }
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;

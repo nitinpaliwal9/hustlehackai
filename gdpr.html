@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDPR Compliance - HustleHack AI</title>
+    <meta name="description" content="GDPR Compliance Statement for HustleHack AI - Your rights under the General Data Protection Regulation.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo (2).png"/>
+    
+    <!-- Additional CSS for GDPR Page -->
+    <style>
+        .gdpr-content {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .gdpr-content h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gdpr-content h2 {
+            color: var(--accent);
+            font-size: 1.75rem;
+            margin: 3rem 0 1rem 0;
+            font-weight: 700;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .gdpr-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .gdpr-content h3 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin: 2rem 0 0.75rem 0;
+            font-weight: 600;
+        }
+        
+        .gdpr-content p {
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+        
+        .gdpr-content ul, .gdpr-content ol {
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            padding-left: 2rem;
+        }
+        
+        .gdpr-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .gdpr-content strong {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .gdpr-content em {
+            color: var(--accent);
+            font-style: italic;
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+        
+        .contact-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .contact-box h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-box p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-email {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-email:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .back-to-home {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .back-to-home a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .rights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .rights-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .rights-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .rights-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .rights-card p {
+            color: var(--gray-300);
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .highlight-box {
+            background: rgba(127, 90, 240, 0.1);
+            border: 1px solid rgba(127, 90, 240, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .highlight-box h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .warning-box {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .warning-box h4 {
+            color: #ffa500;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .data-table th {
+            background: rgba(127, 90, 240, 0.2);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .data-table td {
+            padding: 1rem;
+            color: var(--text-light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .badge-consent {
+            background: rgba(0, 255, 194, 0.2);
+            color: var(--accent);
+        }
+        
+        .badge-contract {
+            background: rgba(127, 90, 240, 0.2);
+            color: var(--primary);
+        }
+        
+        .badge-interest {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon" onerror="this.style.display='none'">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="index.html#resources" class="nav-link">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="index.html" class="btn btn-primary">Back to Home</a>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- GDPR Content -->
+    <main class="section" style="padding-top: 140px;">
+        <div class="container">
+            <div class="gdpr-content">
+                <h1>🛡️ GDPR Compliance Statement</h1>
+                <p class="last-updated">Effective Date: January 10, 2025</p>
+
+                <p>At HustleHack AI, we value <strong>privacy</strong>, <strong>transparency</strong>, and <strong>user control</strong>. If you're located in the European Union (EU), the General Data Protection Regulation (GDPR) grants you specific rights regarding your personal data. This page explains how we handle your data in accordance with GDPR.</p>
+
+                <div class="highlight-box">
+                    <h4>🇪🇺 For EU Users</h4>
+                    <p>This page is specifically designed for users in the European Union. GDPR provides you with enhanced rights and protections regarding your personal data, and we're committed to full compliance with these regulations.</p>
+                </div>
+
+                <h2>1. 📦 What Data We Collect</h2>
+                <p>We only collect what's necessary to offer you a great experience. This may include:</p>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data Type</th>
+                            <th>Purpose</th>
+                            <th>Legal Basis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Name and Email</strong></td>
+                            <td>Account creation and communication</td>
+                            <td><span class="badge badge-consent">Consent</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Plan and Role</strong></td>
+                            <td>Service personalization (student, creator, etc.)</td>
+                            <td><span class="badge badge-contract">Contract</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Device/Browser Info</strong></td>
+                            <td>Platform optimization and security</td>
+                            <td><span class="badge badge-interest">Legitimate Interest</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Information</strong></td>
+                            <td>Subscription processing (via Razorpay)</td>
+                            <td><span class="badge badge-contract">Contract</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Activity Logs</strong></td>
+                            <td>Security and service improvement</td>
+                            <td><span class="badge badge-interest">Legitimate Interest</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="warning-box">
+                    <h4>⚠️ Important Note</h4>
+                    <p>We <strong>do not store</strong> your credit card details directly. All payment processing is handled securely by Razorpay, our GDPR-compliant payment processor.</p>
+                </div>
+
+                <h2>2. 🤖 Why We Collect It</h2>
+                <p>We use your data transparently and only for legitimate purposes:</p>
+                <ul>
+                    <li><strong>Account Management:</strong> Create and manage your HustleHack AI account</li>
+                    <li><strong>Service Delivery:</strong> Provide subscription access and toolkit resources</li>
+                    <li><strong>Essential Communications:</strong> Send confirmation emails, reminders, and content drops</li>
+                    <li><strong>Service Improvement:</strong> Improve our platform through anonymous analytics</li>
+                    <li><strong>Security:</strong> Protect your account and prevent fraud</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h4>🚫 What We DON'T Do</h4>
+                    <p>We <strong>do not sell</strong> or share your personal data with advertisers, third-party marketers, or data brokers. Your data is yours, and we respect that.</p>
+                </div>
+
+                <h2>3. 🛠️ Lawful Basis for Processing</h2>
+                <p>Under GDPR, we must have a lawful basis for processing your personal data. We process your data under:</p>
+                
+                <div class="rights-grid">
+                    <div class="rights-card">
+                        <h4>✅ Consent</h4>
+                        <p>You explicitly agree to our terms and opt-in when signing up for our services.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>📄 Contractual Necessity</h4>
+                        <p>To provide access to your purchased resources and fulfill our service obligations.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>⚖️ Legitimate Interest</h4>
+                        <p>For internal analytics, security measures, and service improvements that benefit all users.</p>
+                    </div>
+                </div>
+
+                <h2>4. 🔐 Data Storage & Security</h2>
+                <p>Your data security is our top priority. Here's how we protect your information:</p>
+                
+                <ul>
+                    <li><strong>Secure Infrastructure:</strong> All data is securely stored on Supabase servers with enterprise-grade security</li>
+                    <li><strong>Encryption:</strong> Data is encrypted both in transit (HTTPS) and at rest (AES-256)</li>
+                    <li><strong>Access Controls:</strong> Strict role-based access with multi-factor authentication</li>
+                    <li><strong>Regular Audits:</strong> Periodic security assessments and vulnerability testing</li>
+                    <li><strong>Payment Security:</strong> Razorpay handles all payment processing with PCI DSS compliance</li>
+                </ul>
+
+                <h3>4.1 Data Processing Partners</h3>
+                <p>We work with GDPR-compliant partners for specific services:</p>
+                <ul>
+                    <li><strong>Supabase:</strong> Database and authentication (EU servers available)</li>
+                    <li><strong>Razorpay:</strong> Payment processing with GDPR compliance</li>
+                    <li><strong>Google Analytics:</strong> Anonymous usage statistics (IP anonymization enabled)</li>
+                </ul>
+
+                <h2>5. 🌍 International Transfers</h2>
+                <p>Our services may involve data being transferred outside the EU (e.g., to India or the US). We ensure any such transfers comply with GDPR using appropriate safeguards:</p>
+                
+                <ul>
+                    <li><strong>Standard Contractual Clauses (SCCs):</strong> EU-approved contracts with data processors</li>
+                    <li><strong>Adequacy Decisions:</strong> Transfers only to countries with adequate protection</li>
+                    <li><strong>Technical Safeguards:</strong> End-to-end encryption and secure transmission protocols</li>
+                    <li><strong>GDPR-Compliant Processors:</strong> All partners meet EU data protection standards</li>
+                </ul>
+
+                <h2>6. 🧠 Your GDPR Rights</h2>
+                <p>You have full control over your data. Under GDPR, you have the following rights:</p>
+                
+                <div class="rights-grid">
+                    <div class="rights-card">
+                        <h4>📋 Right to Access</h4>
+                        <p>Request a copy of all personal data we hold about you, including how it's used and shared.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>✏️ Right to Rectification</h4>
+                        <p>Correct any inaccurate or incomplete personal data we have about you.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>🗑️ Right to Erasure</h4>
+                        <p>Request deletion of your personal data (the "right to be forgotten").</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>⏸️ Right to Restrict Processing</h4>
+                        <p>Limit how we use your data while maintaining your account.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>📦 Right to Data Portability</h4>
+                        <p>Receive your data in a structured, machine-readable format.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>🚫 Right to Object</h4>
+                        <p>Object to certain types of data processing, including direct marketing.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>🔄 Right to Withdraw Consent</h4>
+                        <p>Withdraw your consent at any time where processing is based on consent.</p>
+                    </div>
+                    <div class="rights-card">
+                        <h4>👤 Rights Related to Automated Decision-Making</h4>
+                        <p>Request human review of automated decisions that significantly affect you.</p>
+                    </div>
+                </div>
+
+                <h3>6.1 How to Exercise Your Rights</h3>
+                <p>To exercise any of these rights, simply email us at <a href="mailto:hustlehackai@gmail.com" style="color: var(--primary);">📩 hustlehackai@gmail.com</a> with your request. We'll respond within <strong>7 days</strong> and fulfill valid requests within <strong>30 days</strong> as required by GDPR.</p>
+
+                <div class="highlight-box">
+                    <h4>📝 What to Include in Your Request</h4>
+                    <p>To process your request quickly, please include: your registered email address, the specific right you want to exercise, and any relevant details about your request.</p>
+                </div>
+
+                <h2>7. 📝 Data Retention</h2>
+                <p>We retain your data only as long as necessary for the purposes outlined in this policy:</p>
+                
+                <ul>
+                    <li><strong>Active Accounts:</strong> Data retained while your account is active</li>
+                    <li><strong>Inactive Accounts:</strong> Data may be retained for up to 3 years for reactivation purposes</li>
+                    <li><strong>Legal Obligations:</strong> Some data may be retained longer to comply with legal requirements</li>
+                    <li><strong>User Request:</strong> You may request immediate deletion at any time</li>
+                </ul>
+
+                <h3>7.1 Automated Deletion</h3>
+                <p>We have automated systems in place to:</p>
+                <ul>
+                    <li>Delete inactive accounts after 3 years</li>
+                    <li>Purge temporary data (logs, sessions) after 90 days</li>
+                    <li>Remove marketing data if you unsubscribe</li>
+                </ul>
+
+                <h2>8. 🔔 Data Breach Notification</h2>
+                <p>In the unlikely event of a data breach that affects EU users:</p>
+                
+                <ul>
+                    <li><strong>Regulatory Notification:</strong> We'll notify relevant EU authorities within 72 hours</li>
+                    <li><strong>User Notification:</strong> If the breach poses high risk, we'll notify affected users without undue delay</li>
+                    <li><strong>Transparency:</strong> We'll provide clear information about the breach and our response</li>
+                    <li><strong>Remediation:</strong> We'll take immediate steps to secure data and prevent future breaches</li>
+                </ul>
+
+                <h2>9. 👨‍💼 Data Protection Officer</h2>
+                <p>While not required for our size, we've designated a Data Protection Contact for EU users:</p>
+                
+                <div class="contact-box">
+                    <h3>Data Protection Contact</h3>
+                    <p>For specific GDPR-related queries or concerns:</p>
+                    <a href="mailto:dpo@hustlehackai.com" class="contact-email">📧 dpo@hustlehackai.com</a>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-400);">Response time: Within 7 days for EU users</p>
+                </div>
+
+                <h2>10. 🏛️ Supervisory Authority</h2>
+                <p>If you're an EU user and feel your GDPR rights are not being respected, you have the right to lodge a complaint with your local Data Protection Authority (DPA).</p>
+                
+                <p>You can find your local DPA contact information at: <a href="https://edpb.europa.eu/about-edpb/board/members_en" target="_blank" style="color: var(--primary);">European Data Protection Board</a></p>
+
+                <h2>11. 🔄 Updates to This Statement</h2>
+                <p>We may update this GDPR compliance statement to reflect changes in our practices or legal requirements. For EU users, we will:</p>
+                
+                <ul>
+                    <li>Notify you via email of material changes</li>
+                    <li>Provide 30 days notice before implementing significant changes</li>
+                    <li>Seek fresh consent where required by law</li>
+                    <li>Maintain previous versions for your reference</li>
+                </ul>
+
+                <h2>12. 📞 Contact Information</h2>
+                <p>For any GDPR-related questions, data requests, or concerns:</p>
+
+                <div class="contact-box">
+                    <h3>Contact HustleHack AI</h3>
+                    <p><strong>General Inquiries:</strong> <a href="mailto:hustlehackai@gmail.com" class="contact-email">hustlehackai@gmail.com</a></p>
+                    <p><strong>GDPR Specific:</strong> <a href="mailto:dpo@hustlehackai.com" class="contact-email">dpo@hustlehackai.com</a></p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-400);">
+                        <strong>Address:</strong> HustleHack AI, India<br>
+                        <strong>EU Representative:</strong> Available upon request for regulatory purposes
+                    </p>
+                </div>
+
+                <div class="back-to-home">
+                    <a href="index.html">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: #0F0F1B; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="grid grid-4">
+                <div>
+                    <h3 style="color: white; margin-bottom: 1rem;">HustleHack AI</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 1rem;">Empowering the next generation of Indian creators and entrepreneurs with AI.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Instagram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Telegram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Twitter</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="index.html#features" style="color: var(--gray-400); text-decoration: none;">Features</a></li>
+                        <li><a href="index.html#pricing" style="color: var(--gray-400); text-decoration: none;">Pricing</a></li>
+                        <li><a href="resources.html" style="color: var(--gray-400); text-decoration: none;">Resources</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
+                        <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" style="color: var(--accent); text-decoration: none; font-weight: 600;">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--gray-400);">© 2024 HustleHack AI. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

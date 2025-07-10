@@ -519,20 +519,22 @@ function togglePasswordVisibility(inputId) {
     }, 150);
 }
 
-// Profile Dropdown Toggle
+// Profile Dropdown Toggle - ENHANCED
 function toggleProfileDropdown() {
     const dropdown = document.getElementById('profileDropdown');
+    if (!dropdown) return;
+    
     const isActive = dropdown.classList.contains('active');
     
     if (isActive) {
         dropdown.classList.remove('active');
+        document.removeEventListener('click', closeProfileDropdownOnClickOutside);
     } else {
         dropdown.classList.add('active');
-    }
-    
-    // Close dropdown when clicking outside
-    if (!isActive) {
-        document.addEventListener('click', closeProfileDropdownOnClickOutside);
+        // Add click outside listener after a small delay to prevent immediate closing
+        setTimeout(() => {
+            document.addEventListener('click', closeProfileDropdownOnClickOutside);
+        }, 10);
     }
 }
 
@@ -546,7 +548,7 @@ function closeProfileDropdownOnClickOutside(event) {
     }
 }
 
-// Initialize Profile Dropdown
+// Initialize Profile Dropdown - ENHANCED
 function initializeProfileDropdown() {
     const profileBtn = document.getElementById('profileBtn');
     if (profileBtn) {
@@ -554,6 +556,16 @@ function initializeProfileDropdown() {
             e.preventDefault();
             e.stopPropagation();
             toggleProfileDropdown();
+        });
+    }
+    
+    // FIX 3: Prevent immediate sign out when clicking profile
+    const signOutBtn = document.querySelector('.profile-menu-item[onclick*="handleSignOut"]');
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleUserSignOut();
         });
     }
 }
@@ -1167,7 +1179,10 @@ function updateUIForAuthenticatedUser(user) {
         signInBtn.textContent = `👋 ${userName}`;
         signInBtn.removeAttribute('data-modal');
         signInBtn.classList.add('user-menu');
-        signInBtn.addEventListener('click', handleSignOut);
+        signInBtn.removeEventListener('click', handleSignOut);
+        // Show profile button instead of login
+        const profileWrapper = document.querySelector('.profile-wrapper');
+        profileWrapper.style.display = 'block';
     }
     
     // Update Get Started button
@@ -1177,6 +1192,7 @@ function updateUIForAuthenticatedUser(user) {
         getStartedBtn.removeAttribute('data-modal');
         getStartedBtn.href = '#dashboard';
         getStartedBtn.classList.add('dashboard-btn');
+        getStartedBtn.addEventListener('click', openUserProfile);
     }
     
     // Update all other signup buttons
@@ -1221,7 +1237,7 @@ function updateUIForUnauthenticatedUser() {
     });
 }
 
-// Handle user sign out
+// Handle user sign out - ENHANCED
 async function handleSignOut(e) {
     e.preventDefault();
     
@@ -1235,6 +1251,41 @@ async function handleSignOut(e) {
         
         showNotification('✅ Signed out successfully', 'success');
         updateUIForUnauthenticatedUser();
+        
+        // Refresh the page to reset everything
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Sign out error:', error);
+        showNotification('❌ Sign out failed', 'error');
+    }
+}
+
+// New function for profile dropdown sign out
+async function handleUserSignOut() {
+    try {
+        // Close the dropdown first
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown) {
+            dropdown.classList.remove('active');
+        }
+        
+        const { error } = await supabase.auth.signOut();
+        
+        if (error) {
+            showNotification('❌ Sign out failed', 'error');
+            return;
+        }
+        
+        showNotification('✅ Signed out successfully', 'success');
+        updateUIForUnauthenticatedUser();
+        
+        // Hide Google login buttons and show auth buttons
+        document.querySelectorAll('.btn-google').forEach(btn => {
+            btn.style.display = 'inline-flex';
+        });
         
         // Refresh the page to reset everything
         setTimeout(() => {

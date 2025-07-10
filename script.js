@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeLoadingStates();
   initializeAuthSystem(); // Updated to handle both signup and login
   addRealTimeValidation(); // Already exists
+  initializeDashboardButton();
 });
 
 
@@ -1308,6 +1309,19 @@ function switchToLogin() {
         openModal(document.getElementById('login-modal'));
     }, 300);
 }
+
+function initializeDashboardButton() {
+    const dashboardBtn = document.querySelector('a.profile-menu-item[onclick*="openUserProfile"]');
+    if (dashboardBtn) {
+        dashboardBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openUserProfile();
+        });
+    } else {
+        console.warn('⚠️ Dashboard button not found in DOM');
+    }
+}
+
 
 // Listen for auth state changes
 supabase.auth.onAuthStateChange((event, session) => {

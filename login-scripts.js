@@ -142,19 +142,26 @@ async function handleGoogleLogin() {
             }
         });
 
+        // Supabase will automatically redirect; nothing more needed here.
         if (error) {
-            console.error('❌ Google login error:', error);
-            showToast('Failed to start Google login. Please try again.', 'error');
+            console.error('Supabase error (before redirect):', error.message);
+            showToast(`❌ ${error.message}`, 'error');
             setButtonLoading(googleLoginBtn, false);
-            return;
         }
         
-        console.log('✅ Google OAuth flow started...');
-        // Note: User will be redirected to Google, so we don't need to reset button state
-        
-    } catch (error) {
-        console.error('❌ Google login error:', error);
-        showToast('An error occurred during Google login.', 'error');
+    } catch (err) {
+        // Ignore known non-blocking errors (like DOMException from redirect)
+        if (err && err.name === "AbortError") {
+            return; // benign browser abort
+        }
+
+        if (err?.message?.includes('network') || err?.message?.includes('redirect')) {
+            return; // also benign
+        }
+
+        // Otherwise, show real error
+        console.error('Unexpected Google login error:', err);
+        showToast('An unexpected error occurred during Google login.', 'error');
         setButtonLoading(googleLoginBtn, false);
     }
 }

@@ -1094,6 +1094,7 @@ async function handleLogin(e) {
         loginBtn.textContent = originalText;
         loginBtn.disabled = false;
     }
+  checkAuthStatus()
 }
 
 async function handleSignup(e) {
@@ -1225,6 +1226,7 @@ async function handleSignup(e) {
         if (btnText) btnText.style.display = 'inline';
         if (btnLoading) btnLoading.style.display = 'none';
     }
+  checkAuthStaus()
 }
 
 

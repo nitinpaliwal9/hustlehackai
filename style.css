@@ -224,7 +224,7 @@ p {
 .nav-menu {
   display: flex;
   list-style: none;
-  gap: 48px;
+  gap: 64px;
   margin: 0;
   padding: 0;
 }
@@ -263,7 +263,7 @@ p {
 
 .nav-actions {
   display: flex;
-  gap: 20px;
+  gap: 32px;
   align-items: center;
 }
 

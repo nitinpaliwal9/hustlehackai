@@ -30,6 +30,37 @@
                 <button class="theme-toggle btn btn-ghost">🌙</button>
                 <a href="#" class="btn btn-ghost" data-modal="login-modal">Sign In</a>
                 <a href="#" class="btn btn-primary" data-modal="signup-modal">Get Started</a>
+                <!-- Profile Dropdown (hidden by default) -->
+                <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                    <button class="profile-btn btn btn-ghost" id="profileBtn">
+                        <span class="profile-avatar">👤</span>
+                        <span class="profile-name">User</span>
+                        <span class="profile-arrow">▼</span>
+                    </button>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="dashboard.html" class="profile-menu-item">
+                            <span class="profile-menu-icon">🎯</span>
+                            Dashboard
+                        </a>
+                        <a href="#profile" class="profile-menu-item">
+                            <span class="profile-menu-icon">👤</span>
+                            Profile Settings
+                        </a>
+                        <a href="#billing" class="profile-menu-item">
+                            <span class="profile-menu-icon">💳</span>
+                            Billing
+                        </a>
+                        <a href="#security" class="profile-menu-item">
+                            <span class="profile-menu-icon">🔐</span>
+                            Security
+                        </a>
+                        <div class="profile-menu-divider"></div>
+                        <button class="profile-menu-item" onclick="handleUserSignOut()">
+                            <span class="profile-menu-icon">🚺</span>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <button class="mobile-menu-toggle">☰</button>

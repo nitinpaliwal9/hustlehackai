@@ -10,16 +10,46 @@ const modalCloses = document.querySelectorAll('.modal-close');
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  initializeNavigation();
-  initializeModals();
-  initializeAnimations();
-  initializeForms();
-  initializeScrollEffects();
-  initializeLoadingStates();
-  initializeAuthSystem(); // Updated to handle both signup and login
-  addRealTimeValidation(); // Already exists
-  initializeDashboardButton();
+    initializeNavigation();
+    initializeModals();
+    initializeAnimations();
+    initializeForms();
+    initializeScrollEffects();
+    initializeLoadingStates();
+    initializeAuthSystem(); // Updated to handle both signup and login
+    addRealTimeValidation(); // Already exists
+    initializeDashboardButton();
 });
+
+// Initialize auth state checking on page load
+window.addEventListener('load', async () => {
+    console.log('🔄 Checking auth state on page load...');
+    await checkAuthStateOnLoad();
+});
+
+// Check for existing session on page load
+async function checkAuthStateOnLoad() {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Error getting session:', error);
+            updateUIForUnauthenticatedUser();
+            return;
+        }
+        
+        if (session && session.user) {
+            console.log('✅ Existing session found:', session.user.email);
+            updateUIForAuthenticatedUser(session.user);
+        } else {
+            console.log('ℹ️ No existing session found');
+            updateUIForUnauthenticatedUser();
+        }
+    } catch (error) {
+        console.error('Error checking auth state:', error);
+        updateUIForUnauthenticatedUser();
+    }
+}
 
 
 // Navigation Functions

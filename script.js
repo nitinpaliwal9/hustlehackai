@@ -893,24 +893,32 @@ function initializeAuthSystem() {
 
 // Check authentication status on page load
 async function checkAuthStatus() {
-    try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-            console.error('Auth check error:', error);
-            return;
-        }
-        
-        if (session && session.user) {
-            console.log('User is authenticated:', session.user.email);
-            updateUIForAuthenticatedUser(session.user);
-        } else {
-            console.log('User is not authenticated');
-            updateUIForUnauthenticatedUser();
-        }
-    } catch (error) {
-        console.error('Auth status check failed:', error);
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) throw error;
+
+    if (session && session.user) {
+      // Hide Sign In & Get Started buttons
+      document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]')
+              .forEach(el => el.style.display = 'none');
+
+      // Show profile dropdown
+      const pd = document.getElementById('profileDropdown');
+      if (pd) pd.style.display = 'inline-block';
+
+      // Update dropdown name/avatar
+      const nameSpan = pd.querySelector('.profile-name');
+      if (nameSpan) nameSpan.textContent = session.user.user_metadata?.name || session.user.email.split('@')[0];
+    } else {
+      // Reverse the UI for signed out state
+      document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]')
+              .forEach(el => el.style.display = '');
+      const pd = document.getElementById('profileDropdown');
+      if (pd) pd.style.display = 'none';
     }
+  } catch (err) {
+    console.error('Auth check failed', err);
+  }
 }
 
 // Update UI for authenticated user

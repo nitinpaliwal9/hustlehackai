@@ -148,6 +148,20 @@
             gap: var(--spacing-md);
             margin-top: var(--spacing-md);
         }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-icons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
+    
+    <!-- Scripts -->
+    <script src="script.js"></script>
 </body>
 </html>

@@ -129,6 +129,7 @@ async function checkAuthState() {
 function handleGoogleLogin() {
     setButtonLoading(googleLoginBtn, true);
     
+    // Initiate Google login without any error handling
     window.supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -138,12 +139,10 @@ function handleGoogleLogin() {
                 prompt: 'consent',
             }
         }
-    }).then(({ error }) => {
-        if (error) {
-            showToast(`An error occurred during Google login: ${error.message || 'Please try again later.'}`, 'error');
-        }
-        setButtonLoading(googleLoginBtn, false);
     });
+    
+    // Fallback to reset loading state after timeout
+    setTimeout(() => setButtonLoading(googleLoginBtn, false), 3000);
 }
 
 // Email Sign-In Handler

@@ -126,44 +126,26 @@ async function checkAuthState() {
 }
 
 // Google Sign-In Handler
-async function handleGoogleLogin() {
-    try {
-        console.log('🔑 Starting Google login...');
-        setButtonLoading(googleLoginBtn, true);
-        
-        const { data, error } = await window.supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/auth/callback.html`,
-                queryParams: {
-                    access_type: 'offline',
-                    prompt: 'consent',
-                }
+function handleGoogleLogin() {
+    console.log('🔑 Starting Google login...');
+    
+    // Show redirecting message
+    showToast('🔐 Redirecting to Google...', 'info');
+    
+    // Call Supabase signInWithOAuth WITHOUT await or catch
+    // Supabase handles everything internally via redirect
+    window.supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${window.location.origin}/auth/callback.html`,
+            queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
             }
-        });
-
-        // Supabase will automatically redirect; nothing more needed here.
-        if (error) {
-            console.error('Supabase error (before redirect):', error.message);
-            showToast(`❌ ${error.message}`, 'error');
-            setButtonLoading(googleLoginBtn, false);
         }
-        
-    } catch (err) {
-        // Ignore known non-blocking errors (like DOMException from redirect)
-        if (err && err.name === "AbortError") {
-            return; // benign browser abort
-        }
-
-        if (err?.message?.includes('network') || err?.message?.includes('redirect')) {
-            return; // also benign
-        }
-
-        // Otherwise, show real error
-        console.error('Unexpected Google login error:', err);
-        showToast('An unexpected error occurred during Google login.', 'error');
-        setButtonLoading(googleLoginBtn, false);
-    }
+    });
+    
+    // Do NOT handle response or error — Supabase handles it via redirect
 }
 
 // Email Sign-In Handler

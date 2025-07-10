@@ -557,6 +557,14 @@ function initializeProfileDropdown() {
     }
 }
 
+// Open User Profile
+function openUserProfile() {
+    toggleProfileDropdown();
+    // Implementation for opening a user profile panel or page
+    showNotification('👤 Opening user profile...', 'info');
+    // Add relevant logic here
+}
+
 // Load saved theme
 document.addEventListener('DOMContentLoaded', function() {
     const savedTheme = localStorage.getItem('theme') || 'dark';

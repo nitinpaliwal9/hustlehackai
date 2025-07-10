@@ -887,8 +887,31 @@ function initializeAuthSystem() {
         loginForm.addEventListener('submit', handleLogin);
     }
     
+    // Initialize Google Sign-In buttons
+    initializeGoogleSignIn();
+    
     // Check if user is already logged in
     checkAuthStatus();
+    
+    // Listen for auth state changes
+    supabase.auth.onAuthStateChange((event, session) => {
+        console.log('🔄 Auth state changed:', event, session?.user?.email);
+        
+        if (event === 'SIGNED_IN' && session?.user) {
+            console.log('✅ User signed in:', session.user.email);
+            saveUserToDatabase(session.user);
+            showNotification('✅ Welcome back! Login successful.', 'success');
+            updateUIForAuthenticatedUser(session.user);
+            
+            // Close any open modals
+            closeAllModals();
+        }
+        
+        if (event === 'SIGNED_OUT') {
+            console.log('👋 User signed out');
+            updateUIForUnauthenticatedUser();
+        }
+    });
 }
 
 // Check authentication status on page load
@@ -1193,7 +1216,6 @@ async function handleSignup(e) {
             {
                 id: user.id,
                 name,
-                email,
                 role,
                 device,
                 timestamp

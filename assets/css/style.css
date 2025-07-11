@@ -632,7 +632,12 @@ p {
 
 /* Sections */
 .section {
-  padding: 120px 0;
+  padding: 80px 0;
+}
+
+.section-header {
+  text-align: center;
+  padding-bottom: var(--spacing-lg);
 }
 
 .section-title {
@@ -642,7 +647,31 @@ p {
   font-size: 3rem;
   font-weight: 800;
   letter-spacing: -1px;
+  line-height: 1.2;
 }
+
+.section.Subtitle {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.card {
+  margin-bottom: var(--spacing-xl);
+}
+
+.card-tip {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-icon {
+  margin-bottom: var(--spacing-md);
+}
+
 
 .section-subtitle {
   text-align: center;

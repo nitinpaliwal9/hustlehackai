@@ -1422,7 +1422,7 @@ async function handleLogin(e) {
         // Redirect to dashboard
         setTimeout(() => {
             showNotification('🎯 Redirecting to your dashboard...', 'info');
-            window.location.href = 'dashboard.html';
+            window.location.href = '/pages/dashboard.html';
         }, 1500);
         
     } catch (error) {
@@ -1433,7 +1433,9 @@ async function handleLogin(e) {
         loginBtn.textContent = originalText;
         loginBtn.disabled = false;
     }
-  checkAuthStatus()
+    
+    // Check auth status after login attempt
+    checkAuthStatus();
 }
 
 async function handleSignup(e) {
@@ -1556,7 +1558,7 @@ async function handleSignup(e) {
         
         setTimeout(() => {
             showNotification('✨ Welcome to HustleHack AI! Redirecting to dashboard...', 'success');
-            window.location.href = 'dashboard.html';
+            window.location.href = '/pages/dashboard.html';
         }, 3000);
     } catch (err) {
         console.error('Signup Error:', err);
@@ -1566,7 +1568,9 @@ async function handleSignup(e) {
         if (btnText) btnText.style.display = 'inline';
         if (btnLoading) btnLoading.style.display = 'none';
     }
-  checkAuthStaus()
+    
+    // Check auth status after signup attempt
+    checkAuthStatus();
 }
 
 

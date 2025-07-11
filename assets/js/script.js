@@ -1215,7 +1215,7 @@ function updateUIForAuthenticatedUser(user) {
         }
         
         // Update dashboard link in profile menu
-        const dashboardLink = profileDropdown.querySelector('.profile-menu-item[href="dashboard.html"]');
+        const dashboardLink = profileDropdown.querySelector('.profile-menu-item[onclick*="openUserProfile"]');
         if (dashboardLink) {
             dashboardLink.style.display = 'flex';
         }
@@ -1235,9 +1235,10 @@ function updateUIForAuthenticatedUser(user) {
         if (heroSignupBtn) {
             heroSignupBtn.textContent = '🎯 Go to Dashboard';
             heroSignupBtn.removeAttribute('data-modal');
-            heroSignupBtn.href = 'dashboard.html';
-            heroSignupBtn.onclick = function() {
-                window.location.href = 'dashboard.html';
+            heroSignupBtn.href = 'javascript:void(0);';
+            heroSignupBtn.onclick = function(e) {
+                e.preventDefault();
+                openUserProfile();
             };
         }
     }

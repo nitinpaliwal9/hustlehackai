@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/about", "destination": "/pages/about/index.html" },
+    { "source": "/pages/about", "destination": "/pages/about/index.html" },
     { "source": "/contact", "destination": "/pages/contact/index.html" },
     { "source": "/resources", "destination": "/pages/resources/index.html" },
     { "source": "/login", "destination": "/pages/login/index.html" },

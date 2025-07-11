@@ -5,5 +5,5 @@
     { "source": "/resources", "destination": "/pages/resources/index.html" },
     { "source": "/login", "destination": "/pages/login/index.html" },
     { "source": "/dashboard", "destination": "/pages/dashboard/index.html" }
-  ]
+  ] 
 }

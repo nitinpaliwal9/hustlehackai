@@ -1206,10 +1206,29 @@ select.form-input:focus {
   .nav-container {
     padding: 0 16px;
     gap: 8px;
+    min-height: 70px;
   }
   
   .nav-actions {
     display: none;
+  }
+  
+  /* Improve mobile modal sizing */
+  .modal-content {
+    margin: 20px;
+    padding: 24px;
+    max-height: 90vh;
+    width: calc(100% - 40px);
+  }
+  
+  /* Better form spacing on mobile */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-input {
+    padding: 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
   }
   
   .nav-menu {

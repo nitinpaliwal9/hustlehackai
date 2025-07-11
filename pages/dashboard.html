@@ -6,8 +6,17 @@
     <title>Dashboard - HustleHack AI</title>
     <meta name="description" content="Your personal HustleHack AI dashboard - manage your profile, resources, and account settings.">
     
+    <!-- Enhanced SEO -->
+    <meta name="keywords" content="dashboard, AI tools, productivity, students, creators, HustleHack AI">
+    <meta name="theme-color" content="#4F46E5">
+    
     <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Styles -->
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -73,80 +82,260 @@
         </div>
     </nav>
 
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <img src="/assets/images/logo (2).png" alt="HustleHack AI">
+                <div class="loading-spinner"></div>
+            </div>
+            <h3>Loading your dashboard...</h3>
+            <p>Preparing your AI-powered workspace</p>
+        </div>
+    </div>
+
     <!-- Dashboard Container -->
     <div class="dashboard-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-sidebar-toggle" id="mobileSidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <!-- Sidebar -->
-        <aside class="dashboard-sidebar">
-            <div class="sidebar-header">
-                <h2>Dashboard</h2>
-                <p>Welcome back! 👋</p>
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
+            <!-- User Welcome Section -->
+            <div class="sidebar-user-section">
+                <div class="user-avatar">
+                    <img src="/assets/images/logo (2).png" alt="User Avatar" id="userAvatar">
+                    <div class="user-status online"></div>
+                </div>
+                <div class="user-info">
+                    <h3 id="sidebarUserName">Loading...</h3>
+                    <p id="sidebarUserRole">Getting ready...</p>
+                </div>
+                <div class="user-plan-badge" id="userPlanBadge">
+                    <i class="fas fa-crown"></i>
+                    <span id="userPlanName">Pro</span>
+                </div>
+            </div>
+
+            <!-- Plan Status Card -->
+            <div class="sidebar-plan-status">
+                <div class="plan-progress">
+                    <div class="plan-info">
+                        <span class="plan-text">Plan Usage</span>
+                        <span class="plan-percentage" id="planUsagePercent">65%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="planProgressFill" style="width: 65%"></div>
+                    </div>
+                    <div class="plan-details">
+                        <span id="planUsageText">47 of 100 resources used</span>
+                        <div class="plan-renewal" id="planRenewal">
+                            <i class="fas fa-clock"></i>
+                            <span id="daysRemaining">12 days left</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-renew" id="btnRenewPlan">
+                    <i class="fas fa-rocket"></i>
+                    Renew Plan
+                </button>
             </div>
             
+            <!-- Navigation Menu -->
             <nav class="sidebar-nav">
-                <a href="#overview" class="sidebar-link active" onclick="showDashboardSection('overview')">
-                    <span class="sidebar-icon">📊</span>
-                    Overview
-                </a>
-                <a href="#profile" class="sidebar-link" onclick="showDashboardSection('profile')">
-                    <span class="sidebar-icon">👤</span>
-                    Profile
-                </a>
-                <a href="#resources" class="sidebar-link" onclick="showDashboardSection('resources')">
-                    <span class="sidebar-icon">📁</span>
-                    My Resources
-                </a>
-                <a href="#billing" class="sidebar-link" onclick="showDashboardSection('billing')">
-                    <span class="sidebar-icon">💳</span>
-                    Billing & Plan
-                </a>
-                <a href="#security" class="sidebar-link" onclick="showDashboardSection('security')">
-                    <span class="sidebar-icon">🔐</span>
-                    Security
-                </a>
-                <a href="#activity" class="sidebar-link" onclick="showDashboardSection('activity')">
-                    <span class="sidebar-icon">📜</span>
-                    Activity Log
-                </a>
+                <div class="nav-section">
+                    <span class="nav-section-title">Main</span>
+                    <a href="#overview" class="sidebar-link active" data-section="overview">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Overview</span>
+                        <div class="link-indicator"></div>
+                    </a>
+                    <a href="#resources" class="sidebar-link" data-section="resources">
+                        <i class="fas fa-folder-open"></i>
+                        <span>My Resources</span>
+                        <div class="resource-count" id="resourceCount">156</div>
+                        <div class="link-indicator"></div>
+                    </a>
+                    <a href="#activity" class="sidebar-link" data-section="activity">
+                        <i class="fas fa-clock"></i>
+                        <span>Activity</span>
+                        <div class="notification-dot" id="activityDot"></div>
+                        <div class="link-indicator"></div>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Account</span>
+                    <a href="#profile" class="sidebar-link" data-section="profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
+                        <div class="link-indicator"></div>
+                    </a>
+                    <a href="#billing" class="sidebar-link" data-section="billing">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Billing & Plan</span>
+                        <div class="link-indicator"></div>
+                    </a>
+                    <a href="#security" class="sidebar-link" data-section="security">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security</span>
+                        <div class="link-indicator"></div>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Support</span>
+                    <a href="#support" class="sidebar-link" data-section="support">
+                        <i class="fas fa-headset"></i>
+                        <span>Help & Support</span>
+                        <div class="link-indicator"></div>
+                    </a>
+                </div>
             </nav>
+
+            <!-- Quick Actions -->
+            <div class="sidebar-quick-actions">
+                <button class="quick-action-btn" id="quickAccessBtn">
+                    <i class="fas fa-bolt"></i>
+                    <span>Quick Access</span>
+                </button>
+                <button class="quick-action-btn" id="newContentBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>New Content</span>
+                </button>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="dashboard-main">
+            <!-- Header Bar -->
+            <div class="dashboard-header">
+                <div class="header-welcome">
+                    <h1 class="welcome-title">Welcome back, <span id="mainUserName">Hustler</span>! 🚀</h1>
+                    <p class="welcome-subtitle">Ready to level up your productivity game? Let's get started!</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search resources, tools..." id="dashboardSearch">
+                    </div>
+                    <button class="btn-notification" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    <div class="current-time" id="currentTime">
+                        <span class="time">10:45 AM</span>
+                        <span class="date">Dec 11, 2024</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Overview Section -->
             <section id="dash-overview" class="dashboard-section active">
-                <div class="section-header">
-                    <h1>Dashboard Overview</h1>
-                    <p>Here's what's happening with your account</p>
+                <!-- Plan Status Alert -->
+                <div class="plan-alert" id="planAlert">
+                    <div class="alert-content">
+                        <div class="alert-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="alert-text">
+                            <strong>Plan Renewal Reminder</strong>
+                            <p>Your Pro Plan expires in <span class="highlight" id="alertDaysLeft">12 days</span>. Renew now to continue accessing premium resources!</p>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="btn-alert-primary" id="btnAlertRenew">
+                                <i class="fas fa-credit-card"></i>
+                                Renew Now
+                            </button>
+                            <button class="btn-alert-dismiss" id="btnAlertDismiss">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Quick Stats -->
+                <!-- Stats Grid -->
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">🎯</div>
+                    <div class="stat-card premium">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+12%</span>
+                            </div>
+                        </div>
                         <div class="stat-content">
-                            <h3 id="resourcesUsed">47</h3>
-                            <p>Resources Used</p>
+                            <h3 id="resourcesUsed" class="counter" data-target="47">47</h3>
+                            <p>Resources Used This Month</p>
+                            <div class="stat-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 47%"></div>
+                                </div>
+                                <span class="progress-text">47 of 100</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📚</div>
+
+                    <div class="stat-card success">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-plus"></i>
+                                <span>+8 new</span>
+                            </div>
+                        </div>
                         <div class="stat-content">
-                            <h3 id="totalResources">156</h3>
-                            <p>Total Available</p>
+                            <h3 id="totalResources" class="counter" data-target="156">156</h3>
+                            <p>Total Resources Available</p>
+                            <div class="resource-categories">
+                                <span class="category-chip">Templates</span>
+                                <span class="category-chip">Tools</span>
+                                <span class="category-chip">Prompts</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⭐</div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="plan-status active">
+                                <span>Active</span>
+                            </div>
+                        </div>
                         <div class="stat-content">
-                            <h3 id="currentPlan">Pro</h3>
-                            <p>Current Plan</p>
+                            <h3 id="currentPlan">Pro Plan</h3>
+                            <p>Premium Access</p>
+                            <div class="plan-renewal-info">
+                                <i class="fas fa-calendar"></i>
+                                <span>Renews Jan 11, 2025</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📅</div>
+
+                    <div class="stat-card info">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="streak-badge">
+                                <i class="fas fa-fire"></i>
+                                <span id="dailyStreak">7</span>
+                            </div>
+                        </div>
                         <div class="stat-content">
-                            <h3 id="daysSinceJoin">23</h3>
-                            <p>Days Active</p>
+                            <h3 id="daysSinceJoin" class="counter" data-target="23">23</h3>
+                            <p>Days of Hustling</p>
+                            <div class="achievement-preview">
+                                🏆 Weekly Hustler Badge Earned!
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -557,6 +746,137 @@
     </div>
 
     <!-- Scripts -->
+            <!-- Support Section -->
+            <section id="dash-support" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Help & Support</h1>
+                    <p>Get assistance and connect with our team</p>
+                </div>
+
+                <!-- Support Options -->
+                <div class="support-grid">
+                    <div class="support-card primary">
+                        <div class="support-icon">
+                            <i class="fab fa-telegram-plane"></i>
+                        </div>
+                        <h3>Telegram Community</h3>
+                        <p>Join our active community of creators and get instant help from peers and experts.</p>
+                        <button class="btn-support" data-action="telegram">
+                            <i class="fas fa-external-link-alt"></i>
+                            Join Community
+                        </button>
+                    </div>
+
+                    <div class="support-card secondary">
+                        <div class="support-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email Support</h3>
+                        <p>Send us a detailed message and we'll get back to you within 24 hours.</p>
+                        <button class="btn-support" data-action="email">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Email
+                        </button>
+                    </div>
+
+                    <div class="support-card success">
+                        <div class="support-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3>Knowledge Base</h3>
+                        <p>Browse our comprehensive guides and tutorials to master HustleHack AI.</p>
+                        <button class="btn-support" data-action="kb">
+                            <i class="fas fa-arrow-right"></i>
+                            Browse Guides
+                        </button>
+                    </div>
+
+                    <div class="support-card warning">
+                        <div class="support-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Video Tutorials</h3>
+                        <p>Watch step-by-step video guides to get the most out of your resources.</p>
+                        <button class="btn-support" data-action="videos">
+                            <i class="fas fa-play"></i>
+                            Watch Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Frequently Asked Questions</h2>
+                    </div>
+                    <div class="faq-container">
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                How do I access my downloaded resources?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>All your resources are available in the "My Resources" section. Click on any resource card to access or re-download your content.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                Can I upgrade or downgrade my plan?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Yes! You can change your plan anytime from the Billing section. Changes take effect immediately, and we'll prorate the costs.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                How often do you add new content?
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>We add new AI tools, templates, and resources every week! Pro and Premium members get early access to new releases.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Quick Access Modal -->
+    <div id="quickAccessModal" class="modal quick-access-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Quick Access</h3>
+                <button class="modal-close" onclick="closeQuickAccessModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="quick-access-grid">
+                <a href="#" class="quick-access-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Content Generator</span>
+                </a>
+                <a href="#" class="quick-access-item">
+                    <i class="fas fa-template"></i>
+                    <span>Templates Library</span>
+                </a>
+                <a href="#" class="quick-access-item">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Social Media Kit</span>
+                </a>
+                <a href="#" class="quick-access-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Study Tools</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
         window.supabase = supabase.createClient(
@@ -565,6 +885,6 @@
         );
     </script>
     <script src="/assets/js/script.js"></script>
-    <script src="../assets/js/dashboard-script.js"></script>
+    <script src="/assets/js/dashboard-script.js"></script>
 </body>
 </html>

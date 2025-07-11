@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator's AI Toolkit - HustleHack AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3B82F6;
+            --secondary: #1E40AF;
+            --accent: #10B981;
+            --background: #0F172A;
+            --card-bg: #1E293B;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --border-color: #334155;
+            --gray-100: #F8FAFC;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-700);
+            border-color: var(--accent);
+        }
+
+        .btn-ghost {
+            background: none;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+        }
+
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Mobile Navigation */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            padding: 2rem 0;
+        }
+
+        .toolkit-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .toolkit-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .toolkit-header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .toolkit-overview {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .overview-item {
+            text-align: center;
+        }
+
+        .overview-item h3 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-item p {
+            color: var(--text-secondary);
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+
+        .prompts-preview {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .prompt-item {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .prompt-item h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .prompt-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .audience-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .audience-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+        }
+
+        .audience-item h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .audience-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .btn-white:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .toolkit-header h1 {
+                font-size: 2rem;
+            }
+            
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon" onerror="this.style.display='none'">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="resources.html" class="nav-link">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="index.html#pricing" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="toolkit-header">
+                <h1>🎨 Creator's AI Toolkit</h1>
+                <p>The ultimate collection of AI tools, prompts, and strategies designed specifically for content creators, influencers, and digital entrepreneurs.</p>
+            </div>
+
+            <!-- Overview -->
+            <div class="toolkit-overview">
+                <h2>What's Inside</h2>
+                <div class="overview-grid">
+                    <div class="overview-item">
+                        <h3>200+</h3>
+                        <p>AI-powered prompts for content creation</p>
+                    </div>
+                    <div class="overview-item">
+                        <h3>50+</h3>
+                        <p>Ready-to-use templates and frameworks</p>
+                    </div>
+                    <div class="overview-item">
+                        <h3>15+</h3>
+                        <p>Platform-specific strategies</p>
+                    </div>
+                    <div class="overview-item">
+                        <h3>24/7</h3>
+                        <p>Lifetime access and updates</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="section">
+                <h2>Toolkit Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎬</div>
+                        <h3>Video Script Generator</h3>
+                        <p>AI prompts to create engaging video scripts for YouTube, TikTok, Instagram Reels, and more. Hook viewers from the first second.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🖼️</div>
+                        <h3>Thumbnail & Visual Ideas</h3>
+                        <p>Generate eye-catching thumbnail concepts, visual storytelling ideas, and design prompts that increase click-through rates.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📅</div>
+                        <h3>Content Calendar System</h3>
+                        <p>30/60/90-day content planning templates with seasonal trends, viral topics, and engagement optimization strategies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h3>Engagement Strategy Toolkit</h3>
+                        <p>Prompts for community building, audience interaction, comment responses, and building authentic connections with followers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Analytics & Growth Hacks</h3>
+                        <p>AI-powered insights for content performance analysis, growth optimization, and audience development strategies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3>Cross-Platform Repurposing</h3>
+                        <p>Transform one piece of content into multiple formats across all platforms. Maximize your content's reach and impact.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Prompts -->
+            <div class="section">
+                <h2>Sample Prompts</h2>
+                <div class="prompts-preview">
+                    <div class="prompt-item">
+                        <h4>Viral Video Hook Generator</h4>
+                        <p>"Create 5 attention-grabbing hooks for a video about [topic]. Each hook should be under 10 seconds and create curiosity that makes viewers want to watch until the end."</p>
+                    </div>
+                    <div class="prompt-item">
+                        <h4>Thumbnail Concept Creator</h4>
+                        <p>"Design 3 thumbnail concepts for a video titled '[title]'. Include visual elements, text overlay suggestions, color psychology, and emotional triggers that increase CTR."</p>
+                    </div>
+                    <div class="prompt-item">
+                        <h4>Content Series Planner</h4>
+                        <p>"Plan a 7-part content series about [topic] for [platform]. Include episode titles, key talking points, call-to-actions, and cross-promotion strategies."</p>
+                    </div>
+                    <div class="prompt-item">
+                        <h4>Engagement Booster</h4>
+                        <p>"Create 10 engaging questions related to [content topic] that encourage meaningful comments and discussions. Include follow-up strategies to maintain conversation."</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Audience -->
+            <div class="section">
+                <h2>Perfect For</h2>
+                <div class="audience-section">
+                    <div class="audience-grid">
+                        <div class="audience-item">
+                            <h4>YouTubers</h4>
+                            <p>Video creators looking to scale content production and engagement</p>
+                        </div>
+                        <div class="audience-item">
+                            <h4>TikTok Creators</h4>
+                            <p>Short-form content creators wanting viral video strategies</p>
+                        </div>
+                        <div class="audience-item">
+                            <h4>Instagram Influencers</h4>
+                            <p>Visual storytellers growing their brand and audience</p>
+                        </div>
+                        <div class="audience-item">
+                            <h4>Podcasters</h4>
+                            <p>Audio content creators expanding into video and social media</p>
+                        </div>
+                        <div class="audience-item">
+                            <h4>Brand Marketers</h4>
+                            <p>Marketing professionals creating authentic brand content</p>
+                        </div>
+                        <div class="audience-item">
+                            <h4>Aspiring Creators</h4>
+                            <p>Beginners ready to start their content creation journey</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>Ready to Transform Your Content Creation?</h2>
+                <p>Join thousands of creators who've already accelerated their growth with AI. Get instant access to the complete toolkit and start creating viral content today.</p>
+                <div class="cta-buttons">
+                    <a href="index.html#pricing" class="btn btn-white">Get Full Access - $29</a>
+                    <a href="resources.html" class="btn btn-outline">Browse More Resources</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 HustleHack AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            themeToggle.textContent = body.classList.contains('light-theme') ? '☀️' : '🌙';
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

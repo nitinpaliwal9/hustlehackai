@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - HustleHack AI</title>
+    <meta name="description" content="Connect with HustleHack AI for support, inquiries, and collaboration.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo (2).png"/>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="resources.html" class="nav-link">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="#" class="nav-link active">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="#" class="btn btn-ghost" data-modal="login-modal">Sign In</a>
+                <a href="#" class="btn btn-primary" data-modal="signup-modal">Get Started</a>
+                <!-- Profile Dropdown (hidden by default) -->
+                <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                    <button class="profile-btn btn btn-ghost" id="profileBtn">
+                        <span class="profile-avatar">👤</span>
+                        <span class="profile-name">User</span>
+                        <span class="profile-arrow">▼</span>
+                    </button>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="dashboard.html" class="profile-menu-item">
+                            <span class="profile-menu-icon">🎯</span>
+                            Dashboard
+                        </a>
+                        <a href="#profile" class="profile-menu-item">
+                            <span class="profile-menu-icon">👤</span>
+                            Profile Settings
+                        </a>
+                        <a href="#billing" class="profile-menu-item">
+                            <span class="profile-menu-icon">💳</span>
+                            Billing
+                        </a>
+                        <a href="#security" class="profile-menu-item">
+                            <span class="profile-menu-icon">🔐</span>
+                            Security
+                        </a>
+                        <div class="profile-menu-divider"></div>
+                        <button class="profile-menu-item" onclick="handleUserSignOut()">
+                            <span class="profile-menu-icon">🚺</span>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Contact Hero Section -->
+    <section class="hero bg-gradient animate-pulse">
+        <div class="container">
+            <div class="hero-content text-center">
+                <h1 class="hero-title text-white">Connect with HustleHack AI</h1>
+                <p class="hero-subtitle">We're eager to support your AI journey. For inquiries, assistance, or a simple hello, reach out!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="grid grid-2 gap-4 animate-fadeInUp">
+                <div>
+                    <h2 class="text-primary">📧 Email Us</h2>
+                    <p>Send us your queries, support requests, or feedback at:</p>
+                    <p><strong>hustlehackai@gmail.com</strong></p>
+                    <p>We respond within 24 hours on weekdays. Mark “URGENT” for priority issues.</p>
+                </div>
+                <div>
+                    <h2 class="text-primary">💡 Before You Email</h2>
+                    <ul>
+                        <li>FAQs – Quick solutions to common questions.</li>
+                        <li>Help Center – Guides and troubleshooting tips.</li>
+                        <li>Resources – Latest tools, guides, and updates.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="social-connect text-center mt-4">
+                <h2 class="text-primary">🧠 Stay Connected</h2>
+                <p>Follow us on social media:</p>
+                <div class="social-icons animate-float">
+                    <a href="#" class="btn btn-outline btn-lg">Instagram</a>
+                    <a href="#" class="btn btn-outline btn-lg">Twitter</a>
+                    <a href="#" class="btn btn-outline btn-lg">Telegram</a>
+                </div>
+                <p class="mt-2">Together, let's innovate the future of work!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background: #0F0F1B; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="grid grid-4">
+                <div>
+                    <h3 style="color: white; margin-bottom: 1rem;">HustleHack AI</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 1rem;">Empowering the next generation of Indian creators and entrepreneurs with AI.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Instagram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Telegram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Twitter</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="index.html#features" style="color: var(--gray-400); text-decoration: none;">Features</a></li>
+                        <li><a href="index.html#pricing" style="color: var(--gray-400); text-decoration: none;">Pricing</a></li>
+                        <li><a href="resources.html" style="color: var(--gray-400); text-decoration: none;">Resources</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
+                        <li><a href="press.html" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
+                        <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--gray-400);">© 2024 HustleHack AI. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-lg);
+            align-items: start;
+        }
+
+        .social-connect {
+            margin-top: var(--spacing-3xl);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-icons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+    
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

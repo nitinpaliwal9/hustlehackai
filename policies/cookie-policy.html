@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Policy - HustleHack AI</title>
+    <meta name="description" content="Cookie Policy for HustleHack AI - Learn how we use cookies and tracking technologies on our platform.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo (2).png"/>
+    
+    <!-- Additional CSS for Cookie Policy -->
+    <style>
+        .cookie-content {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .cookie-content h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cookie-content h2 {
+            color: var(--accent);
+            font-size: 1.75rem;
+            margin: 3rem 0 1rem 0;
+            font-weight: 700;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .cookie-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .cookie-content h3 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin: 2rem 0 0.75rem 0;
+            font-weight: 600;
+        }
+        
+        .cookie-content p {
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+        
+        .cookie-content ul, .cookie-content ol {
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            padding-left: 2rem;
+        }
+        
+        .cookie-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .cookie-content strong {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .cookie-content em {
+            color: var(--accent);
+            font-style: italic;
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+        
+        .contact-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .contact-box h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-box p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-email {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-email:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .back-to-home {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .back-to-home a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .cookie-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cookie-table th {
+            background: rgba(127, 90, 240, 0.2);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cookie-table td {
+            padding: 1rem;
+            color: var(--text-light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .cookie-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .browser-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .browser-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .browser-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .highlight-box {
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .highlight-box h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .third-party-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .third-party-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .third-party-item h5 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .third-party-item p {
+            color: var(--gray-300);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon" onerror="this.style.display='none'">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="index.html#resources" class="nav-link">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="index.html" class="btn btn-primary">Back to Home</a>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Cookie Policy Content -->
+    <main class="section" style="padding-top: 140px;">
+        <div class="container">
+            <div class="cookie-content">
+                <h1>🍪 Cookie Policy</h1>
+                <p class="last-updated">Effective Date: January 10, 2025</p>
+
+                <p>This Cookie Policy explains how HustleHack AI ("<strong>we</strong>", "<strong>us</strong>", or "<strong>our</strong>") uses cookies and similar tracking technologies on our website <em>https://hustlehackai.in</em>.</p>
+
+                <h2>1. What Are Cookies?</h2>
+                <p>Cookies are small data files stored on your device when you visit a website. They help improve user experience, track preferences, and understand how our platform is used.</p>
+                
+                <div class="highlight-box">
+                    <h4>🔍 Quick Facts About Cookies</h4>
+                    <p>Cookies are essential for modern websites to function properly. They remember your preferences, keep you logged in, and help us understand how to improve our services for you.</p>
+                </div>
+
+                <h2>2. Why We Use Cookies</h2>
+                <p>We use cookies to:</p>
+                <ul>
+                    <li><strong>Authenticate Users:</strong> So you stay logged in to your HustleHack AI account</li>
+                    <li><strong>Store Preferences:</strong> Like your plan type or device session</li>
+                    <li><strong>Analyze Performance:</strong> Using tools like Google Analytics to improve our content and experience</li>
+                    <li><strong>Secure Transactions:</strong> Razorpay and Supabase may set cookies to process subscriptions and manage access securely</li>
+                </ul>
+
+                <h2>3. Types of Cookies We Use</h2>
+                <p>We categorize cookies based on their purpose and functionality:</p>
+                
+                <table class="cookie-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Purpose</th>
+                            <th>Examples</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Essential</strong></td>
+                            <td>Required for core features like login/signup</td>
+                            <td>Session tokens, authentication state</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Understand how users interact with the site</td>
+                            <td>Google Analytics, page views, bounce rate</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Functionality</strong></td>
+                            <td>Save your preferences (e.g., role selection)</td>
+                            <td>Theme preferences, language settings</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Third-party</strong></td>
+                            <td>Razorpay, Supabase Auth, Telegram embeds</td>
+                            <td>Payment processing, social integrations</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. Third-Party Cookies</h2>
+                <p>We work with trusted platforms that may set their own cookies. We do not control these cookies, but we do our best to ensure they are used responsibly.</p>
+                
+                <div class="third-party-list">
+                    <div class="third-party-item">
+                        <h5>Supabase Auth</h5>
+                        <p>For login and session handling</p>
+                    </div>
+                    <div class="third-party-item">
+                        <h5>Razorpay</h5>
+                        <p>For secure subscription payments</p>
+                    </div>
+                    <div class="third-party-item">
+                        <h5>Google Analytics</h5>
+                        <p>For anonymous usage statistics</p>
+                    </div>
+                    <div class="third-party-item">
+                        <h5>Telegram (Optional)</h5>
+                        <p>If you interact with embedded bots</p>
+                    </div>
+                </div>
+
+                <h3>4.1 Third-Party Cookie Policies</h3>
+                <p>For more information about how these services use cookies, please refer to their privacy policies:</p>
+                <ul>
+                    <li><strong>Supabase:</strong> <a href="https://supabase.com/privacy" target="_blank" style="color: var(--primary);">Supabase Privacy Policy</a></li>
+                    <li><strong>Razorpay:</strong> <a href="https://razorpay.com/privacy/" target="_blank" style="color: var(--primary);">Razorpay Privacy Policy</a></li>
+                    <li><strong>Google Analytics:</strong> <a href="https://policies.google.com/privacy" target="_blank" style="color: var(--primary);">Google Privacy Policy</a></li>
+                </ul>
+
+                <h2>5. How to Manage or Disable Cookies</h2>
+                <p>You can disable cookies via your browser settings. However, this may limit functionality (e.g., login sessions, saved preferences).</p>
+                
+                <div class="highlight-box">
+                    <h4>⚠️ Important Note</h4>
+                    <p>Disabling certain cookies may affect your ability to use some features of HustleHack AI, including staying logged in, accessing your subscriptions, and receiving personalized content.</p>
+                </div>
+
+                <h3>5.1 Browser Help Links</h3>
+                <p>Here are direct links to cookie management instructions for popular browsers:</p>
+                
+                <div class="browser-links">
+                    <a href="https://support.google.com/chrome/answer/95647" target="_blank" class="browser-link">Chrome</a>
+                    <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" class="browser-link">Safari</a>
+                    <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" class="browser-link">Firefox</a>
+                    <a href="https://support.microsoft.com/en-us/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" class="browser-link">Edge</a>
+                </div>
+
+                <h3>5.2 Opt-Out Options</h3>
+                <p>For specific tracking services, you can opt out directly:</p>
+                <ul>
+                    <li><strong>Google Analytics:</strong> <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" style="color: var(--primary);">Google Analytics Opt-out</a></li>
+                    <li><strong>General Advertising:</strong> <a href="https://www.youronlinechoices.com/" target="_blank" style="color: var(--primary);">Your Online Choices</a></li>
+                </ul>
+
+                <h2>6. Cookie Retention</h2>
+                <p>Different cookies have different lifespans:</p>
+                <ul>
+                    <li><strong>Session Cookies:</strong> Deleted when you close your browser</li>
+                    <li><strong>Persistent Cookies:</strong> Remain for a set period (typically 1-24 months)</li>
+                    <li><strong>Authentication Cookies:</strong> Valid for 30 days or until you log out</li>
+                    <li><strong>Preference Cookies:</strong> Stored for up to 1 year</li>
+                </ul>
+
+                <h2>7. International Data Transfers</h2>
+                <p>Some of our third-party services may transfer cookie data internationally. We ensure appropriate safeguards are in place through:</p>
+                <ul>
+                    <li>Standard contractual clauses</li>
+                    <li>Adequacy decisions</li>
+                    <li>Privacy Shield frameworks (where applicable)</li>
+                </ul>
+
+                <h2>8. Your Rights</h2>
+                <p>Under applicable data protection laws, you have the right to:</p>
+                <ul>
+                    <li><strong>Access:</strong> Request information about cookies we use</li>
+                    <li><strong>Control:</strong> Manage your cookie preferences</li>
+                    <li><strong>Deletion:</strong> Request deletion of non-essential cookies</li>
+                    <li><strong>Portability:</strong> Receive your cookie data in a portable format</li>
+                </ul>
+
+                <h2>9. Changes to This Policy</h2>
+                <p>We may update this Cookie Policy periodically to reflect changes in our practices or legal requirements. Changes will be reflected on this page with an updated effective date.</p>
+                
+                <p>We will notify you of significant changes through:</p>
+                <ul>
+                    <li>Email notifications to registered users</li>
+                    <li>Prominent notices on our website</li>
+                    <li>In-app notifications</li>
+                </ul>
+
+                <h2>10. Compliance</h2>
+                <p>This Cookie Policy complies with applicable laws including:</p>
+                <ul>
+                    <li>EU General Data Protection Regulation (GDPR)</li>
+                    <li>California Consumer Privacy Act (CCPA)</li>
+                    <li>India's Information Technology Act, 2000</li>
+                    <li>Upcoming Digital Personal Data Protection Act, 2023</li>
+                </ul>
+
+                <div class="contact-box">
+                    <h3>Questions About Our Cookie Policy?</h3>
+                    <p>If you have any questions about our use of cookies or this policy, please don't hesitate to contact us:</p>
+                    <a href="mailto:hustlehackai@gmail.com" class="contact-email">📩 hustlehackai@gmail.com</a>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-400);">We respond to all cookie-related inquiries within 48 hours.</p>
+                </div>
+
+                <div class="back-to-home">
+                    <a href="index.html">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: #0F0F1B; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="grid grid-4">
+                <div>
+                    <h3 style="color: white; margin-bottom: 1rem;">HustleHack AI</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 1rem;">Empowering the next generation of Indian creators and entrepreneurs with AI.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Instagram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Telegram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Twitter</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="index.html#features" style="color: var(--gray-400); text-decoration: none;">Features</a></li>
+                        <li><a href="index.html#pricing" style="color: var(--gray-400); text-decoration: none;">Pricing</a></li>
+                        <li><a href="resources.html" style="color: var(--gray-400); text-decoration: none;">Resources</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
+                        <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--accent); text-decoration: none; font-weight: 600;">Cookie Policy</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--gray-400);">© 2024 HustleHack AI. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

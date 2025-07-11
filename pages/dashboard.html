@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - HustleHack AI</title>
+    <meta name="description" content="Your personal HustleHack AI dashboard - manage your profile, resources, and account settings.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/dashboard-styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/logo (2).png"/>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="/assets/images/logo (2).png" alt="HustleHack AI Logo" class="logo-icon">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="resources.html" class="nav-link">Resources</a></li>
+                <li><a href="/pages/about.html" class="nav-link">About</a></li>
+                <li><a href="/pages/contact.html" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <!-- Profile Dropdown -->
+                <div class="profile-dropdown" id="profileDropdown" style="display: block;">
+                    <button class="profile-btn btn btn-ghost" id="profileBtn">
+                        <span class="profile-avatar">👤</span>
+                        <span class="profile-name" id="userProfileName">User</span>
+                        <span class="profile-arrow">▼</span>
+                    </button>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/pages/dashboard.html" class="profile-menu-item active">
+                            <span class="profile-menu-icon">🎯</span>
+                            Dashboard
+                        </a>
+                        <a href="#profile" class="profile-menu-item" onclick="showDashboardSection('profile')">
+                            <span class="profile-menu-icon">👤</span>
+                            Profile Settings
+                        </a>
+                        <a href="#billing" class="profile-menu-item" onclick="showDashboardSection('billing')">
+                            <span class="profile-menu-icon">💳</span>
+                            Billing
+                        </a>
+                        <a href="#security" class="profile-menu-item" onclick="showDashboardSection('security')">
+                            <span class="profile-menu-icon">🔐</span>
+                            Security
+                        </a>
+                        <div class="profile-menu-divider"></div>
+                        <button class="profile-menu-item" onclick="handleUserSignOut()">
+                            <span class="profile-menu-icon">🚪</span>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <h2>Dashboard</h2>
+                <p>Welcome back! 👋</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#overview" class="sidebar-link active" onclick="showDashboardSection('overview')">
+                    <span class="sidebar-icon">📊</span>
+                    Overview
+                </a>
+                <a href="#profile" class="sidebar-link" onclick="showDashboardSection('profile')">
+                    <span class="sidebar-icon">👤</span>
+                    Profile
+                </a>
+                <a href="#resources" class="sidebar-link" onclick="showDashboardSection('resources')">
+                    <span class="sidebar-icon">📁</span>
+                    My Resources
+                </a>
+                <a href="#billing" class="sidebar-link" onclick="showDashboardSection('billing')">
+                    <span class="sidebar-icon">💳</span>
+                    Billing & Plan
+                </a>
+                <a href="#security" class="sidebar-link" onclick="showDashboardSection('security')">
+                    <span class="sidebar-icon">🔐</span>
+                    Security
+                </a>
+                <a href="#activity" class="sidebar-link" onclick="showDashboardSection('activity')">
+                    <span class="sidebar-icon">📜</span>
+                    Activity Log
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Overview Section -->
+            <section id="dash-overview" class="dashboard-section active">
+                <div class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Here's what's happening with your account</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <h3 id="resourcesUsed">47</h3>
+                            <p>Resources Used</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-content">
+                            <h3 id="totalResources">156</h3>
+                            <p>Total Available</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <h3 id="currentPlan">Pro</h3>
+                            <p>Current Plan</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <h3 id="daysSinceJoin">23</h3>
+                            <p>Days Active</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                        <a href="#activity" onclick="showDashboardSection('activity')" class="view-all-link">View All</a>
+                    </div>
+                    <div class="activity-list" id="recentActivity">
+                        <div class="activity-item">
+                            <div class="activity-icon">📱</div>
+                            <div class="activity-content">
+                                <p><strong>Social Media Prompt Pack</strong> accessed</p>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">🎨</div>
+                            <div class="activity-content">
+                                <p><strong>Creator AI Toolkit</strong> downloaded</p>
+                                <span class="activity-time">1 day ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">📚</div>
+                            <div class="activity-content">
+                                <p><strong>Student Productivity Suite</strong> viewed</p>
+                                <span class="activity-time">3 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="showDashboardSection('resources')">
+                            <span class="action-icon">📁</span>
+                            Browse Resources
+                        </button>
+                        <button class="action-btn" onclick="showDashboardSection('billing')">
+                            <span class="action-icon">⬆️</span>
+                            Upgrade Plan
+                        </button>
+                        <a href="resources.html" class="action-btn">
+                            <span class="action-icon">🆕</span>
+                            Latest Drops
+                        </a>
+                        <button class="action-btn" onclick="showDashboardSection('profile')">
+                            <span class="action-icon">⚙️</span>
+                            Settings
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="dash-profile" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Profile Settings</h1>
+                    <p>Manage your personal information and preferences</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Personal Information</h2>
+                    </div>
+                    <form class="profile-form" id="profileForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" id="profileName" placeholder="Your Name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" id="profileEmail" placeholder="your@email.com" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <select class="form-input" id="profileRole">
+                                    <option value="Student">Student</option>
+                                    <option value="Content Creator">Content Creator</option>
+                                    <option value="Entrepreneur">Entrepreneur</option>
+                                    <option value="Freelancer">Freelancer</option>
+                                    <option value="Hustler">Hustler</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Theme Preference</label>
+                                <select class="form-input" id="themePreference">
+                                    <option value="dark">Dark Mode</option>
+                                    <option value="light">Light Mode</option>
+                                    <option value="auto">Auto</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Resources Section -->
+            <section id="dash-resources" class="dashboard-section">
+                <div class="section-header">
+                    <h1>My Resources</h1>
+                    <p>Access your unlocked tools and content based on your plan</p>
+                </div>
+
+                <!-- Plan Status -->
+                <div class="plan-status-card">
+                    <div class="plan-info">
+                        <h3>Current Plan: <span id="planName">Pro Plan</span></h3>
+                        <p>Access to premium resources and tools</p>
+                    </div>
+                    <div class="plan-actions">
+                        <button class="btn btn-outline" onclick="showDashboardSection('billing')">Manage Plan</button>
+                    </div>
+                </div>
+
+                <!-- Resources Grid -->
+                <div class="resources-grid" id="userResources">
+                    <div class="resource-card unlocked">
+                        <div class="resource-header">
+                            <span class="resource-icon">📱</span>
+                            <span class="resource-status unlocked">✅ Unlocked</span>
+                        </div>
+                        <h3>Social Media Prompt Pack</h3>
+                        <p>50+ prompts for content creation across platforms</p>
+                        <div class="resource-actions">
+                            <a href="social-media-prompt-pack.html" class="btn btn-primary btn-sm">Access Now</a>
+                            <span class="usage-count">Used 12 times</span>
+                        </div>
+                    </div>
+
+                    <div class="resource-card unlocked">
+                        <div class="resource-header">
+                            <span class="resource-icon">🎨</span>
+                            <span class="resource-status unlocked">✅ Unlocked</span>
+                        </div>
+                        <h3>Creator AI Toolkit</h3>
+                        <p>Complete toolkit for content creators</p>
+                        <div class="resource-actions">
+                            <a href="creators-ai-toolkit.html" class="btn btn-primary btn-sm">Access Now</a>
+                            <span class="usage-count">Used 8 times</span>
+                        </div>
+                    </div>
+
+                    <div class="resource-card unlocked">
+                        <div class="resource-header">
+                            <span class="resource-icon">📚</span>
+                            <span class="resource-status unlocked">✅ Unlocked</span>
+                        </div>
+                        <h3>Student Productivity Suite</h3>
+                        <p>Study tools and academic resources</p>
+                        <div class="resource-actions">
+                            <a href="student-productivity-suite.html" class="btn btn-primary btn-sm">Access Now</a>
+                            <span class="usage-count">Used 15 times</span>
+                        </div>
+                    </div>
+
+                    <div class="resource-card locked">
+                        <div class="resource-header">
+                            <span class="resource-icon">🚀</span>
+                            <span class="resource-status locked">🔒 Premium Only</span>
+                        </div>
+                        <h3>Advanced AI Workshop</h3>
+                        <p>Advanced prompting techniques and strategies</p>
+                        <div class="resource-actions">
+                            <button class="btn btn-outline btn-sm" onclick="showDashboardSection('billing')">Upgrade to Access</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing Section -->
+            <section id="dash-billing" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Billing & Plan</h1>
+                    <p>Manage your subscription and billing information</p>
+                </div>
+
+                <!-- Current Plan -->
+                <div class="current-plan-card">
+                    <div class="plan-header">
+                        <div class="plan-info">
+                            <h2>Pro Plan</h2>
+                            <p class="plan-price">₹299/month</p>
+                        </div>
+                        <div class="plan-status">
+                            <span class="status-badge active">Active</span>
+                        </div>
+                    </div>
+                    <div class="plan-details">
+                        <div class="plan-features">
+                            <h4>Your Plan Includes:</h4>
+                            <ul>
+                                <li>✅ Access to all current resources</li>
+                                <li>✅ Weekly AI drops</li>
+                                <li>✅ Premium prompts & templates</li>
+                                <li>✅ Priority support</li>
+                                <li>✅ Community access</li>
+                            </ul>
+                        </div>
+                        <div class="plan-usage">
+                            <h4>Usage This Month:</h4>
+                            <div class="usage-bar">
+                                <div class="usage-progress" style="width: 65%"></div>
+                            </div>
+                            <p>47 of 100 resources used</p>
+                        </div>
+                    </div>
+                    <div class="plan-actions">
+                        <button class="btn btn-primary">Upgrade to Premium</button>
+                        <button class="btn btn-outline">Change Plan</button>
+                        <button class="btn btn-ghost" onclick="cancelSubscription()">Cancel Subscription</button>
+                    </div>
+                </div>
+
+                <!-- Billing History -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Billing History</h2>
+                        <button class="btn btn-ghost btn-sm">Download All</button>
+                    </div>
+                    <div class="billing-history">
+                        <div class="billing-item">
+                            <div class="billing-info">
+                                <h4>Pro Plan - December 2024</h4>
+                                <p>Invoice #INV-2024-12-001</p>
+                            </div>
+                            <div class="billing-amount">
+                                <span class="amount">₹299</span>
+                                <span class="status paid">Paid</span>
+                            </div>
+                            <div class="billing-actions">
+                                <button class="btn btn-ghost btn-sm">Download</button>
+                            </div>
+                        </div>
+                        <div class="billing-item">
+                            <div class="billing-info">
+                                <h4>Pro Plan - November 2024</h4>
+                                <p>Invoice #INV-2024-11-001</p>
+                            </div>
+                            <div class="billing-amount">
+                                <span class="amount">₹299</span>
+                                <span class="status paid">Paid</span>
+                            </div>
+                            <div class="billing-actions">
+                                <button class="btn btn-ghost btn-sm">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="dash-security" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Security Settings</h1>
+                    <p>Keep your account secure with these settings</p>
+                </div>
+
+                <!-- Password Change -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Change Password</h2>
+                    </div>
+                    <form class="security-form" id="passwordForm">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <div class="password-input-container">
+                                <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
+                                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('currentPassword')">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <div class="password-input-container">
+                                <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+                                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('newPassword')">👁️</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <div class="password-input-container">
+                                <input type="password" class="form-input" id="confirmPassword" placeholder="Confirm new password">
+                                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword')">👁️</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </form>
+                </div>
+
+                <!-- Two-Factor Authentication -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Two-Factor Authentication</h2>
+                        <span class="feature-badge">Coming Soon</span>
+                    </div>
+                    <div class="security-option">
+                        <div class="option-info">
+                            <h4>Authenticator App</h4>
+                            <p>Use an authenticator app for additional security</p>
+                        </div>
+                        <div class="option-action">
+                            <button class="btn btn-outline" disabled>Enable 2FA</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Sessions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2>Active Sessions</h2>
+                    </div>
+                    <div class="sessions-list">
+                        <div class="session-item current">
+                            <div class="session-info">
+                                <h4>Current Session</h4>
+                                <p>Windows • Chrome • India</p>
+                                <span class="session-time">Active now</span>
+                            </div>
+                            <div class="session-actions">
+                                <span class="current-badge">Current</span>
+                            </div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-info">
+                                <h4>Previous Session</h4>
+                                <p>Android • Chrome • India</p>
+                                <span class="session-time">2 hours ago</span>
+                            </div>
+                            <div class="session-actions">
+                                <button class="btn btn-ghost btn-sm">Revoke</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity Log Section -->
+            <section id="dash-activity" class="dashboard-section">
+                <div class="section-header">
+                    <h1>Activity Log</h1>
+                    <p>Track your recent activity and resource usage</p>
+                </div>
+
+                <!-- Activity Filter -->
+                <div class="activity-filters">
+                    <button class="filter-btn active" onclick="filterActivity('all')">All Activity</button>
+                    <button class="filter-btn" onclick="filterActivity('resources')">Resources</button>
+                    <button class="filter-btn" onclick="filterActivity('account')">Account</button>
+                    <button class="filter-btn" onclick="filterActivity('security')">Security</button>
+                </div>
+
+                <!-- Activity List -->
+                <div class="dashboard-card">
+                    <div class="activity-timeline" id="activityTimeline">
+                        <div class="timeline-item" data-type="resources">
+                            <div class="timeline-icon">📱</div>
+                            <div class="timeline-content">
+                                <h4>Social Media Prompt Pack accessed</h4>
+                                <p>Downloaded prompts for Instagram content creation</p>
+                                <span class="timeline-time">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-type="account">
+                            <div class="timeline-icon">👤</div>
+                            <div class="timeline-content">
+                                <h4>Profile updated</h4>
+                                <p>Changed role from Student to Content Creator</p>
+                                <span class="timeline-time">1 day ago</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-type="resources">
+                            <div class="timeline-icon">🎨</div>
+                            <div class="timeline-content">
+                                <h4>Creator AI Toolkit downloaded</h4>
+                                <p>Accessed advanced creator tools package</p>
+                                <span class="timeline-time">1 day ago</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-type="security">
+                            <div class="timeline-icon">🔐</div>
+                            <div class="timeline-content">
+                                <h4>Login from new device</h4>
+                                <p>Signed in from Android • Chrome</p>
+                                <span class="timeline-time">2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item" data-type="resources">
+                            <div class="timeline-icon">📚</div>
+                            <div class="timeline-content">
+                                <h4>Student Productivity Suite viewed</h4>
+                                <p>Browsed study tools and templates</p>
+                                <span class="timeline-time">3 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        window.supabase = supabase.createClient(
+            'https://bmgvtzwesdkitdjfszsh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+        );
+    </script>
+    <script src="/assets/js/script.js"></script>
+    <script src="assets/js/dashboard-script.js"></script>
+</body>
+</html>

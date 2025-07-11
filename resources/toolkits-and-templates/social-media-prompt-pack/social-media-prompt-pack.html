@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Prompt Pack - HustleHack AI</title>
+    <meta name="description" content="20+ plug-and-play AI prompts for Instagram, LinkedIn, Twitter, and YouTube. Turn ChatGPT into your full-time content assistant.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo (2).png"/>
+    
+    <!-- Additional CSS for Prompt Pack Page -->
+    <style>
+        .prompt-pack-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            line-height: 1.8;
+            padding: 0 1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .prompt-pack-content {
+                max-width: 100%;
+                padding: 0 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .prompt-pack-content {
+                padding: 0 1rem;
+            }
+        }
+        
+        .pack-hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+            background: rgba(127, 90, 240, 0.05);
+            border-radius: 24px;
+            border: 1px solid rgba(127, 90, 240, 0.2);
+        }
+        
+        .pack-hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: white;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .pack-hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-300);
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+            line-height: 1.6;
+        }
+        
+        .pack-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark-bg);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 255, 194, 0.3);
+        }
+        
+        .section-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+        
+        .section-header {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-header p {
+            color: var(--gray-300);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .prompt-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .prompt-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .prompt-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .prompt-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .prompt-description {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .sample-prompt {
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .sample-prompt h3 {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .prompt-example {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--gray-200);
+            line-height: 1.6;
+        }
+        
+        .target-audience {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .audience-item {
+            background: rgba(127, 90, 240, 0.1);
+            border: 1px solid rgba(127, 90, 240, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .audience-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .audience-title {
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .audience-description {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .access-tiers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .tier-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .tier-card.featured {
+            border-color: var(--accent);
+            background: rgba(0, 255, 194, 0.05);
+        }
+        
+        .tier-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+        
+        .tier-name {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tier-price {
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .tier-access {
+            color: var(--gray-300);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-section {
+            background: var(--gradient);
+            border-radius: 24px;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin: 4rem 0;
+            color: white;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+        
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            border: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        
+.breadcrumb {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            overflow: visible;
+            align-items: center;
+            gap: 4px;
+            word-break: break-word;
+            min-height: 24px;
+        }
+        
+        .breadcrumb-wrapper {
+            overflow: visible;
+            width: 100%;
+            padding: 8px 0;
+        }
+
+        @media (max-width: 768px) {
+            .breadcrumb {
+                font-size: 0.8rem;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .breadcrumb {
+                font-size: 0.75rem;
+                gap: 2px;
+            }
+            
+            .breadcrumb span[style*="margin"] {
+                margin: 0 4px !important;
+            }
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(135deg, rgba(127, 90, 240, 0.1), rgba(0, 255, 194, 0.1));
+            border: 1px solid rgba(127, 90, 240, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .feature-highlight h3 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            text-align: left;
+        }
+        
+        .feature-list li {
+            color: var(--gray-300);
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .feature-list li::before {
+            content: "✨";
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon" onerror="this.style.display='none'">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="resources.html" class="nav-link">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="index.html#pricing" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Prompt Pack Content -->
+    <main class="section" style="padding-top: 120px;">
+        <div class="container">
+            <div class="prompt-pack-content">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb-wrapper">
+                    <div class="breadcrumb">
+                        <a href="index.html">Home</a> 
+                        <span style="margin: 0 8px; color: var(--gray-500);">/</span>
+                        <a href="resources.html">Resources</a> 
+                        <span style="margin: 0 8px; color: var(--gray-500);">/</span>
+                        <span style="color: var(--gray-300);">Social Media Prompt Pack</span>
+                    </div>
+                </div>
+
+                <!-- Hero Section -->
+                <div class="pack-hero">
+                    <div class="pack-badge">🔥 MOST POPULAR</div>
+                    <h1>🧰 Social Media Prompt Pack</h1>
+                    <p class="subtitle">20+ plug-and-play AI prompts crafted to help you create consistent, high-quality, and engaging content across Instagram, LinkedIn, Twitter, and YouTube — without writer's block.</p>
+                    <p style="color: var(--accent); font-weight: 600; margin-bottom: 0;">Turn ChatGPT into your full-time content assistant</p>
+                </div>
+
+                <!-- What's Inside Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2>✅ What's Inside</h2>
+                        <p>A complete collection of AI prompts designed to transform your content creation process</p>
+                    </div>
+                    
+                    <div class="prompts-grid">
+                        <div class="prompt-item">
+                            <span class="prompt-icon">🎯</span>
+                            <h3 class="prompt-title">Niche Introduction Prompt</h3>
+                            <p class="prompt-description">Perfect elevator pitch prompts to introduce yourself and your expertise</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">🧠</span>
+                            <h3 class="prompt-title">Thought Leadership Prompt</h3>
+                            <p class="prompt-description">Share insights and establish authority in your field</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">📈</span>
+                            <h3 class="prompt-title">Carousel Builder for Instagram</h3>
+                            <p class="prompt-description">Create engaging multi-slide posts that drive maximum engagement</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">✍️</span>
+                            <h3 class="prompt-title">LinkedIn Story Framework</h3>
+                            <p class="prompt-description">Professional storytelling that builds connections and drives engagement</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">💡</span>
+                            <h3 class="prompt-title">YouTube Short Script Generator</h3>
+                            <p class="prompt-description">Viral-worthy scripts for short-form video content</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">🧵</span>
+                            <h3 class="prompt-title">Twitter/X Thread Blueprint</h3>
+                            <p class="prompt-description">Create compelling threads that spark conversations</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">💬</span>
+                            <h3 class="prompt-title">Comment & DM Reply Generator</h3>
+                            <p class="prompt-description">Never run out of engaging responses for your community</p>
+                        </div>
+                        
+                        <div class="prompt-item">
+                            <span class="prompt-icon">📅</span>
+                            <h3 class="prompt-title">7-Day Content Calendar</h3>
+                            <p class="prompt-description">Complete template to plan and organize your content strategy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample Prompts Section -->
+                <div class="sample-prompt">
+                    <h3>💬 Sample Prompts</h3>
+                    <p style="color: var(--gray-300); margin-bottom: 1.5rem;">Here's what you can expect from our professionally crafted prompts:</p>
+                    
+                    <div class="prompt-example">
+                        "I want to write a relatable LinkedIn post about burnout and productivity. Make it personal, with a strong hook and a subtle CTA at the end."
+                    </div>
+                    
+                    <div class="prompt-example">
+                        "Write a high-value 5-post Instagram carousel on '3 AI tools every content creator should know' with emojis and casual tone."
+                    </div>
+                </div>
+
+                <!-- Target Audience Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2>🚀 Who It's For</h2>
+                        <p>Perfect for ambitious creators ready to scale their content game</p>
+                    </div>
+                    
+                    <div class="target-audience">
+                        <div class="audience-item">
+                            <span class="audience-icon">🎨</span>
+                            <h3 class="audience-title">Content Creators</h3>
+                            <p class="audience-description">Building a personal brand across platforms</p>
+                        </div>
+                        
+                        <div class="audience-item">
+                            <span class="audience-icon">💼</span>
+                            <h3 class="audience-title">Freelancers & Solopreneurs</h3>
+                            <p class="audience-description">Promoting services and expertise</p>
+                        </div>
+                        
+                        <div class="audience-item">
+                            <span class="audience-icon">🎓</span>
+                            <h3 class="audience-title">Students & Beginners</h3>
+                            <p class="audience-description">Testing content waters and building skills</p>
+                        </div>
+                        
+                        <div class="audience-item">
+                            <span class="audience-icon">🏫</span>
+                            <h3 class="audience-title">Coaches & Educators</h3>
+                            <p class="audience-description">Sharing knowledge on Instagram/LinkedIn</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Features -->
+                <div class="feature-highlight">
+                    <h3>🌟 What Makes This Pack Special</h3>
+                    <ul class="feature-list">
+                        <li>Platform-specific optimization</li>
+                        <li>Psychology-backed engagement triggers</li>
+                        <li>Copy-paste ready prompts</li>
+                        <li>Tone and style variations</li>
+                        <li>Hook and CTA templates</li>
+                        <li>Regular updates with new prompts</li>
+                    </ul>
+                </div>
+
+                <!-- Access Tiers Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2>📥 Access Levels</h2>
+                        <p>Choose your plan and unlock the content creation power you need</p>
+                    </div>
+                    
+                    <div class="access-tiers">
+                        <div class="tier-card">
+                            <h3 class="tier-name">Starter Plan</h3>
+                            <div class="tier-price">₹99</div>
+                            <p class="tier-access">✅ 3 Sample Prompts<br>🎯 Basic Templates<br>📧 Email Support</p>
+                            <a href="index.html#pricing" class="btn btn-outline">Get Starter</a>
+                        </div>
+                        
+                        <div class="tier-card featured">
+                            <h3 class="tier-name">Creator Mode</h3>
+                            <div class="tier-price">₹199</div>
+                            <p class="tier-access">🔓 Complete Prompt Pack<br>📅 Content Calendar<br>🎨 Bonus Templates<br>⚡ Priority Support</p>
+                            <a href="index.html#pricing" class="btn btn-primary">Get Full Access</a>
+                        </div>
+                        
+                        <div class="tier-card">
+                            <h3 class="tier-name">Pro Hacker</h3>
+                            <div class="tier-price">₹299</div>
+                            <p class="tier-access">🚀 Everything in Creator<br>🤖 Custom Prompts<br>📞 1-on-1 Strategy<br>🎯 Personal Branding Kit</p>
+                            <a href="index.html#pricing" class="btn btn-outline">Go Pro</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Section -->
+                <div class="cta-section">
+                    <h2>Ready to Transform Your Content?</h2>
+                    <p>Join thousands of creators who've already 10x'd their content output with our AI-powered prompts</p>
+                    <a href="index.html#pricing" class="btn-white">Get Full Access Now →</a>
+                </div>
+
+                <!-- Back to Resources -->
+                <div style="text-align: center; margin: 3rem 0;">
+                    <a href="resources.html" style="color: var(--primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 2px solid var(--primary); border-radius: 8px; transition: all 0.3s ease;">
+                        ← Back to Resources
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: #0F0F1B; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="grid grid-4">
+                <div>
+                    <h3 style="color: white; margin-bottom: 1rem;">HustleHack AI</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 1rem;">Empowering the next generation of Indian creators and entrepreneurs with AI.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Instagram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Telegram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Twitter</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="index.html#features" style="color: var(--gray-400); text-decoration: none;">Features</a></li>
+                        <li><a href="index.html#pricing" style="color: var(--gray-400); text-decoration: none;">Pricing</a></li>
+                        <li><a href="resources.html" style="color: var(--gray-400); text-decoration: none;">Resources</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
+                        <li><a href="press.html" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
+                        <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--gray-400);">© 2024 HustleHack AI. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -10,10 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="logo (2).png"/>
+    <link rel="icon" type="image/png" href="/assets/images/logo (2).png"/>
 </head>
 <body>
     <!-- Navigation -->
@@ -28,9 +28,9 @@
                 <li><a href="#home" class="nav-link">Home</a></li>
                 <li><a href="#features" class="nav-link">Features</a></li>
                 <li><a href="#pricing" class="nav-link">Pricing</a></li>
-                <li><a href="#resources" class="nav-link">Resources</a></li>
+                <li><a href="resources.html" class="nav-link">Resources</a></li>
                 <li><a href="about.html" class="nav-link">About</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
             </ul>
             
             <div class="nav-actions">
@@ -45,7 +45,7 @@
                         <span class="profile-arrow">▼</span>
                     </button>
                     <div class="profile-menu" id="profileMenu">
-                        <a href="#" class="profile-menu-item" onclick="openUserProfile()">
+                        <a href="dashboard.html" class="profile-menu-item">
                             <span class="profile-menu-icon">🎯</span>
                             Dashboard
                         </a>
@@ -82,7 +82,19 @@
                 <p class="hero-subtitle">AI tools, templates, prompts & guides to help you grow faster — all in one toolkit designed for young Indian students, creators, and solopreneurs.</p>
                 
                 <div class="hero-actions">
-                    <a href="#" class="btn btn-primary btn-lg" data-modal="signup-modal">🚀 Start Your Journey</a>
+                    <button id="google-login-btn-hero" class="btn btn-google btn-lg">
+                        <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span>🚀 Continue with Google</span>
+                        <div class="btn-loading" style="display: none;">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                    <a href="#" class="btn btn-primary btn-lg" data-modal="signup-modal">📧 Sign Up with Email</a>
                     <a href="#features" class="btn btn-ghost btn-lg">✨ Explore Features</a>
                 </div>
             </div>
@@ -183,45 +195,90 @@
             
             <div class="grid grid-3">
                 <div class="pricing-card">
-                    <h3 class="pricing-title">Starter</h3>
-                    <div class="pricing-price">₹99<span style="font-size: 1rem; color: #9CA3AF;">/month</span></div>
+                    <div class="pricing-rating">
+                        <div class="rating-stars">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star partial">★</span>
+                        </div>
+                        <span class="rating-text">4.2/5 (2,847 reviews)</span>
+                    </div>
+                    <h3 class="pricing-title">Starter Hustle</h3>
+                    <p class="pricing-subtitle">Perfect for getting started</p>
+                    <div class="pricing-container">
+                        <div class="pricing-original">₹499</div>
+                        <div class="pricing-current">₹99<span class="pricing-period">/month</span></div>
+                        <div class="pricing-discount">80% OFF</div>
+                    </div>
                     <ul class="pricing-features">
-                        <li>Basic AI tools access</li>
-                        <li>5 templates per month</li>
+                        <li>Essential AI tools & templates</li>
+                        <li>Basic automation scripts</li>
                         <li>Community access</li>
-                        <li>Weekly newsletter</li>
-                        <li>Mobile app access</li>
+                        <li>Email support</li>
                     </ul>
-                    <a href="#" class="btn btn-outline" data-modal="signup-modal">Get Started</a>
+                    <a href="https://rzp.io/rzp/ppw09ED" class="btn btn-outline" target="_blank">Get Started Now</a>
+                    <p class="pricing-note">One-month access, renew anytime manually</p>
                 </div>
                 
                 <div class="pricing-card featured">
                     <div class="pricing-badge">Most Popular</div>
-                    <h3 class="pricing-title">Creator</h3>
-                    <div class="pricing-price">₹199<span style="font-size: 1rem; color: #9CA3AF;">/month</span></div>
+                    <div class="pricing-rating">
+                        <div class="rating-stars">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                        </div>
+                        <span class="rating-text">4.8/5 (5,632 reviews)</span>
+                    </div>
+                    <h3 class="pricing-title">Creator Mode</h3>
+                    <p class="pricing-subtitle">For serious creators</p>
+                    <div class="pricing-container">
+                        <div class="pricing-original">₹799</div>
+                        <div class="pricing-current">₹199<span class="pricing-period">/month</span></div>
+                        <div class="pricing-discount">75% OFF</div>
+                    </div>
                     <ul class="pricing-features">
-                        <li>Everything in Starter</li>
-                        <li>Unlimited templates</li>
-                        <li>Premium AI tools</li>
-                        <li>1-on-1 mentoring session</li>
+                        <li>Everything in Starter +</li>
+                        <li>Advanced AI workflows</li>
+                        <li>Premium templates library</li>
                         <li>Priority support</li>
-                        <li>Advanced analytics</li>
+                        <li>Weekly live sessions</li>
                     </ul>
-                    <a href="#" class="btn btn-primary" data-modal="signup-modal">Start Creating</a>
+                    <a href="https://rzp.io/rzp/atTfuqqZ" class="btn btn-primary" target="_blank">Level Up Now</a>
+                    <p class="pricing-note">One-month access, renew anytime manually</p>
                 </div>
                 
                 <div class="pricing-card">
-                    <h3 class="pricing-title">Pro</h3>
-                    <div class="pricing-price">₹299<span style="font-size: 1rem; color: #9CA3AF;">/month</span></div>
+                    <div class="pricing-rating">
+                        <div class="rating-stars">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star half">★</span>
+                        </div>
+                        <span class="rating-text">4.5/5 (1,923 reviews)</span>
+                    </div>
+                    <h3 class="pricing-title">Pro Hacker</h3>
+                    <p class="pricing-subtitle">Maximum firepower</p>
+                    <div class="pricing-container">
+                        <div class="pricing-original">₹1,199</div>
+                        <div class="pricing-current">₹299<span class="pricing-period">/month</span></div>
+                        <div class="pricing-discount">75% OFF</div>
+                    </div>
                     <ul class="pricing-features">
-                        <li>Everything in Creator</li>
-                        <li>Custom AI solutions</li>
-                        <li>Team collaboration</li>
-                        <li>API access</li>
-                        <li>White-label options</li>
-                        <li>24/7 dedicated support</li>
+                        <li>Everything in Creator +</li>
+                        <li>Exclusive AI models</li>
+                        <li>Custom automation builds</li>
+                        <li>1-on-1 strategy calls</li>
+                        <li>VIP community access</li>
                     </ul>
-                    <a href="#" class="btn btn-outline" data-modal="signup-modal">Go Pro</a>
+                    <a href="https://rzp.io/rzp/nraUuNBx" class="btn btn-outline" target="_blank">Go Pro Now</a>
+                    <p class="pricing-note">One-month access, renew anytime manually</p>
                 </div>
             </div>
         </div>
@@ -338,7 +395,7 @@
             <p class="section-subtitle" style="color: white; opacity: 0.9;">Join thousands of students and creators who are already building their future with AI</p>
             
             <div class="hero-actions">
-                <a href="#" class="btn btn-lg" style="background: white; color: #7F5AF0;" data-modal="signup-modal">🚀 Start for ₹99</a>
+                <a href="https://rzp.io/rzp/ppw09ED" class="btn btn-lg" style="background: white; color: #7F5AF0;" target="_blank">🚀 Start with Starter Hustle - ₹99</a>
                 <a href="#pricing" class="btn btn-lg" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white;">Compare Plans</a>
             </div>
         </div>
@@ -373,7 +430,7 @@
                     <ul style="list-style: none; color: var(--gray-400);">
                         <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
                         <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
-                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
+                        <li><a href="press.html" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
                         <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
                     </ul>
                 </div>
@@ -381,10 +438,10 @@
                 <div>
                     <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
                     <ul style="list-style: none; color: var(--gray-400);">
-                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
-                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
-                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
-                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
                     </ul>
                 </div>
             </div>
@@ -490,6 +547,6 @@
         );
     </script>
 
-    <script src="script.js"></script>
+    <script src="/assets/js/script.js"></script>
 </body>
 </html>

@@ -10,16 +10,46 @@ const modalCloses = document.querySelectorAll('.modal-close');
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  initializeNavigation();
-  initializeModals();
-  initializeAnimations();
-  initializeForms();
-  initializeScrollEffects();
-  initializeLoadingStates();
-  initializeAuthSystem(); // Updated to handle both signup and login
-  addRealTimeValidation(); // Already exists
-  initializeDashboardButton();
+    initializeNavigation();
+    initializeModals();
+    initializeAnimations();
+    initializeForms();
+    initializeScrollEffects();
+    initializeLoadingStates();
+    initializeAuthSystem(); // Updated to handle both signup and login
+    addRealTimeValidation(); // Already exists
+    initializeDashboardButton();
 });
+
+// Initialize auth state checking on page load
+window.addEventListener('load', async () => {
+    console.log('🔄 Checking auth state on page load...');
+    await checkAuthStateOnLoad();
+});
+
+// Check for existing session on page load
+async function checkAuthStateOnLoad() {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Error getting session:', error);
+            updateUIForUnauthenticatedUser();
+            return;
+        }
+        
+        if (session && session.user) {
+            console.log('✅ Existing session found:', session.user.email);
+            updateUIForAuthenticatedUser(session.user);
+        } else {
+            console.log('ℹ️ No existing session found');
+            updateUIForUnauthenticatedUser();
+        }
+    } catch (error) {
+        console.error('Error checking auth state:', error);
+        updateUIForUnauthenticatedUser();
+    }
+}
 
 
 // Navigation Functions
@@ -519,20 +549,22 @@ function togglePasswordVisibility(inputId) {
     }, 150);
 }
 
-// Profile Dropdown Toggle
+// Profile Dropdown Toggle - ENHANCED
 function toggleProfileDropdown() {
     const dropdown = document.getElementById('profileDropdown');
+    if (!dropdown) return;
+    
     const isActive = dropdown.classList.contains('active');
     
     if (isActive) {
         dropdown.classList.remove('active');
+        document.removeEventListener('click', closeProfileDropdownOnClickOutside);
     } else {
         dropdown.classList.add('active');
-    }
-    
-    // Close dropdown when clicking outside
-    if (!isActive) {
-        document.addEventListener('click', closeProfileDropdownOnClickOutside);
+        // Add click outside listener after a small delay to prevent immediate closing
+        setTimeout(() => {
+            document.addEventListener('click', closeProfileDropdownOnClickOutside);
+        }, 10);
     }
 }
 
@@ -546,7 +578,7 @@ function closeProfileDropdownOnClickOutside(event) {
     }
 }
 
-// Initialize Profile Dropdown
+// Initialize Profile Dropdown - ENHANCED
 function initializeProfileDropdown() {
     const profileBtn = document.getElementById('profileBtn');
     if (profileBtn) {
@@ -554,6 +586,16 @@ function initializeProfileDropdown() {
             e.preventDefault();
             e.stopPropagation();
             toggleProfileDropdown();
+        });
+    }
+    
+    // FIX 3: Prevent immediate sign out when clicking profile
+    const signOutBtn = document.querySelector('.profile-menu-item[onclick*="handleSignOut"]');
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleUserSignOut();
         });
     }
 }
@@ -859,6 +901,229 @@ function closeDashboard() {
     }
 }
 
+// Google Sign-In Functions
+function initializeGoogleSignIn() {
+    // Hero section Google button
+    const googleBtnHero = document.getElementById('google-login-btn-hero');
+    if (googleBtnHero) {
+        googleBtnHero.addEventListener('click', handleGoogleSignIn);
+    }
+
+    // Modal Google buttons (we'll add these to modals)
+    addGoogleButtonsToModals();
+
+    // Initial UI update based on authentication state
+    updateAuthUI();
+}
+
+// Add Google Sign-In buttons to existing modals
+function addGoogleButtonsToModals() {
+    // Add to login modal
+    const loginModal = document.getElementById('login-modal');
+    if (loginModal) {
+        const loginForm = loginModal.querySelector('#loginForm');
+        if (loginForm && !loginModal.querySelector('.btn-google')) {
+            const googleBtn = createGoogleButton('google-login-btn-modal');
+            const firstFormGroup = loginForm.querySelector('.form-group');
+            
+            // Insert Google button before first form group
+            firstFormGroup.parentNode.insertBefore(googleBtn, firstFormGroup);
+            
+            // Add divider
+            const divider = document.createElement('div');
+            divider.className = 'auth-divider';
+            divider.innerHTML = '<span>or continue with email</span>';
+            firstFormGroup.parentNode.insertBefore(divider, firstFormGroup);
+        }
+    }
+    
+    // Add to signup modal
+    const signupModal = document.getElementById('signup-modal');
+    if (signupModal) {
+        const signupForm = signupModal.querySelector('#signupForm');
+        if (signupForm && !signupModal.querySelector('.btn-google')) {
+            const googleBtn = createGoogleButton('google-signup-btn-modal');
+            const firstFormGroup = signupForm.querySelector('.form-group');
+            
+            // Insert Google button before first form group
+            firstFormGroup.parentNode.insertBefore(googleBtn, firstFormGroup);
+            
+            // Add divider
+            const divider = document.createElement('div');
+            divider.className = 'auth-divider';
+            divider.innerHTML = '<span>or sign up with email</span>';
+            firstFormGroup.parentNode.insertBefore(divider, firstFormGroup);
+        }
+    }
+}
+
+// Create Google Sign-In button
+function createGoogleButton(id) {
+    const button = document.createElement('button');
+    button.id = id;
+    button.type = 'button';
+    button.className = 'btn-google';
+    button.innerHTML = `
+        <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span>Continue with Google</span>
+        <div class="btn-loading" style="display: none;">
+            <div class="spinner"></div>
+        </div>
+    `;
+    
+    button.addEventListener('click', handleGoogleSignIn);
+return button;
+}
+
+// Update UI based on authentication state
+function updateAuthUI() {
+    const user = supabase.auth.user();
+    const isAuthenticated = !!user;
+
+    // Toggle visibility of Google buttons and other auth elements
+    document.querySelectorAll('.btn-google').forEach(btn => {
+        btn.style.display = isAuthenticated ? 'none' : 'inline-block';
+    });
+
+    // Example: Toggle visibility of nav buttons
+    const navSignIn = document.getElementById('nav-sign-in');
+    const navGetStarted = document.getElementById('nav-get-started');
+    const navProfile = document.getElementById('nav-profile');
+
+    if (navSignIn && navGetStarted) {
+        navSignIn.style.display = isAuthenticated ? 'none' : 'inline-block';
+        navGetStarted.style.display = isAuthenticated ? 'none' : 'inline-block';
+    }
+    if (navProfile) {
+        navProfile.style.display = isAuthenticated ? 'inline-block' : 'none';
+    }
+}
+
+// Handle Google Sign-In
+async function handleGoogleSignIn() {
+    try {
+        console.log('🔑 Starting Google login...');
+        const button = event.target.closest('.btn-google') || event.target;
+        setButtonLoading(button, true);
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback.html`,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                }
+            }
+        });
+
+        // FIX 1: Only show error if it's a real error, not during redirection
+        if (error && error.message && !error.message.includes('redirect')) {
+            console.error('❌ Google login error:', error);
+            showNotification('Failed to start Google login. Please try again.', 'error');
+            setButtonLoading(button, false);
+            return;
+        }
+
+        console.log('✅ Google OAuth flow started...');
+        // Note: User will be redirected to Google, so button state will reset automatically
+        updateAuthUI();
+
+    } catch (error) {
+        console.error('❌ Google login error:', error);
+        
+        // Skip toast if error is just the OAuth redirect notice
+        if (error.message && error.message.includes('redirect')) {
+            // This is just a normal redirect, not a real error
+            console.log('ℹ️ OAuth redirect initiated, this is normal');
+            return;
+        }
+        
+        // Only show error toast for genuine errors
+        showNotification('An error occurred during Google login.', 'error');
+        const button = event.target.closest('.btn-google') || event.target;
+        setButtonLoading(button, false);
+    }
+}
+
+// Set button loading state
+function setButtonLoading(button, isLoading) {
+    const btnText = button.querySelector('span:not(.btn-loading)');
+    const btnLoading = button.querySelector('.btn-loading');
+    const btnIcon = button.querySelector('.google-icon');
+    
+    if (isLoading) {
+        button.classList.add('loading');
+        if (btnText) btnText.style.opacity = '0';
+        if (btnIcon) btnIcon.style.opacity = '0';
+        if (btnLoading) btnLoading.style.display = 'flex';
+        button.disabled = true;
+    } else {
+        button.classList.remove('loading');
+        if (btnText) btnText.style.opacity = '1';
+        if (btnIcon) btnIcon.style.opacity = '1';
+        if (btnLoading) btnLoading.style.display = 'none';
+        button.disabled = false;
+    }
+}
+
+// Save user to database
+async function saveUserToDatabase(user) {
+    try {
+        console.log('💾 Saving user to database:', user.id);
+        
+        // Check if user already exists
+        const { data: existingUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (!existingUser) {
+            // Create new user record
+            const { data, error } = await supabase
+                .from('users')
+                .insert([{
+                    id: user.id,
+                    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                    email: user.email,
+                    role: user.app_metadata?.provider === 'google' ? 'Google User' : 'Email User',
+                    device: navigator.userAgent,
+                    timestamp: new Date().toISOString(),
+                    provider: user.app_metadata?.provider || 'email'
+                }]);
+
+            if (error) {
+                console.error('❌ Error saving user:', error);
+                return false;
+            }
+            
+            console.log('✅ User saved successfully:', data);
+        } else {
+            console.log('✅ User already exists in database');
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('❌ Error in saveUserToDatabase:', error);
+        return false;
+    }
+}
+
+// Close all modals
+function closeAllModals() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.classList.remove('active');
+    });
+    document.body.style.overflow = '';
+}
+
 // Load saved theme
 document.addEventListener('DOMContentLoaded', function() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -887,8 +1152,31 @@ function initializeAuthSystem() {
         loginForm.addEventListener('submit', handleLogin);
     }
     
+    // Initialize Google Sign-In buttons
+    initializeGoogleSignIn();
+    
     // Check if user is already logged in
     checkAuthStatus();
+    
+    // Listen for auth state changes
+    supabase.auth.onAuthStateChange((event, session) => {
+        console.log('🔄 Auth state changed:', event, session?.user?.email);
+        
+        if (event === 'SIGNED_IN' && session?.user) {
+            console.log('✅ User signed in:', session.user.email);
+            saveUserToDatabase(session.user);
+            showNotification('✅ Welcome back! Login successful.', 'success');
+            updateUIForAuthenticatedUser(session.user);
+            
+            // Close any open modals
+            closeAllModals();
+        }
+        
+        if (event === 'SIGNED_OUT') {
+            console.log('👋 User signed out');
+            updateUIForUnauthenticatedUser();
+        }
+    });
 }
 
 // Check authentication status on page load
@@ -898,93 +1186,119 @@ async function checkAuthStatus() {
     if (error) throw error;
 
     if (session && session.user) {
-      // Hide Sign In & Get Started buttons
-      document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]')
-              .forEach(el => el.style.display = 'none');
-
-      // Show profile dropdown
-      const pd = document.getElementById('profileDropdown');
-      if (pd) pd.style.display = 'inline-block';
-
-      // Update dropdown name/avatar
-      const nameSpan = pd.querySelector('.profile-name');
-      if (nameSpan) nameSpan.textContent = session.user.user_metadata?.name || session.user.email.split('@')[0];
+      console.log('✅ User is authenticated:', session.user.email);
+      updateUIForAuthenticatedUser(session.user);
     } else {
-      // Reverse the UI for signed out state
-      document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]')
-              .forEach(el => el.style.display = '');
-      const pd = document.getElementById('profileDropdown');
-      if (pd) pd.style.display = 'none';
+      console.log('ℹ️ User is not authenticated');
+      updateUIForUnauthenticatedUser();
     }
   } catch (err) {
     console.error('Auth check failed', err);
+    updateUIForUnauthenticatedUser();
   }
 }
 
 // Update UI for authenticated user
 function updateUIForAuthenticatedUser(user) {
-    // Update Sign In button
-    const signInBtn = document.querySelector('[data-modal="login-modal"]');
-    if (signInBtn) {
-        const userName = user.user_metadata?.name || user.email.split('@')[0];
-        signInBtn.textContent = `👋 ${userName}`;
-        signInBtn.removeAttribute('data-modal');
-        signInBtn.classList.add('user-menu');
-        signInBtn.addEventListener('click', handleSignOut);
-    }
+    console.log('🔄 Updating UI for authenticated user:', user.email);
     
-    // Update Get Started button
-    const getStartedBtn = document.querySelector('[data-modal="signup-modal"]');
-    if (getStartedBtn) {
-        getStartedBtn.textContent = '🎯 Dashboard';
-        getStartedBtn.removeAttribute('data-modal');
-        getStartedBtn.href = '#dashboard';
-        getStartedBtn.classList.add('dashboard-btn');
-    }
+    const userName = user.user_metadata?.name || user.email.split('@')[0];
     
-    // Update all other signup buttons
-    const allSignupBtns = document.querySelectorAll('[data-modal="signup-modal"]');
-    allSignupBtns.forEach(btn => {
-        if (btn !== getStartedBtn) {
-            btn.textContent = '✨ Dashboard';
-            btn.removeAttribute('data-modal');
-            btn.href = '#dashboard';
-        }
+    // Hide Google login buttons
+    document.querySelectorAll('.btn-google, #google-login-btn-hero').forEach(btn => {
+        btn.style.display = 'none';
     });
+    
+    // Hide login/signup modal buttons
+    document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]').forEach(btn => {
+        btn.style.display = 'none';
+    });
+    
+    // Show and update profile dropdown
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileDropdown) {
+        profileDropdown.style.display = 'inline-block';
+        
+        // Update profile name
+        const profileName = profileDropdown.querySelector('.profile-name');
+        if (profileName) {
+            profileName.textContent = userName;
+        }
+        
+        // Update dashboard link in profile menu
+        const dashboardLink = profileDropdown.querySelector('.profile-menu-item[href="dashboard.html"]');
+        if (dashboardLink) {
+            dashboardLink.style.display = 'flex';
+        }
+    }
+    
+    // Update hero actions - replace login buttons with dashboard button
+    const heroActions = document.querySelector('.hero-actions');
+    if (heroActions) {
+        // Hide Google login button in hero
+        const heroGoogleBtn = heroActions.querySelector('#google-login-btn-hero');
+        if (heroGoogleBtn) {
+            heroGoogleBtn.style.display = 'none';
+        }
+        
+        // Update signup button to dashboard button
+        const heroSignupBtn = heroActions.querySelector('[data-modal="signup-modal"]');
+        if (heroSignupBtn) {
+            heroSignupBtn.textContent = '🎯 Go to Dashboard';
+            heroSignupBtn.removeAttribute('data-modal');
+            heroSignupBtn.href = 'dashboard.html';
+            heroSignupBtn.onclick = function() {
+                window.location.href = 'dashboard.html';
+            };
+        }
+    }
+    
+    console.log('✅ UI updated for authenticated user');
 }
 
 // Update UI for unauthenticated user
 function updateUIForUnauthenticatedUser() {
-    // Reset Sign In button
-    const signInBtn = document.querySelector('.user-menu') || document.querySelector('a[href="#"]');
-    if (signInBtn && signInBtn.textContent.includes('👋')) {
-        signInBtn.textContent = 'Sign In';
-        signInBtn.setAttribute('data-modal', 'login-modal');
-        signInBtn.classList.remove('user-menu');
-        signInBtn.removeEventListener('click', handleSignOut);
-    }
+    console.log('🔄 Updating UI for unauthenticated user');
     
-    // Reset Get Started button
-    const getStartedBtn = document.querySelector('.dashboard-btn');
-    if (getStartedBtn) {
-        getStartedBtn.textContent = 'Get Started';
-        getStartedBtn.setAttribute('data-modal', 'signup-modal');
-        getStartedBtn.classList.remove('dashboard-btn');
-        getStartedBtn.removeAttribute('href');
-    }
-    
-    // Reset all other buttons
-    const allDashboardBtns = document.querySelectorAll('a[href="#dashboard"]');
-    allDashboardBtns.forEach(btn => {
-        if (btn.textContent.includes('Dashboard')) {
-            btn.textContent = 'Get Started';
-            btn.setAttribute('data-modal', 'signup-modal');
-            btn.removeAttribute('href');
-        }
+    // Show Google login buttons
+    document.querySelectorAll('.btn-google, #google-login-btn-hero').forEach(btn => {
+        btn.style.display = 'inline-flex';
     });
+    
+    // Show login/signup modal buttons
+    document.querySelectorAll('[data-modal="login-modal"], [data-modal="signup-modal"]').forEach(btn => {
+        btn.style.display = 'inline-flex';
+    });
+    
+    // Hide profile dropdown
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileDropdown) {
+        profileDropdown.style.display = 'none';
+    }
+    
+    // Reset hero actions
+    const heroActions = document.querySelector('.hero-actions');
+    if (heroActions) {
+        // Show Google login button in hero
+        const heroGoogleBtn = heroActions.querySelector('#google-login-btn-hero');
+        if (heroGoogleBtn) {
+            heroGoogleBtn.style.display = 'inline-flex';
+        }
+        
+        // Reset signup button
+        const heroSignupBtn = heroActions.querySelector('a');
+        if (heroSignupBtn && heroSignupBtn.textContent.includes('Dashboard')) {
+            heroSignupBtn.textContent = '📧 Sign Up with Email';
+            heroSignupBtn.setAttribute('data-modal', 'signup-modal');
+            heroSignupBtn.removeAttribute('href');
+            heroSignupBtn.onclick = null;
+        }
+    }
+    
+    console.log('✅ UI updated for unauthenticated user');
 }
 
-// Handle user sign out
+// Handle user sign out - ENHANCED
 async function handleSignOut(e) {
     e.preventDefault();
     
@@ -998,6 +1312,41 @@ async function handleSignOut(e) {
         
         showNotification('✅ Signed out successfully', 'success');
         updateUIForUnauthenticatedUser();
+        
+        // Refresh the page to reset everything
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Sign out error:', error);
+        showNotification('❌ Sign out failed', 'error');
+    }
+}
+
+// New function for profile dropdown sign out
+async function handleUserSignOut() {
+    try {
+        // Close the dropdown first
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown) {
+            dropdown.classList.remove('active');
+        }
+        
+        const { error } = await supabase.auth.signOut();
+        
+        if (error) {
+            showNotification('❌ Sign out failed', 'error');
+            return;
+        }
+        
+        showNotification('✅ Signed out successfully', 'success');
+        updateUIForUnauthenticatedUser();
+        
+        // Hide Google login buttons and show auth buttons
+        document.querySelectorAll('.btn-google').forEach(btn => {
+            btn.style.display = 'inline-flex';
+        });
         
         // Refresh the page to reset everything
         setTimeout(() => {
@@ -1081,9 +1430,10 @@ async function handleLogin(e) {
         document.getElementById('loginForm').reset();
         closeModal(document.getElementById('login-modal'));
         
-        // Success follow-up
+        // Redirect to dashboard
         setTimeout(() => {
-            showNotification('✨ You are now signed in and ready to explore!', 'success');
+            showNotification('🎯 Redirecting to your dashboard...', 'info');
+            window.location.href = 'dashboard.html';
         }, 1500);
         
     } catch (error) {
@@ -1216,7 +1566,8 @@ async function handleSignup(e) {
         }, 1500);
         
         setTimeout(() => {
-            showNotification('✨ Welcome to HustleHack AI! We\'re excited to have you onboard.', 'success');
+            showNotification('✨ Welcome to HustleHack AI! Redirecting to dashboard...', 'success');
+            window.location.href = 'dashboard.html';
         }, 3000);
     } catch (err) {
         console.error('Signup Error:', err);

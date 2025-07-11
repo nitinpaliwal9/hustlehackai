@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Press & Media Kit - HustleHack AI</title>
+    <meta name="description" content="Press & Media Kit for HustleHack AI - Brand assets, founder info, and media resources for journalists and creators.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo (2).png"/>
+    
+    <!-- Additional CSS for Press Page -->
+    <style>
+        .press-content {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .press-content h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .press-content h2 {
+            color: var(--accent);
+            font-size: 1.75rem;
+            margin: 3rem 0 1rem 0;
+            font-weight: 700;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .press-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .press-content h3 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin: 2rem 0 0.75rem 0;
+            font-weight: 600;
+        }
+        
+        .press-content p {
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+        
+        .press-content ul, .press-content ol {
+            color: var(--text-light);
+            margin-bottom: 1.25rem;
+            padding-left: 2rem;
+        }
+        
+        .press-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .press-content strong {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .press-content em {
+            color: var(--accent);
+            font-style: italic;
+        }
+        
+        .press-intro {
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+        
+        .at-glance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .at-glance-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .at-glance-label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .at-glance-value {
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .download-box {
+            background: rgba(127, 90, 240, 0.1);
+            border: 1px solid rgba(127, 90, 240, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .download-box h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .download-btn {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .download-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .story-angles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .story-angle {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .story-angle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .contact-box {
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .contact-box h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .contact-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .contact-label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-value {
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .contact-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .contact-value a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-to-home {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .back-to-home a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-home a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .press-kit-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .press-kit-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .press-kit-item strong {
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon" onerror="this.style.display='none'">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="index.html#resources" class="nav-link">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="index.html" class="btn btn-primary">Back to Home</a>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Press Content -->
+    <main class="section" style="padding-top: 140px;">
+        <div class="container">
+            <div class="press-content">
+                <h1>📰 Press & Media Kit</h1>
+                <p class="press-intro">Welcome to the HustleHack AI press room</p>
+
+                <p>Whether you're a journalist, blogger, podcaster, or creator looking to feature us, this page has everything you need — our story, brand assets, press contact, and more.</p>
+
+                <h2>🚀 What is HustleHack AI?</h2>
+                <p>HustleHack AI is a modern AI-powered productivity toolkit built for students, creators, solopreneurs, and hustlers. We offer a growing library of:</p>
+                <ul>
+                    <li><strong>Curated AI tools</strong> - Hand-picked tools for maximum productivity</li>
+                    <li><strong>Weekly drops</strong> - PDFs, prompt packs, and templates delivered fresh</li>
+                    <li><strong>Learning roadmaps</strong> - Actionable blueprints for skill development</li>
+                    <li><strong>One-click workflows</strong> - Content generation made simple</li>
+                </ul>
+                <p>All designed to help ambitious users do more with less — using the power of AI.</p>
+
+                <h2>📌 At a Glance</h2>
+                <div class="at-glance-grid">
+                    <div class="at-glance-item">
+                        <div class="at-glance-label">Company Name</div>
+                        <div class="at-glance-value">HustleHack AI</div>
+                    </div>
+                    <div class="at-glance-item">
+                        <div class="at-glance-label">Founded</div>
+                        <div class="at-glance-value">2025</div>
+                    </div>
+                    <div class="at-glance-item">
+                        <div class="at-glance-label">Founder</div>
+                        <div class="at-glance-value">Nitin Paliwal</div>
+                    </div>
+                    <div class="at-glance-item">
+                        <div class="at-glance-label">Website</div>
+                        <div class="at-glance-value"><a href="https://hustlehackai.in" style="color: var(--primary);">hustlehackai.in</a></div>
+                    </div>
+                    <div class="at-glance-item">
+                        <div class="at-glance-label">Location</div>
+                        <div class="at-glance-value">India (Global audience)</div>
+                    </div>
+                    <div class="at-glance-item">
+                        <div class="at-glance-label">Product Type</div>
+                        <div class="at-glance-value">Micro-SaaS, Subscription-based</div>
+                    </div>
+                </div>
+
+                <h2>🖼️ Download Our Press Kit</h2>
+                <div class="download-box">
+                    <h3>Complete Media Package</h3>
+                    <p>Our comprehensive press kit includes everything you need for your story:</p>
+                    
+                    <div class="press-kit-list">
+                        <div class="press-kit-item">
+                            <strong>Logo Pack</strong>
+                            <p>SVG + PNG variations</p>
+                        </div>
+                        <div class="press-kit-item">
+                            <strong>Brand Guidelines</strong>
+                            <p>Colors & typography</p>
+                        </div>
+                        <div class="press-kit-item">
+                            <strong>Founder Bio</strong>
+                            <p>Bio + professional photo</p>
+                        </div>
+                        <div class="press-kit-item">
+                            <strong>Screenshots</strong>
+                            <p>Product interface & features</p>
+                        </div>
+                        <div class="press-kit-item">
+                            <strong>Recent Updates</strong>
+                            <p>Latest feature drops</p>
+                        </div>
+                        <div class="press-kit-item">
+                            <strong>One-Pager</strong>
+                            <p>Complete company overview</p>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="download-btn">📥 Download Media Kit (Coming Soon)</a>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-400);">Media kit will be available soon. Contact us for immediate access.</p>
+                </div>
+
+                <h2>🧠 Story Angles We Love</h2>
+                <p>Here are some compelling story angles we're excited to collaborate on:</p>
+                
+                <div class="story-angles">
+                    <div class="story-angle">
+                        <h4 style="color: var(--accent); margin-bottom: 1rem;">🏗️ Building with No-Code AI</h4>
+                        <p>How young founders are creating sophisticated AI tools without traditional coding.</p>
+                    </div>
+                    <div class="story-angle">
+                        <h4 style="color: var(--accent); margin-bottom: 1rem;">🇮🇳 Micro-SaaS from India</h4>
+                        <p>Small tools with global reach - the new wave of Indian entrepreneurship.</p>
+                    </div>
+                    <div class="story-angle">
+                        <h4 style="color: var(--accent); margin-bottom: 1rem;">🎓 AI for Career Advantage</h4>
+                        <p>How students and creators are using AI to accelerate their professional growth.</p>
+                    </div>
+                    <div class="story-angle">
+                        <h4 style="color: var(--accent); margin-bottom: 1rem;">💪 Building a Hustle Brand</h4>
+                        <p>Creating authentic brands around hustle, creativity, and real impact.</p>
+                    </div>
+                </div>
+
+                <h2>🎤 Interview & Media Requests</h2>
+                <div class="contact-box">
+                    <h3>Ready to Feature Us?</h3>
+                    <p>We're always open to press interviews, features, and collaborative content.</p>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-label">Founder Contact</div>
+                            <div class="contact-value">Nitin Paliwal</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value"><a href="mailto:hustlehackai@gmail.com">hustlehackai@gmail.com</a></div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">Instagram</div>
+                            <div class="contact-value"><a href="https://instagram.com/hustlehack.ai" target="_blank">@hustlehack.ai</a></div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">Response Time</div>
+                            <div class="contact-value">Within 24 hours</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>🧾 Previous Mentions</h2>
+                <div class="download-box" style="background: rgba(255, 255, 255, 0.02);">
+                    <h3 style="color: var(--gray-300);">Media Coverage</h3>
+                    <p>We're building our media presence! This section will showcase:</p>
+                    <ul style="text-align: left; max-width: 400px; margin: 1rem auto;">
+                        <li>Press features and articles</li>
+                        <li>Podcast guest appearances</li>
+                        <li>Student and creator testimonials</li>
+                        <li>Industry recognition</li>
+                    </ul>
+                    <p style="color: var(--accent); font-weight: 600;">Be the first to feature us!</p>
+                </div>
+
+                <div class="back-to-home">
+                    <a href="index.html">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: #0F0F1B; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="grid grid-4">
+                <div>
+                    <h3 style="color: white; margin-bottom: 1rem;">HustleHack AI</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 1rem;">Empowering the next generation of Indian creators and entrepreneurs with AI.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Instagram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Telegram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Twitter</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="index.html#features" style="color: var(--gray-400); text-decoration: none;">Features</a></li>
+                        <li><a href="index.html#pricing" style="color: var(--gray-400); text-decoration: none;">Pricing</a></li>
+                        <li><a href="resources.html" style="color: var(--gray-400); text-decoration: none;">Resources</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
+                        <li><a href="press.html" style="color: var(--accent); text-decoration: none; font-weight: 600;">Press</a></li>
+                        <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--gray-400);">© 2024 HustleHack AI. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

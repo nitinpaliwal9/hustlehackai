@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - HustleHack AI</title>
+    <meta name="description" content="Premium AI resources, toolkits, templates, and guides for students, creators, and entrepreneurs.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo (2).png"/>
+    
+    <!-- Additional CSS for Resources Page -->
+    <style>
+        .resources-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .resources-hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4rem;
+        }
+        
+        .resources-hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: white;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .resources-hero p {
+            font-size: 1.25rem;
+            color: var(--gray-300);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .resources-section {
+            margin-bottom: 6rem;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--gray-300);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .resource-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .resource-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .resource-card:hover::before {
+            opacity: 0.05;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(127, 90, 240, 0.2);
+        }
+        
+        .resource-card > * {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+        
+        .card-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .card-description {
+            color: var(--gray-300);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 8px 0;
+        }
+        
+        .card-link:hover {
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: var(--dark-bg);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 3;
+        }
+        
+        .featured-card {
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+        
+        .featured-card .card-badge {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .coming-soon-card {
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .coming-soon-card:hover {
+            transform: none;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tool-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .tool-name {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-description {
+            color: var(--gray-400);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .cta-section {
+            background: rgba(127, 90, 240, 0.1);
+            border: 1px solid rgba(127, 90, 240, 0.3);
+            border-radius: 24px;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin: 4rem 0;
+        }
+        
+        .cta-section h2 {
+            color: var(--accent);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            color: var(--gray-300);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .weekly-drops {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .drop-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+        
+        .drop-week {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .drop-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+        
+        .drop-description {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .drop-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-link:hover {
+            color: var(--accent);
+            transform: translateX(2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo (2).png" alt="HustleHack AI Logo" class="logo-icon" onerror="this.style.display='none'">
+                <span class="logo-text">HustleHack AI</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="resources.html" class="nav-link" style="color: var(--accent);">Resources</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle btn btn-ghost">🌙</button>
+                <a href="index.html#pricing" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Resources Content -->
+    <main class="section" style="padding-top: 100px;">
+        <div class="resources-content">
+            <!-- Hero Section -->
+            <div class="resources-hero">
+                <h1>🚀 Premium Resources</h1>
+                <p>Everything you need to accelerate your AI journey — handpicked tools, templates, guides, and exclusive content for the next-gen hustlers.</p>
+            </div>
+
+            <!-- Toolkits & Templates Section -->
+            <section class="resources-section">
+                <div class="section-header">
+                    <h2>🧰 Toolkits & Templates</h2>
+                    <p>Handpicked AI-ready templates for creators, students, and solopreneurs</p>
+                </div>
+                <div class="resource-cards">
+                    <div class="resource-card featured-card">
+                        <div class="card-badge">Popular</div>
+                        <span class="card-icon">📱</span>
+                        <h3 class="card-title">Social Media Prompt Pack</h3>
+                        <p class="card-description">50+ AI-ready prompts to automate your content calendar. Generate viral posts, engaging captions, trending hashtags, and strategic content plans across all platforms effortlessly.</p>
+                            <a href="/resources/toolkits-and-templates/social-media-prompt-pack/social-media-prompt-pack.html" class="btn btn-primary">Explore Pack →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">💼</span>
+                        <h3 class="card-title">Student Productivity Suite</h3>
+                        <p class="card-description">Complete toolkit for academic success. Note-taking templates, study planners, and AI study assistants.</p>
+                        <a href="/resources/toolkits-and-templates/student-productivity-suite/student-productivity-suite.html" class="card-link">Explore Suite →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">🎨</span>
+                        <h3 class="card-title">Creator's AI Toolkit</h3>
+                        <p class="card-description">Everything creators need: video scripts, thumbnail ideas, content calendars, and engagement strategies.</p>
+                        <a href="/resources/toolkits-and-templates/creators-ai-toolkit/creators-ai-toolkit.html" class="card-link">Explore Toolkit →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">🚀</span>
+                        <h3 class="card-title">Startup Launch Kit</h3>
+                        <p class="card-description">From idea to launch: business plan templates, pitch decks, marketing strategies, and growth hacks.</p>
+                        <a href="#" class="card-link">Launch Now →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">💰</span>
+                        <h3 class="card-title">Freelancer's Arsenal</h3>
+                        <p class="card-description">Client proposals, project templates, pricing calculators, and automated workflow setups.</p>
+                        <a href="#" class="card-link">Boost Income →</a>
+                    </div>
+                    
+                    <div class="resource-card coming-soon-card">
+                        <div class="card-badge">Coming Soon</div>
+                        <span class="card-icon">🤖</span>
+                        <h3 class="card-title">AI Automation Scripts</h3>
+                        <p class="card-description">Ready-to-use automation scripts for common tasks. No coding required, just copy and customize.</p>
+                        <a href="#" class="card-link" style="color: var(--gray-500);">Notify Me →</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Free Guides & Blueprints Section -->
+            <section class="resources-section">
+                <div class="section-header">
+                    <h2>📘 Free Guides & Blueprints</h2>
+                    <p>Step-by-step guides to master AI tools and grow your skills</p>
+                </div>
+                <div class="resource-cards">
+                    <div class="resource-card">
+                        <span class="card-icon">🎯</span>
+                        <h3 class="card-title">AI for Beginners</h3>
+                        <p class="card-description">Complete beginner's guide to AI. From ChatGPT basics to advanced prompting techniques in 30 days.</p>
+                        <a href="#" class="card-link">Start Learning →</a>
+                    </div>
+                    
+                    <div class="resource-card featured-card">
+                        <div class="card-badge">Most Downloaded</div>
+                        <span class="card-icon">📈</span>
+                        <h3 class="card-title">Growth Hacking with AI</h3>
+                        <p class="card-description">10 proven strategies to grow your audience using AI tools. Real case studies and actionable tactics.</p>
+                        <a href="#" class="card-link">Download Guide →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">🎓</span>
+                        <h3 class="card-title">Student Success Blueprint</h3>
+                        <p class="card-description">How to use AI for studying, research, assignments, and career preparation. Academic edge unlocked.</p>
+                        <a href="#" class="card-link">Get Blueprint →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">💡</span>
+                        <h3 class="card-title">AI Side Hustle Ideas</h3>
+                        <p class="card-description">50+ profitable side hustle ideas using AI. Start earning while learning, step-by-step execution guide.</p>
+                        <a href="#" class="card-link">Explore Ideas →</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weekly Drop Archive Section -->
+            <section class="resources-section">
+                <div class="section-header">
+                    <h2>📅 Weekly Drop Archive</h2>
+                    <p>Access our previous weekly drops - fresh AI resources delivered every week</p>
+                </div>
+                <div class="weekly-drops">
+                    <div class="drop-card">
+                        <div class="drop-week">Week 15 • Jan 2025</div>
+                        <h3 class="drop-title">AI Content Calendar Mastery</h3>
+                        <p class="drop-description">Complete system to plan, create, and schedule content using AI. Includes 30-day content ideas and automation workflows.</p>
+                        <a href="#" class="drop-link">View Drop →</a>
+                    </div>
+                    
+                    <div class="drop-card">
+                        <div class="drop-week">Week 14 • Jan 2025</div>
+                        <h3 class="drop-title">Student Research Assistant</h3>
+                        <p class="drop-description">AI prompts and tools for academic research. Find sources, summarize papers, and generate citations automatically.</p>
+                        <a href="#" class="drop-link">Access Drop →</a>
+                    </div>
+                    
+                    <div class="drop-card">
+                        <div class="drop-week">Week 13 • Jan 2025</div>
+                        <h3 class="drop-title">Viral Video Scripts Pack</h3>
+                        <p class="drop-description">25 proven video script templates for social media. Hooks, storytelling frameworks, and CTAs that convert.</p>
+                        <a href="#" class="drop-link">Get Scripts →</a>
+                    </div>
+                    
+                    <div class="drop-card">
+                        <div class="drop-week">Week 12 • Dec 2024</div>
+                        <h3 class="drop-title">AI Email Marketing Suite</h3>
+                        <p class="drop-description">Subject lines, email sequences, and newsletter templates powered by AI. Boost open rates and conversions.</p>
+                        <a href="#" class="drop-link">Download Suite →</a>
+                    </div>
+                    
+                    <div class="drop-card">
+                        <div class="drop-week">Week 11 • Dec 2024</div>
+                        <h3 class="drop-title">Freelancer Proposal Generator</h3>
+                        <p class="drop-description">AI-powered proposal templates that win clients. Pricing strategies and negotiation tactics included.</p>
+                        <a href="#" class="drop-link">View Drop →</a>
+                    </div>
+                    
+                    <div class="drop-card">
+                        <div class="drop-week">Week 10 • Dec 2024</div>
+                        <h3 class="drop-title">Social Media Automation</h3>
+                        <p class="drop-description">Set up automated posting, engagement, and growth systems. Complete setup guide and tool recommendations.</p>
+                        <a href="#" class="drop-link">Automate Now →</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Tools Stack Section -->
+            <section class="resources-section">
+                <div class="section-header">
+                    <h2>🛠️ AI Tools Stack</h2>
+                    <p>Curated collection of the best AI tools for productivity and creativity</p>
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <span class="tool-icon">🤖</span>
+                        <h3 class="tool-name">ChatGPT</h3>
+                        <p class="tool-description">Conversational AI for writing, coding, and problem-solving</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">🎨</span>
+                        <h3 class="tool-name">Midjourney</h3>
+                        <p class="tool-description">AI image generation for creative projects and content</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">✍️</span>
+                        <h3 class="tool-name">Notion AI</h3>
+                        <p class="tool-description">AI-powered workspace for notes, docs, and project management</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">🎥</span>
+                        <h3 class="tool-name">Runway ML</h3>
+                        <p class="tool-description">AI video editing and generation for content creators</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">📊</span>
+                        <h3 class="tool-name">Beautiful.AI</h3>
+                        <p class="tool-description">AI presentation maker for stunning slides and pitches</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">🔍</span>
+                        <h3 class="tool-name">Perplexity AI</h3>
+                        <p class="tool-description">AI search engine for research and information gathering</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">🎵</span>
+                        <h3 class="tool-name">Mubert</h3>
+                        <p class="tool-description">AI music generation for videos and content</p>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <span class="tool-icon">💬</span>
+                        <h3 class="tool-name">Copy.ai</h3>
+                        <p class="tool-description">AI copywriting for marketing and sales content</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reels & Video Shorts Section -->
+            <section class="resources-section">
+                <div class="section-header">
+                    <h2>🎥 Reels & Video Shorts</h2>
+                    <p>Quick video tutorials and tips to master AI tools on the go</p>
+                </div>
+                <div class="resource-cards">
+                    <div class="resource-card">
+                        <span class="card-icon">⚡</span>
+                        <h3 class="card-title">60-Second AI Tips</h3>
+                        <p class="card-description">Quick daily tips to improve your AI workflow. Bite-sized knowledge for busy hustlers.</p>
+                        <a href="#" class="card-link">Watch Series →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">🎬</span>
+                        <h3 class="card-title">Tool Tutorials</h3>
+                        <p class="card-description">Step-by-step video guides for popular AI tools. Learn by watching, practice by doing.</p>
+                        <a href="#" class="card-link">Start Watching →</a>
+                    </div>
+                    
+                    <div class="resource-card">
+                        <span class="card-icon">🔥</span>
+                        <h3 class="card-title">Success Stories</h3>
+                        <p class="card-description">Real stories from our community. See how others are using AI to transform their work and life.</p>
+                        <a href="#" class="card-link">Get Inspired →</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>🚀 Ready to Level Up?</h2>
+                <p>Join thousands of students, creators, and entrepreneurs who are already using AI to accelerate their success. Get access to all premium resources.</p>
+                <a href="index.html#pricing" class="btn btn-primary btn-lg">Get Full Access</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="section" style="background: #0F0F1B; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="grid grid-4">
+                <div>
+                    <h3 style="color: white; margin-bottom: 1rem;">HustleHack AI</h3>
+                    <p style="color: var(--gray-400); margin-bottom: 1rem;">Empowering the next generation of Indian creators and entrepreneurs with AI.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Instagram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Telegram</a>
+                        <a href="#" style="color: var(--primary); text-decoration: none;">Twitter</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="index.html#features" style="color: var(--gray-400); text-decoration: none;">Features</a></li>
+                        <li><a href="index.html#pricing" style="color: var(--gray-400); text-decoration: none;">Pricing</a></li>
+                        <li><a href="resources.html" style="color: var(--accent); text-decoration: none; font-weight: 600;">Resources</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="about.html" style="color: var(--gray-400); text-decoration: none;">About</a></li>
+                        <li><a href="#" style="color: var(--gray-400); text-decoration: none;">Careers</a></li>
+                        <li><a href="press.html" style="color: var(--gray-400); text-decoration: none;">Press</a></li>
+                        <li><a href="contact.html" style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: white; margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400);">
+                        <li><a href="privacy-policy.html" style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html" style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="cookie-policy.html" style="color: var(--gray-400); text-decoration: none;">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" style="color: var(--gray-400); text-decoration: none;">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: var(--gray-400);">© 2024 HustleHack AI. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

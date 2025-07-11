@@ -453,7 +453,8 @@ p {
 
 .btn-primary:hover {
   background: linear-gradient(135deg, #6B46C1, var(--primary));
-  transform: translateY(-2px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(127, 90, 240, 0.4);
   box-shadow: 0 8px 25px rgba(127, 90, 240, 0.4);
 }
 
@@ -465,7 +466,8 @@ p {
 
 .btn-accent:hover {
   background: #00E5B8;
-  transform: translateY(-2px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 194, 0.3);
   box-shadow: 0 8px 25px rgba(0, 255, 194, 0.3);
 }
 
@@ -589,10 +591,11 @@ p {
 }
 
 .card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 60px rgba(127, 90, 240, 0.2);
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(127, 90, 240, 0.2);
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.08);
+    filter: brightness(1.1);
 }
 
 .card-icon {

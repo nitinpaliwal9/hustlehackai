@@ -694,8 +694,10 @@ function openDashboard(user) {
     console.log('Opening dashboard for user:', user.email);
     showNotification('🎯 Opening your dashboard...', 'info');
     
-    // Create dashboard modal/overlay
-    createDashboardModal(user);
+    // Redirect to the actual dashboard page instead of modal
+    setTimeout(() => {
+        window.location.href = '/pages/dashboard.html';
+    }, 500);
 }
 
 // Create Dashboard Modal
@@ -1334,7 +1336,7 @@ function updateUIForUnauthenticatedUser() {
 }
 
 // Google Apps Script Integration for Form Submissions
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGP3LBv95cc7VC0ciOFBor-Pc_4RLDcxWm4IFsGe-0wJcF5cUWqzsDom6tBIqppbqKYA/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
 // Enhanced form submission with Google Apps Script logging
 async function submitToGoogleSheets(formData) {

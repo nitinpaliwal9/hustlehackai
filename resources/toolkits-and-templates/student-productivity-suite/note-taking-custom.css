@@ -1,0 +1,182 @@
+/* Advanced Custom Styles for Note-Taking Templates */
+
+:root {
+  --note-shadow-hover: 0 20px 30px rgba(127, 90, 240, 0.5);
+  --note-transition-duration: 0.4s;
+  --note-gradient: linear-gradient(135deg, #7F5AF0, #00FFC2);
+}
+
+.note-card {
+  background: var(--bg-surface);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow var(--transition-normal), transform var(--transition-fast);
+  overflow: hidden;
+  position: relative;
+}
+
+.note-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--note-gradient);
+  opacity: 0.1;
+  transition: opacity var(--transition-slow);
+  z-index: 0;
+}
+
+.note-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--note-shadow-hover);
+}
+
+.note-heading {
+  font-family: var(--font-display);
+  color: var(--primary);
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.note-content {
+  color: var(--text-light);
+  line-height: 1.8;
+  font-size: 1.125rem;
+  position: relative;
+  z-index: 1;
+}
+
+.note-icon {
+  font-size: 3rem;
+  color: var(--accent);
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.note-link {
+  display: inline-block;
+  margin-top: var(--spacing-lg);
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.note-link:hover {
+  color: var(--accent);
+  transform: translateX(5px);
+}
+
+@media(max-width: 768px) {
+  .note-card {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Additional Responsive Design for Note Cards */
+
+@media (max-width: 992px) {
+  .note-card {
+    padding: var(--spacing-lg);
+    flex-direction: column;
+  }
+
+  .note-icon {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .note-card {
+    padding: var(--spacing-md);
+  }
+
+  .note-heading {
+    font-size: 1.75rem;
+  }
+
+  .note-content {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .note-link {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animations and Further Enhancements */
+
+@keyframes cardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.note-card.animate {
+  animation: cardFadeUp var(--note-transition-duration) ease-out forwards;
+}
+
+/* Advanced Hover Effects for Note Cards */
+
+.note-card:hover::before {
+  opacity: 0.15;
+}
+
+.note-card:hover .note-heading {
+  color: var(--accent);
+}
+
+.note-card:hover .note-content {
+  color: var(--text-secondary);
+}
+
+.note-card:hover .note-icon {
+  filter: drop-shadow(0 4px 10px rgba(0, 255, 194, 0.5));
+}
+
+.note-card:hover .note-link {
+  text-decoration: underline;
+}
+
+/* Custom Scrollbar for Note Cards */
+
+.note-card-content {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) rgba(255, 255, 255, 0.1);
+}
+
+.note-card-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.note-card-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+.note-card-content::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: var(--primary);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.note-card-content::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}

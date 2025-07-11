@@ -353,24 +353,41 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Notification System
-function showNotification(message, type = 'info') {
+// Enhanced Notification System with network status
+function showNotification(message, type = 'info', duration = 3000) {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
-    notification.textContent = message;
     
-    // Styling
+    // Add icons based on type
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    const icon = icons[type] || icons.info;
+    notification.innerHTML = `<span style="margin-right: 8px;">${icon}</span>${message}`;
+    
+    // Enhanced styling
     Object.assign(notification.style, {
         position: 'fixed',
         top: '20px',
         right: '20px',
         padding: '1rem 1.5rem',
-        borderRadius: '0.5rem',
+        borderRadius: '12px',
         color: 'white',
         fontWeight: '500',
         zIndex: '3000',
         transform: 'translateX(100%)',
-        transition: 'transform 0.3s ease-in-out'
+        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(10px)',
+        display: 'flex',
+        alignItems: 'center',
+        maxWidth: '400px',
+        fontSize: '14px',
+        lineHeight: '1.5'
     });
     
     // Type-specific styling

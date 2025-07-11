@@ -1288,6 +1288,31 @@ function updateUIForUnauthenticatedUser() {
     console.log('✅ UI updated for unauthenticated user');
 }
 
+// Google Apps Script Integration for Form Submissions
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGP3LBv95cc7VC0ciOFBor-Pc_4RLDcxWm4IFsGe-0wJcF5cUWqzsDom6tBIqppbqKYA/exec';
+
+// Enhanced form submission with Google Apps Script logging
+async function submitToGoogleSheets(formData) {
+    try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Important for Google Apps Script
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        // Note: no-cors mode means we can't read the response
+        // but the request will still be processed by Google Apps Script
+        console.log('✅ Form data sent to Google Apps Script');
+        return true;
+    } catch (error) {
+        console.error('❌ Failed to submit to Google Apps Script:', error);
+        return false;
+    }
+}
+
 // Handle user sign out - ENHANCED
 async function handleSignOut(e) {
     e.preventDefault();

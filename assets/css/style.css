@@ -453,8 +453,7 @@ p {
 
 .btn-primary:hover {
   background: linear-gradient(135deg, #6B46C1, var(--primary));
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(127, 90, 240, 0.4);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(127, 90, 240, 0.4);
 }
 
@@ -466,8 +465,7 @@ p {
 
 .btn-accent:hover {
   background: #00E5B8;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 255, 194, 0.3);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 255, 194, 0.3);
 }
 

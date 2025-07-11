@@ -1571,6 +1571,22 @@ async function handleSignup(e) {
             console.error('DB Error:', dbError);
         } else {
             showNotification('🎉 Account created successfully!', 'success');
+            
+            // Log to Google Apps Script for analytics
+            const analyticsData = {
+                type: 'signup',
+                name: name,
+                email: email,
+                role: role,
+                device: device,
+                timestamp: timestamp,
+                userId: user.id
+            };
+            
+            // Submit to Google Apps Script (async, non-blocking)
+            submitToGoogleSheets(analyticsData).catch(err => {
+                console.warn('⚠️ Analytics logging failed:', err);
+            });
         }
 
         // Cleanup

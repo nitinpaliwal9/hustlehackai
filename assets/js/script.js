@@ -1022,32 +1022,21 @@ async function handleGoogleSignIn() {
             }
         });
 
-        // FIX 1: Only show error if it's a real error, not during redirection
-        if (error && error.message && !error.message.includes('redirect')) {
-            console.error('❌ Google login error:', error);
-            showNotification('Failed to start Google login. Please try again.', 'error');
-            setButtonLoading(button, false);
-            return;
-        }
-
-        console.log('✅ Google OAuth flow started...');
-        // Note: User will be redirected to Google, so button state will reset automatically
-        updateAuthUI();
+        // Don't show error notifications for OAuth redirects - they're normal behavior
+        console.log('✅ Google OAuth flow initiated successfully');
+        // Note: User will be redirected to Google, button loading state will reset on page change
 
     } catch (error) {
         console.error('❌ Google login error:', error);
         
-        // Skip toast if error is just the OAuth redirect notice
-        if (error.message && error.message.includes('redirect')) {
-            // This is just a normal redirect, not a real error
-            console.log('ℹ️ OAuth redirect initiated, this is normal');
-            return;
+        // Only show error notifications for actual authentication failures, not redirects
+        if (error && !error.message?.includes('redirect') && !error.message?.includes('popup') && !error.message?.includes('window')) {
+            showNotification('Failed to initiate Google login. Please try again.', 'error');
+            const button = event.target.closest('.btn-google') || event.target;
+            setButtonLoading(button, false);
+        } else {
+            console.log('ℹ️ Google OAuth redirect initiated (this is normal behavior)');
         }
-        
-        // Only show error toast for genuine errors
-        showNotification('An error occurred during Google login.', 'error');
-        const button = event.target.closest('.btn-google') || event.target;
-        setButtonLoading(button, false);
     }
 }
 

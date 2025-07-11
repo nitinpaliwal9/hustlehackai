@@ -407,7 +407,7 @@ function showNotification(message, type = 'info', duration = 3000) {
         notification.style.transform = 'translateX(0)';
     }, 10);
     
-    // Remove after 3 seconds
+    // Remove after specified duration
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
@@ -415,8 +415,36 @@ function showNotification(message, type = 'info', duration = 3000) {
                 notification.parentNode.removeChild(notification);
             }
         }, 300);
-    }, 3000);
+    }, duration);
+    
+    // Add click to dismiss
+    notification.addEventListener('click', () => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    });
 }
+
+// Network status detection
+function checkNetworkStatus() {
+    if (!navigator.onLine) {
+        showNotification('You are offline. Some features may not work.', 'warning', 5000);
+        return false;
+    }
+    return true;
+}
+
+// Listen for network status changes
+window.addEventListener('online', () => {
+    showNotification('Connection restored!', 'success');
+});
+
+window.addEventListener('offline', () => {
+    showNotification('You are offline. Check your internet connection.', 'error', 5000);
+});
 
 // Scroll Effects
 function initializeScrollEffects() {
@@ -1396,6 +1424,11 @@ async function handleLogin(e) {
     e.preventDefault();
     console.log('🔐 Login function called');
     
+    // Check network status first
+    if (!checkNetworkStatus()) {
+        return;
+    }
+    
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     
@@ -1484,6 +1517,11 @@ async function handleLogin(e) {
 async function handleSignup(e) {
     e.preventDefault();
     console.log('🧠 Signup function called');
+
+    // Check network status first
+    if (!checkNetworkStatus()) {
+        return;
+    }
 
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();

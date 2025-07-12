@@ -19,12 +19,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeAuthSystem(); // Updated to handle both signup and login
     addRealTimeValidation(); // Already exists
     initializeDashboardButton();
+    ensureMobileMenuToggleVisibility(); // Ensure hamburger menu is always visible on mobile
 });
 
 // Initialize auth state checking on page load
 window.addEventListener('load', async () => {
     console.log('🔄 Checking auth state on page load...');
     await checkAuthStateOnLoad();
+});
+
+// Handle window resize to ensure mobile menu toggle remains visible
+window.addEventListener('resize', function() {
+    ensureMobileMenuToggleVisibility();
 });
 
 // Check for existing session on page load
@@ -116,6 +122,15 @@ function toggleMobileMenu() {
         if (navActions && !navMenu.contains(navActions)) {
             const navActionsClone = navActions.cloneNode(true);
             navActionsClone.style.display = 'flex';
+            
+            // For authenticated users, ensure profile dropdown is visible in mobile menu
+            const profileDropdown = navActionsClone.querySelector('.profile-dropdown');
+            if (profileDropdown && profileDropdown.style.display === 'inline-block') {
+                profileDropdown.style.display = 'block';
+                profileDropdown.style.width = '100%';
+                profileDropdown.style.marginTop = '10px';
+            }
+            
             navMenu.appendChild(navActionsClone);
         }
     }
@@ -686,6 +701,27 @@ function initializeProfileDropdown() {
 // Check if device is mobile
 function isMobileDevice() {
     return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Ensure mobile menu toggle is always visible on mobile devices
+function ensureMobileMenuToggleVisibility() {
+    if (isMobileDevice()) {
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.style.display = 'flex';
+            mobileMenuToggle.style.visibility = 'visible';
+            mobileMenuToggle.style.position = 'absolute';
+            mobileMenuToggle.style.right = '16px';
+            mobileMenuToggle.style.zIndex = '1004';
+            mobileMenuToggle.style.opacity = '1';
+            mobileMenuToggle.style.pointerEvents = 'auto';
+            console.log('✅ Mobile menu toggle visibility ensured - Window width:', window.innerWidth);
+        } else {
+            console.warn('⚠️ Mobile menu toggle not found in DOM');
+        }
+    } else {
+        console.log('💻 Not a mobile device - Window width:', window.innerWidth);
+    }
 }
 
 // Open User Profile/Dashboard
@@ -1332,6 +1368,13 @@ function updateUIForAuthenticatedUser(user) {
         if (isMobileDevice()) {
             profileDropdown.classList.add('mobile-visible');
         }
+        
+        // Ensure mobile menu toggle is always visible
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        if (mobileMenuToggle && isMobileDevice()) {
+            mobileMenuToggle.style.display = 'flex';
+            mobileMenuToggle.style.visibility = 'visible';
+        }
     }
     
     // Update hero actions - replace login buttons with dashboard button
@@ -1384,6 +1427,13 @@ function updateUIForUnauthenticatedUser() {
         const profileDropdown = document.getElementById('profileDropdown');
         if (profileDropdown) {
             profileDropdown.classList.remove('mobile-visible');
+        }
+        
+        // Ensure mobile menu toggle is always visible
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.style.display = 'flex';
+            mobileMenuToggle.style.visibility = 'visible';
         }
     }
     

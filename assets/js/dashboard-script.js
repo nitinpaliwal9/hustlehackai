@@ -46,37 +46,112 @@ const elements = {
     dashboardSidebar: document.getElementById('dashboardSidebar')
 };
 
-// Initialize Dashboard
-window.addEventListener('load', function() {
-    console.log('🚀 Initializing HustleHack AI Dashboard...');
-    updateLoadingProgress(30, 'Connecting to services...');
+// Global debugging flag
+window.DEBUG_MODE = true;
+window.dashboardLoaded = false;
+
+// Enhanced logging function
+function debugLog(level, message, data = null) {
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
     
-    // Updated safety net with error handling and progress feedback
+    if (level === 'error') {
+        console.error(logMessage, data || '');
+    } else if (level === 'warn') {
+        console.warn(logMessage, data || '');
+    } else {
+        console.log(logMessage, data || '');
+    }
+    
+    // Also log to a global array for debugging
+    if (!window.debugLogs) window.debugLogs = [];
+    window.debugLogs.push({ timestamp, level, message, data });
+}
+
+// Initialize Dashboard with extensive logging
+window.addEventListener('load', function() {
+    debugLog('info', '🚀 DASHBOARD LOAD EVENT TRIGGERED');
+    debugLog('info', 'Window location:', window.location.href);
+    debugLog('info', 'User agent:', navigator.userAgent);
+    debugLog('info', 'Document readyState:', document.readyState);
+    
+    // Check if critical elements exist
+    debugLog('info', 'Checking critical DOM elements...');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const dashboardContainer = document.getElementById('dashboardContainer');
+    const errorScreen = document.getElementById('errorScreen');
+    
+    debugLog('info', 'Loading screen exists:', !!loadingScreen);
+    debugLog('info', 'Dashboard container exists:', !!dashboardContainer);
+    debugLog('info', 'Error screen exists:', !!errorScreen);
+    
+    // Check Supabase availability
+    debugLog('info', 'Checking Supabase availability...');
+    debugLog('info', 'Window.supabase exists:', !!window.supabase);
+    if (window.supabase) {
+        debugLog('info', 'Supabase client type:', typeof window.supabase);
+    }
+    
+    updateLoadingProgress(30, 'Connecting to services...');
+    debugLog('info', 'Loading progress updated to 30%');
+    
+    // Enhanced safety net with detailed logging
     setTimeout(() => {
-        if (!dashboardLoaded) {
-            console.warn('⚠️ Loading system delay detected, attempting recovery...');
+        debugLog('warn', 'Safety timeout triggered after 8 seconds');
+        debugLog('warn', 'Dashboard loaded status:', window.dashboardLoaded);
+        
+        if (!window.dashboardLoaded) {
+            debugLog('warn', '⚠️ Loading system delay detected, attempting recovery...');
             updateLoadingProgress(70, 'Attempting to recover...');
+            
+            // Log current state
+            debugLog('warn', 'Current user:', currentUser);
+            debugLog('warn', 'User profile:', userProfile);
+            debugLog('warn', 'Usage stats:', usageStats);
+            
             setTimeout(() => {
-                updateLoadingProgress(100, 'Almost there...');
+                debugLog('error', 'Final recovery timeout reached');
+                updateLoadingProgress(100, 'Loading failed...');
                 hideLoadingScreen();
-                document.getElementById('errorScreen').style.display = 'flex';
-                console.error('❌ Final error: Unable to fully load dashboard!');
+                const errorScreen = document.getElementById('errorScreen');
+                if (errorScreen) {
+                    errorScreen.style.display = 'flex';
+                    debugLog('error', 'Error screen displayed');
+                } else {
+                    debugLog('error', 'Error screen not found!');
+                }
+                debugLog('error', '❌ FINAL ERROR: Unable to fully load dashboard!');
             }, 3000);
         }
     }, 8000);
     
-    initializeDashboard();
+    debugLog('info', 'Starting dashboard initialization...');
+    initializeDashboard().catch(error => {
+        debugLog('error', 'Dashboard initialization promise rejected:', error);
+    });
 });
 
 function updateLoadingProgress(percent, statusText) {
+    debugLog('info', `Updating loading progress: ${percent}% - ${statusText}`);
+    
     const progressBar = document.querySelector('.progress-fill');
     const statusElement = document.getElementById('loadingStatus');
 
+    debugLog('info', 'Progress bar element found:', !!progressBar);
+    debugLog('info', 'Status element found:', !!statusElement);
+
     if (progressBar) {
         progressBar.style.width = `${percent}%`;
+        debugLog('info', 'Progress bar updated successfully');
+    } else {
+        debugLog('warn', 'Progress bar element not found!');
     }
+    
     if (statusElement) {
         statusElement.textContent = statusText;
+        debugLog('info', 'Status text updated successfully');
+    } else {
+        debugLog('warn', 'Status element not found!');
     }
 }
 
@@ -117,119 +192,195 @@ function updateCurrentTime() {
 }
 
 async function initializeDashboard() {
+    debugLog('info', '=== STARTING DASHBOARD INITIALIZATION ===');
     window.dashboardLoaded = false;
     let attempts = 0;
     const maxAttempts = 3;
     
     async function attemptInitialization() {
         attempts++;
-        console.log(`🚀 Starting dashboard initialization... (Attempt ${attempts}/${maxAttempts})`);
+        debugLog('info', `🚀 Dashboard initialization attempt ${attempts}/${maxAttempts}`);
+        debugLog('info', 'Current window.dashboardLoaded status:', window.dashboardLoaded);
+        
         updateLoadingProgress(40, `Loading attempt ${attempts}...`);
         
         try {
+            // Check Supabase client availability first
+            debugLog('info', 'Verifying Supabase client...');
+            if (!window.supabase) {
+                throw new Error('Supabase client not available');
+            }
+            debugLog('info', 'Supabase client confirmed available');
+            
             // Check authentication with improved error handling
-            console.log('🔍 Checking authentication...');
+            debugLog('info', '🔍 Starting authentication check...');
             updateLoadingProgress(50, 'Verifying credentials...');
             
             let user = null;
             let authError = null;
             
             try {
-                const authResult = await Promise.race([
-                    window.supabase.auth.getUser(),
-                    new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Auth timeout')), 4000)
-                    )
-                ]);
+                debugLog('info', 'Calling supabase.auth.getUser()...');
+                const authPromise = window.supabase.auth.getUser();
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Auth timeout after 4 seconds')), 4000)
+                );
+                
+                debugLog('info', 'Waiting for auth result with 4s timeout...');
+                const authResult = await Promise.race([authPromise, timeoutPromise]);
+                
+                debugLog('info', 'Auth result received:', {
+                    hasData: !!authResult.data,
+                    hasUser: !!authResult.data?.user,
+                    hasError: !!authResult.error
+                });
                 
                 user = authResult.data?.user;
                 authError = authResult.error;
                 
-                console.log('Auth result:', { user: !!user, error: authError });
+                if (user) {
+                    debugLog('info', 'User data:', {
+                        id: user.id,
+                        email: user.email,
+                        created_at: user.created_at
+                    });
+                } else {
+                    debugLog('warn', 'No user data in auth result');
+                }
+                
+                if (authError) {
+                    debugLog('error', 'Auth error details:', authError);
+                }
+                
             } catch (timeoutError) {
-                console.error('❌ Auth check timed out:', timeoutError);
-                throw new Error('Authentication service timeout');
+                debugLog('error', '❌ Auth check timed out:', timeoutError);
+                throw new Error('Authentication service timeout: ' + timeoutError.message);
             }
             
             if (authError || !user) {
-                console.error('❌ Authentication failed:', authError);
+                debugLog('error', '❌ Authentication failed');
+                debugLog('error', 'Auth error:', authError);
+                debugLog('error', 'User exists:', !!user);
                 throw new Error('Authentication failed: ' + (authError?.message || 'No user found'));
             }
             
             currentUser = user;
-            console.log('✅ User authenticated:', user.email);
+            debugLog('info', '✅ User authenticated successfully:', user.email);
             updateLoadingProgress(60, 'Loading user profile...');
             
             // Check and auto-initialize user profile
-            console.log('👤 Checking user profile...');
-            const profileResult = await checkAndInitializeUser(user, true);
+            debugLog('info', '👤 Starting user profile check...');
+            
+            let profileResult;
+            try {
+                profileResult = await checkAndInitializeUser(user, true);
+                debugLog('info', 'Profile check result:', {
+                    needsRedirect: profileResult.needsRedirect,
+                    isNewUser: profileResult.isNewUser,
+                    hasProfile: !!profileResult.userProfile
+                });
+            } catch (profileError) {
+                debugLog('error', 'Profile check failed:', profileError);
+                throw new Error('Failed to load user profile: ' + profileError.message);
+            }
             
             if (profileResult.needsRedirect) {
-                console.log('📝 Redirecting to complete profile...');
+                debugLog('info', '📝 Profile incomplete, redirecting to complete profile...');
                 window.location.href = '/complete-profile.html';
                 return;
             }
             
             userProfile = profileResult.userProfile;
+            debugLog('info', 'User profile loaded:', {
+                name: userProfile?.name,
+                email: userProfile?.email,
+                plan: userProfile?.plan
+            });
+            
             updateLoadingProgress(70, 'Loading dashboard data...');
             
             // Load dashboard data with error handling
+            debugLog('info', 'Starting parallel data loading...');
             const dataPromises = [
                 loadUsageStats().catch(err => {
-                    console.warn('⚠️ Usage stats load failed:', err);
+                    debugLog('warn', '⚠️ Usage stats load failed:', err);
                     usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
+                    return 'usage_stats_failed';
                 }),
                 loadAvailableResources().catch(err => {
-                    console.warn('⚠️ Resources load failed:', err);
+                    debugLog('warn', '⚠️ Resources load failed:', err);
                     availableResources = [];
+                    return 'resources_failed';
                 }),
                 loadRecentActivity().catch(err => {
-                    console.warn('⚠️ Activity load failed:', err);
+                    debugLog('warn', '⚠️ Activity load failed:', err);
                     recentActivity = [];
+                    return 'activity_failed';
                 })
             ];
             
-            await Promise.all(dataPromises);
+            const dataResults = await Promise.all(dataPromises);
+            debugLog('info', 'Data loading results:', dataResults);
+            
             updateLoadingProgress(85, 'Finalizing setup...');
             
             // Initialize UI components
-            initializeNavigation();
-            initializeMobileMenu();
-            initializeRealTimeFeatures();
-            updateUserInterface();
+            debugLog('info', 'Initializing UI components...');
+            try {
+                initializeNavigation();
+                debugLog('info', 'Navigation initialized');
+                
+                initializeMobileMenu();
+                debugLog('info', 'Mobile menu initialized');
+                
+                initializeRealTimeFeatures();
+                debugLog('info', 'Real-time features initialized');
+                
+                updateUserInterface();
+                debugLog('info', 'User interface updated');
+            } catch (uiError) {
+                debugLog('error', 'UI initialization error:', uiError);
+                // Continue anyway, UI errors shouldn't stop the dashboard
+            }
             
             updateLoadingProgress(100, 'Complete!');
             
             // Mark as loaded and show dashboard
             window.dashboardLoaded = true;
+            debugLog('info', '✅ Dashboard marked as loaded!');
             
             setTimeout(() => {
+                debugLog('info', 'Showing dashboard after 500ms delay...');
                 hideLoadingScreen();
                 showDashboard();
                 
                 // Show appropriate welcome message
                 if (profileResult.isNewUser) {
+                    debugLog('info', 'Showing welcome message for new user');
                     if (profileResult.isProfileComplete) {
                         showWelcomeCompletedUser(userProfile);
                     } else {
                         showWelcomeNewUser(userProfile);
                     }
                 } else {
+                    debugLog('info', 'Showing welcome back message');
                     showToast('Welcome back! Dashboard loaded successfully.', 'success');
                 }
             }, 500);
             
-            console.log('✅ Dashboard initialized successfully!');
+            debugLog('info', '✅ DASHBOARD INITIALIZATION COMPLETED SUCCESSFULLY!');
             
         } catch (error) {
-            console.error(`❌ Dashboard initialization failed (Attempt ${attempts}):`, error);
+            debugLog('error', `❌ Dashboard initialization failed (Attempt ${attempts}):`, error);
+            debugLog('error', 'Error stack:', error.stack);
             
             if (attempts < maxAttempts) {
-                console.log(`🔄 Retrying in 2 seconds... (${maxAttempts - attempts} attempts left)`);
+                debugLog('info', `🔄 Retrying in 2 seconds... (${maxAttempts - attempts} attempts left)`);
                 updateLoadingProgress(20, `Retrying... (${attempts}/${maxAttempts})`);
                 setTimeout(() => attemptInitialization(), 2000);
             } else {
-                console.error('❌ All initialization attempts failed, showing error screen');
+                debugLog('error', '❌ ALL INITIALIZATION ATTEMPTS FAILED!');
+                debugLog('error', 'Showing error screen with message:', error.message);
                 hideLoadingScreen();
                 showErrorScreen(error.message);
             }
@@ -237,7 +388,13 @@ async function initializeDashboard() {
     }
     
     // Start the initialization process
-    await attemptInitialization();
+    debugLog('info', 'Calling attemptInitialization()...');
+    try {
+        await attemptInitialization();
+    } catch (finalError) {
+        debugLog('error', 'FINAL CATCH: Dashboard initialization completely failed:', finalError);
+    }
+    debugLog('info', '=== DASHBOARD INITIALIZATION PROCESS ENDED ===');
 }
 
 // ====================================
@@ -520,36 +677,68 @@ async function autoInitializeNewUser(user) {
 
 // Enhanced user profile check with auto-initialization
 async function checkAndInitializeUser(user, autoInitialize = true) {
+    debugLog('info', '=== STARTING USER PROFILE CHECK ===');
+    debugLog('info', 'User ID:', user.id);
+    debugLog('info', 'User email:', user.email);
+    debugLog('info', 'Auto-initialize enabled:', autoInitialize);
+    
     try {
-        console.log('👤 Checking user profile for:', user.email);
+        debugLog('info', '👤 Querying user profile from database...');
         
-        const { data: userRow, error: profileError } = await supabase
+        const profileQuery = supabase
             .from('users')
             .select('*')
             .eq('id', user.id)
             .single();
+            
+        debugLog('info', 'Profile query created, executing...');
+        const { data: userRow, error: profileError } = await profileQuery;
+        
+        debugLog('info', 'Profile query completed');
+        debugLog('info', 'Has profile data:', !!userRow);
+        debugLog('info', 'Has profile error:', !!profileError);
         
         if (profileError) {
+            debugLog('error', 'Profile error details:', {
+                code: profileError.code,
+                message: profileError.message,
+                details: profileError.details
+            });
+            
             if (profileError.code === 'PGRST116') {
                 // No profile found
-                console.log('📝 No profile found for user:', user.email);
+                debugLog('info', '📝 No profile found for user:', user.email);
                 
                 if (autoInitialize) {
-                    // Auto-initialize the user
-                    const newProfile = await autoInitializeNewUser(user);
-                    return { userProfile: newProfile, isNewUser: true };
+                    debugLog('info', 'Auto-initializing new user profile...');
+                    try {
+                        const newProfile = await autoInitializeNewUser(user);
+                        debugLog('info', 'New profile created successfully:', newProfile);
+                        return { userProfile: newProfile, isNewUser: true };
+                    } catch (initError) {
+                        debugLog('error', 'Failed to auto-initialize user:', initError);
+                        throw initError;
+                    }
                 } else {
-                    // Redirect to complete profile
+                    debugLog('info', 'Auto-initialization disabled, redirect needed');
                     return { userProfile: null, isNewUser: true, needsRedirect: true };
                 }
             } else {
                 // Other database error
-                console.error('❌ Profile check failed:', profileError);
+                debugLog('error', '❌ Profile check failed with database error');
                 throw profileError;
             }
         } else {
             // Profile exists
-            console.log('✅ User profile found:', userRow.name);
+            debugLog('info', '✅ User profile found in database');
+            debugLog('info', 'Profile data:', {
+                name: userRow.name,
+                email: userRow.email,
+                role: userRow.role,
+                plan: userRow.plan,
+                profile_completed: userRow.profile_completed,
+                last_login: userRow.last_login
+            });
             
             // Check if this is a recently completed profile (has all required fields)
             const isRecentlyCompleted = userRow.profile_completed === true && 
@@ -557,18 +746,27 @@ async function checkAndInitializeUser(user, autoInitialize = true) {
                                       userRow.name && 
                                       userRow.role;
             
+            debugLog('info', 'Profile completion status:', isRecentlyCompleted);
+            
             // Consider it a "new" user experience if profile was just completed
             const wasJustCompleted = isRecentlyCompleted && !userRow.last_login;
+            debugLog('info', 'Was just completed:', wasJustCompleted);
             
-            return { 
+            const result = { 
                 userProfile: userRow, 
                 isNewUser: wasJustCompleted,
                 isProfileComplete: isRecentlyCompleted
             };
+            
+            debugLog('info', 'Profile check result:', result);
+            return result;
         }
     } catch (error) {
-        console.error('❌ User check failed:', error);
+        debugLog('error', '❌ User profile check failed with exception:', error);
+        debugLog('error', 'Error stack:', error.stack);
         throw error;
+    } finally {
+        debugLog('info', '=== USER PROFILE CHECK COMPLETED ===');
     }
 }
 

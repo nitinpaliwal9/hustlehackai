@@ -49,19 +49,36 @@ const elements = {
 // Initialize Dashboard
 window.addEventListener('load', function() {
     console.log('🚀 Initializing HustleHack AI Dashboard...');
+    updateLoadingProgress(30, 'Connecting to services...');
     
-    // Backup safety net - force hide loading screen after 5 seconds no matter what
+    // Updated safety net with error handling and progress feedback
     setTimeout(() => {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen && loadingScreen.style.display !== 'none') {
-            console.warn('🚨 EMERGENCY: Force hiding stuck loading screen');
-            hideLoadingScreen();
-            loadFallbackDashboard();
+        if (!dashboardLoaded) {
+            console.warn('⚠️ Loading system delay detected, attempting recovery...');
+            updateLoadingProgress(70, 'Attempting to recover...');
+            setTimeout(() => {
+                updateLoadingProgress(100, 'Almost there...');
+                hideLoadingScreen();
+                document.getElementById('errorScreen').style.display = 'flex';
+                console.error('❌ Final error: Unable to fully load dashboard!');
+            }, 3000);
         }
-    }, 5000);
+    }, 8000);
     
     initializeDashboard();
 });
+
+function updateLoadingProgress(percent, statusText) {
+    const progressBar = document.querySelector('.progress-fill');
+    const statusElement = document.getElementById('loadingStatus');
+
+    if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+    }
+    if (statusElement) {
+        statusElement.textContent = statusText;
+    }
+}
 
 // Add fallback functions for missing methods
 function initializeMobileMenu() {
@@ -100,140 +117,127 @@ function updateCurrentTime() {
 }
 
 async function initializeDashboard() {
-    let dashboardLoaded = false;
-    try {
-        console.log('🔄 Starting dashboard initialization...');
-        
-        // Shorter timeout for better UX
-        const timeoutId = setTimeout(() => {
-            if (!dashboardLoaded) {
-                console.warn('⚠️ Dashboard loading timed out, showing fallback');
-                hideLoadingScreen();
-                loadFallbackDashboard();
-                showToast('Dashboard loaded with limited functionality. Please refresh if needed.', 'warning');
-            }
-        }, 8000); // 8 second timeout
-        
-        // Check authentication with better error handling
-        console.log('🔍 Checking authentication...');
-        let user = null;
-        let authError = null;
+    window.dashboardLoaded = false;
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    async function attemptInitialization() {
+        attempts++;
+        console.log(`🚀 Starting dashboard initialization... (Attempt ${attempts}/${maxAttempts})`);
+        updateLoadingProgress(40, `Loading attempt ${attempts}...`);
         
         try {
-            const authResult = await Promise.race([
-                window.supabase.auth.getUser(),
-                new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Auth timeout')), 3000)
-                )
-            ]);
+            // Check authentication with improved error handling
+            console.log('🔍 Checking authentication...');
+            updateLoadingProgress(50, 'Verifying credentials...');
             
-            user = authResult.data?.user;
-            authError = authResult.error;
+            let user = null;
+            let authError = null;
             
-            console.log('Auth result:', { user: !!user, error: authError });
-        } catch (timeoutError) {
-            console.error('❌ Auth check timed out:', timeoutError);
-            authError = timeoutError;
-        }
-        
-        if (authError || !user) {
-            console.error('❌ Authentication failed:', authError);
-            clearTimeout(timeoutId);
-            
-            // Don't redirect immediately - show fallback first
-            hideLoadingScreen();
-            loadFallbackDashboard();
-            showToast('Authentication required. Please sign in.', 'warning');
-            
-            // Delayed redirect to avoid jarring experience
-            setTimeout(() => {
-                window.location.href = '/pages/login.html';
-            }, 3000);
-            return;
-        }
-        
-        currentUser = user;
-        console.log('✅ User authenticated:', user.email);
-        
-        // 🚀 NEW: Check and auto-initialize user profile
-        console.log('👤 Checking user profile...');
-        const profileResult = await checkAndInitializeUser(user, true); // auto-initialize enabled
-        
-        if (profileResult.needsRedirect) {
-            // This shouldn't happen with auto-initialization enabled, but just in case
-            console.log('📝 Redirecting to complete profile...');
-            clearTimeout(timeoutId);
-            window.location.href = '/complete-profile.html';
-            return;
-        }
-        
-        userProfile = profileResult.userProfile;
-        
-        // Welcome message for new users
-        if (profileResult.isNewUser) {
-            console.log('🎉 Welcome new user!');
-            // We'll show a special welcome message later
-        }
-        
-        // 3. Fetch all dashboard data in parallel
-        await Promise.all([
-            loadUsageStats().catch(err => {
-                console.warn('⚠️ Usage stats load failed:', err);
-                usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
-            }),
-            loadAvailableResources().catch(err => {
-                console.warn('⚠️ Resources load failed:', err);
-                availableResources = [];
-            }),
-            loadRecentActivity().catch(err => {
-                console.warn('⚠️ Activity load failed:', err);
-                recentActivity = [];
-            })
-        ]);
-        
-        console.log('✅ Dashboard data loaded');
-        
-        // Mark as loaded and show dashboard
-        dashboardLoaded = true;
-        clearTimeout(timeoutId);
-        showDashboard();
-        
-        // Initialize UI components
-        console.log('🎨 Initializing UI components...');
-        initializeNavigation();
-        initializeMobileMenu();
-        initializeRealTimeFeatures();
-        
-        // Update UI with loaded data
-        console.log('🔄 Updating user interface...');
-        updateUserInterface();
-        
-        // Clear timeout and hide loading screen
-        clearTimeout(timeoutId);
-        hideLoadingScreen();
-        
-        console.log('✅ Dashboard initialized successfully!');
-        
-        // Show appropriate welcome message
-        if (profileResult.isNewUser) {
-            if (profileResult.isProfileComplete) {
-                // User just completed their profile manually
-                showWelcomeCompletedUser(userProfile);
-            } else {
-                // User was auto-initialized
-                showWelcomeNewUser(userProfile);
+            try {
+                const authResult = await Promise.race([
+                    window.supabase.auth.getUser(),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Auth timeout')), 4000)
+                    )
+                ]);
+                
+                user = authResult.data?.user;
+                authError = authResult.error;
+                
+                console.log('Auth result:', { user: !!user, error: authError });
+            } catch (timeoutError) {
+                console.error('❌ Auth check timed out:', timeoutError);
+                throw new Error('Authentication service timeout');
             }
-        } else {
-            showToast('Welcome back! Dashboard loaded successfully.', 'success');
+            
+            if (authError || !user) {
+                console.error('❌ Authentication failed:', authError);
+                throw new Error('Authentication failed: ' + (authError?.message || 'No user found'));
+            }
+            
+            currentUser = user;
+            console.log('✅ User authenticated:', user.email);
+            updateLoadingProgress(60, 'Loading user profile...');
+            
+            // Check and auto-initialize user profile
+            console.log('👤 Checking user profile...');
+            const profileResult = await checkAndInitializeUser(user, true);
+            
+            if (profileResult.needsRedirect) {
+                console.log('📝 Redirecting to complete profile...');
+                window.location.href = '/complete-profile.html';
+                return;
+            }
+            
+            userProfile = profileResult.userProfile;
+            updateLoadingProgress(70, 'Loading dashboard data...');
+            
+            // Load dashboard data with error handling
+            const dataPromises = [
+                loadUsageStats().catch(err => {
+                    console.warn('⚠️ Usage stats load failed:', err);
+                    usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
+                }),
+                loadAvailableResources().catch(err => {
+                    console.warn('⚠️ Resources load failed:', err);
+                    availableResources = [];
+                }),
+                loadRecentActivity().catch(err => {
+                    console.warn('⚠️ Activity load failed:', err);
+                    recentActivity = [];
+                })
+            ];
+            
+            await Promise.all(dataPromises);
+            updateLoadingProgress(85, 'Finalizing setup...');
+            
+            // Initialize UI components
+            initializeNavigation();
+            initializeMobileMenu();
+            initializeRealTimeFeatures();
+            updateUserInterface();
+            
+            updateLoadingProgress(100, 'Complete!');
+            
+            // Mark as loaded and show dashboard
+            window.dashboardLoaded = true;
+            
+            setTimeout(() => {
+                hideLoadingScreen();
+                showDashboard();
+                
+                // Show appropriate welcome message
+                if (profileResult.isNewUser) {
+                    if (profileResult.isProfileComplete) {
+                        showWelcomeCompletedUser(userProfile);
+                    } else {
+                        showWelcomeNewUser(userProfile);
+                    }
+                } else {
+                    showToast('Welcome back! Dashboard loaded successfully.', 'success');
+                }
+            }, 500);
+            
+            console.log('✅ Dashboard initialized successfully!');
+            
+        } catch (error) {
+            console.error(`❌ Dashboard initialization failed (Attempt ${attempts}):`, error);
+            
+            if (attempts < maxAttempts) {
+                console.log(`🔄 Retrying in 2 seconds... (${maxAttempts - attempts} attempts left)`);
+                updateLoadingProgress(20, `Retrying... (${attempts}/${maxAttempts})`);
+                setTimeout(() => attemptInitialization(), 2000);
+            } else {
+                console.error('❌ All initialization attempts failed, showing error screen');
+                hideLoadingScreen();
+                showErrorScreen(error.message);
+            }
         }
-        
-    } catch (error) {
-        console.error('❌ Dashboard initialization failed:', error);
-        dashboardLoaded = false;
-        hideLoadingScreen();
-        loadFallbackDashboard();
-        showToast('Dashboard initialization failed. Running in fallback mode.', 'error');
     }
+    
+    // Start the initialization process
+    await attemptInitialization();
 }
 
 // ====================================
@@ -885,25 +889,81 @@ function updateOverviewSection() {
 // Loading Screen Management
 function showLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
+    const errorScreen = document.getElementById('errorScreen');
     if (loadingScreen) {
-        loadingScreen.classList.remove('hidden');
+        loadingScreen.style.display = 'flex';
+    }
+    if (errorScreen) {
+        errorScreen.style.display = 'none';
     }
 }
 
 function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
-    const dashboardContainer = document.getElementById('dashboardContainer');
-    
     if (loadingScreen) {
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            
-            // Show dashboard container
-            if (dashboardContainer) {
-                dashboardContainer.style.display = 'block';
-            }
-        }, 1000);
+        loadingScreen.style.display = 'none';
     }
+}
+
+function showDashboard() {
+    const dashboardContainer = document.getElementById('dashboardContainer');
+    if (dashboardContainer) {
+        dashboardContainer.style.display = 'block';
+    }
+}
+
+function showErrorScreen(errorMessage) {
+    const errorScreen = document.getElementById('errorScreen');
+    const errorMessageEl = document.getElementById('errorMessage');
+    
+    if (errorScreen) {
+        errorScreen.style.display = 'flex';
+    }
+    if (errorMessageEl && errorMessage) {
+        errorMessageEl.textContent = errorMessage;
+    }
+}
+
+function retryDashboard() {
+    console.log('🔄 User requested dashboard retry');
+    const errorScreen = document.getElementById('errorScreen');
+    if (errorScreen) {
+        errorScreen.style.display = 'none';
+    }
+    showLoadingScreen();
+    updateLoadingProgress(0, 'Retrying...');
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+
+function showOfflineMode() {
+    console.log('🌐 Loading offline mode');
+    hideLoadingScreen();
+    const errorScreen = document.getElementById('errorScreen');
+    if (errorScreen) {
+        errorScreen.style.display = 'none';
+    }
+    loadOfflineDashboard();
+}
+
+function loadOfflineDashboard() {
+    // Set fallback data for offline mode
+    userProfile = {
+        name: 'User',
+        email: 'user@example.com',
+        role: 'Member',
+        plan: 'Offline Mode'
+    };
+    
+    usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
+    availableResources = [];
+    recentActivity = [];
+    
+    // Initialize basic UI
+    updateUserInterface();
+    showDashboard();
+    showToast('Running in offline mode. Some features may be limited.', 'warning');
 }
 
 // ====================================

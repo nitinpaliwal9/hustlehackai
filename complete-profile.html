@@ -490,7 +490,10 @@
                     email: formData.get('email').trim(),
                     phone: formData.get('phone').trim(),
                     role: formData.get('role'),
-                    created_at: new Date().toISOString()
+                    plan: 'starter', // Default plan
+                    profile_completed: true, // Mark as completed
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 };
 
                 // Validate data

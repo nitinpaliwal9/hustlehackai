@@ -116,37 +116,24 @@ async function initializeDashboard() {
         currentUser = user;
         console.log('✅ User authenticated:', user.email);
         
-        // 🚨 NEW: Check if user profile exists BEFORE loading dashboard
-        console.log('👤 Checking if user profile exists...');
-        const { data: userRow, error: profileError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
+        // 🚀 NEW: Check and auto-initialize user profile
+        console.log('👤 Checking user profile...');
+        const profileResult = await checkAndInitializeUser(user, true); // auto-initialize enabled
         
-        if (profileError) {
-            if (profileError.code === 'PGRST116') {
-                // No profile found - redirect to complete profile
-                console.log('📝 No profile found, redirecting to complete profile');
-                clearTimeout(timeoutId);
-                window.location.href = '/complete-profile.html';
-                return;
-            } else {
-                // Other database error - try to continue with fallback
-                console.error('❌ Profile check failed:', profileError);
-                userProfile = {
-                    id: currentUser.id,
-                    name: currentUser.email?.split('@')[0] || 'User',
-                    email: currentUser.email,
-                    role: 'User',
-                    plan: 'Pro',
-                    timestamp: currentUser.created_at
-                };
-            }
-        } else {
-            // Profile exists, use it
-            userProfile = userRow;
-            console.log('✅ User profile loaded:', userProfile.name);
+        if (profileResult.needsRedirect) {
+            // This shouldn't happen with auto-initialization enabled, but just in case
+            console.log('📝 Redirecting to complete profile...');
+            clearTimeout(timeoutId);
+            window.location.href = '/complete-profile.html';
+            return;
+        }
+        
+        userProfile = profileResult.userProfile;
+        
+        // Welcome message for new users
+        if (profileResult.isNewUser) {
+            console.log('🎉 Welcome new user!');
+            // We'll show a special welcome message later
         }
         
         // Load remaining dashboard data in parallel with individual error handling
@@ -187,12 +174,149 @@ async function initializeDashboard() {
         hideLoadingScreen();
         
         console.log('✅ Dashboard initialized successfully!');
-        showToast('Welcome back! Dashboard loaded successfully.', 'success');
+        
+        // Show appropriate welcome message
+        if (profileResult.isNewUser) {
+            showWelcomeNewUser(userProfile);
+        } else {
+            showToast('Welcome back! Dashboard loaded successfully.', 'success');
+        }
         
     } catch (error) {
         console.error('❌ Dashboard initialization failed:', error);
         showToast('Failed to load dashboard. Please refresh the page.', 'error');
         hideLoadingScreen();
+    }
+}
+
+// ====================================
+// NEW USER ONBOARDING
+// ====================================
+
+// Welcome new users with onboarding
+function showWelcomeNewUser(userProfile) {
+    console.log('🎉 Showing welcome message for new user:', userProfile.name);
+    
+    // Show welcome toast
+    showToast(`🎉 Welcome to HustleHack AI, ${userProfile.name}! Your profile has been created.`, 'success');
+    
+    // Show onboarding modal after a delay
+    setTimeout(() => {
+        showOnboardingModal(userProfile);
+    }, 2000);
+}
+
+// Show onboarding modal for new users
+function showOnboardingModal(userProfile) {
+    const modal = document.createElement('div');
+    modal.id = 'onboardingModal';
+    modal.className = 'modal onboarding-modal';
+    modal.style.display = 'block';
+    
+    modal.innerHTML = `
+        <div class="modal-content onboarding-content">
+            <div class="onboarding-header">
+                <div class="onboarding-icon">🚀</div>
+                <h2>Welcome to HustleHack AI!</h2>
+                <p>Hi ${userProfile.name}, your account has been set up with default settings.</p>
+            </div>
+            
+            <div class="onboarding-steps">
+                <div class="onboarding-step">
+                    <div class="step-icon">📝</div>
+                    <div class="step-content">
+                        <h3>Complete Your Profile</h3>
+                        <p>Add your phone number and choose your role to get personalized resources.</p>
+                    </div>
+                </div>
+                
+                <div class="onboarding-step">
+                    <div class="step-icon">🎁</div>
+                    <div class="step-content">
+                        <h3>Explore Resources</h3>
+                        <p>Check out our starter resources designed for ${userProfile.role}s.</p>
+                    </div>
+                </div>
+                
+                <div class="onboarding-step">
+                    <div class="step-icon">🚀</div>
+                    <div class="step-content">
+                        <h3>Upgrade When Ready</h3>
+                        <p>Unlock premium features and advanced AI tools anytime.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="onboarding-actions">
+                <button class="btn btn-primary" onclick="completeProfile()">
+                    📝 Complete Profile
+                </button>
+                <button class="btn btn-ghost" onclick="skipOnboarding()">
+                    Skip for Now
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Complete profile action
+function completeProfile() {
+    closeOnboardingModal();
+    window.location.href = '/complete-profile.html';
+}
+
+// Skip onboarding
+function skipOnboarding() {
+    closeOnboardingModal();
+    showToast('You can complete your profile anytime from the Profile section.', 'info');
+}
+
+// Close onboarding modal
+function closeOnboardingModal() {
+    const modal = document.getElementById('onboardingModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Check if user profile is incomplete and show reminder
+function checkProfileCompletion() {
+    if (userProfile && userProfile.profile_completed === false) {
+        // Show subtle reminder in UI
+        showIncompleteProfileReminder();
+    }
+}
+
+// Show incomplete profile reminder
+function showIncompleteProfileReminder() {
+    const reminder = document.createElement('div');
+    reminder.className = 'profile-reminder';
+    reminder.innerHTML = `
+        <div class="reminder-content">
+            <span class="reminder-icon">📝</span>
+            <span class="reminder-text">Complete your profile to unlock personalized features</span>
+            <button class="btn btn-sm btn-primary" onclick="completeProfile()">
+                Complete Now
+            </button>
+            <button class="btn btn-sm btn-ghost" onclick="dismissReminder()">
+                ×
+            </button>
+        </div>
+    `;
+    
+    const container = document.querySelector('.dashboard-main');
+    if (container) {
+        container.insertBefore(reminder, container.firstChild);
+    }
+}
+
+// Dismiss profile reminder
+function dismissReminder() {
+    const reminder = document.querySelector('.profile-reminder');
+    if (reminder) {
+        reminder.remove();
     }
 }
 
@@ -208,6 +332,88 @@ function redirectToLogin() {
 // ====================================
 // DATA LOADING FUNCTIONS
 // ====================================
+
+// Auto-initialize new users with default profile
+async function autoInitializeNewUser(user) {
+    try {
+        console.log('🔄 Auto-initializing new user profile for:', user.email);
+        
+        // Extract name from email (before @)
+        const defaultName = user.email.split('@')[0].replace(/[._-]/g, ' ');
+        
+        // Create default profile
+        const newProfile = {
+            id: user.id,
+            email: user.email,
+            name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+            phone: '', // Will be filled later
+            role: 'student', // Default role
+            plan: 'starter', // Default plan
+            plan_expiry: null, // No expiry for starter
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            profile_completed: false // Mark as incomplete for later completion
+        };
+        
+        const { data, error } = await supabase
+            .from('users')
+            .insert([newProfile])
+            .select()
+            .single();
+        
+        if (error) {
+            console.error('❌ Failed to auto-initialize user:', error);
+            throw error;
+        }
+        
+        console.log('✅ User auto-initialized successfully:', data.name);
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Auto-initialization failed:', error);
+        throw error;
+    }
+}
+
+// Enhanced user profile check with auto-initialization
+async function checkAndInitializeUser(user, autoInitialize = true) {
+    try {
+        console.log('👤 Checking user profile for:', user.email);
+        
+        const { data: userRow, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+        
+        if (profileError) {
+            if (profileError.code === 'PGRST116') {
+                // No profile found
+                console.log('📝 No profile found for user:', user.email);
+                
+                if (autoInitialize) {
+                    // Auto-initialize the user
+                    const newProfile = await autoInitializeNewUser(user);
+                    return { userProfile: newProfile, isNewUser: true };
+                } else {
+                    // Redirect to complete profile
+                    return { userProfile: null, isNewUser: true, needsRedirect: true };
+                }
+            } else {
+                // Other database error
+                console.error('❌ Profile check failed:', profileError);
+                throw profileError;
+            }
+        } else {
+            // Profile exists
+            console.log('✅ User profile found:', userRow.name);
+            return { userProfile: userRow, isNewUser: false };
+        }
+    } catch (error) {
+        console.error('❌ User check failed:', error);
+        throw error;
+    }
+}
 
 // Profile loading is now handled directly in initializeDashboard()
 // This function is kept for backwards compatibility but redirects to main flow

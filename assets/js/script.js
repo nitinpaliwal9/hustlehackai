@@ -673,7 +673,13 @@ function initializeProfileDropdown() {
                         // Force show nav-actions on mobile when profile is visible
                         const navActions = document.querySelector('.nav-actions');
                         if (navActions) {
-                            navActions.style.display = 'flex';
+                            navActions.classList.add('show-profile');
+                        }
+                    } else if (profileDropdown.style.display === 'none') {
+                        // Hide nav-actions on mobile when profile is hidden
+                        const navActions = document.querySelector('.nav-actions');
+                        if (navActions) {
+                            navActions.classList.remove('show-profile');
                         }
                     }
                 }
@@ -1330,8 +1336,8 @@ function updateUIForAuthenticatedUser(user) {
         
         // Force show nav-actions on mobile when profile dropdown is shown
         const navActions = document.querySelector('.nav-actions');
-        if (navActions) {
-            navActions.style.display = 'flex';
+        if (navActions && isMobileDevice()) {
+            navActions.classList.add('show-profile');
         }
     }
     
@@ -1383,7 +1389,7 @@ function updateUIForUnauthenticatedUser() {
     // Hide nav-actions on mobile when no profile dropdown
     const navActions = document.querySelector('.nav-actions');
     if (navActions && isMobileDevice()) {
-        navActions.style.display = 'none';
+        navActions.classList.remove('show-profile');
     }
     
     // Reset hero actions

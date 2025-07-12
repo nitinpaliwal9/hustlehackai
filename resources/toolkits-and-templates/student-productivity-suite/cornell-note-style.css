@@ -1,0 +1,154 @@
+/* Cornell Note-Taking System Styles */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #1e293b;
+    color: #f1f5f9;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+header.hero {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: #7B61FF;
+    color: white;
+}
+
+.cta-btn {
+    background-color: #A5B4FC;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.how-it-works {
+    display: flex;
+    padding: 2rem;
+    justify-content: space-between;
+}
+
+.diagram {
+    flex: 1;
+    margin-right: 2rem;
+    background: #2d3748;
+    border-radius: 8px;
+}
+
+.explanation {
+    flex: 1;
+}
+
+.why-it-works {
+    background: #334155;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+}
+
+.benefit-cards {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+}
+
+.card {
+    flex: 1;
+    margin: 0 1rem;
+    padding: 1rem;
+    background: #475569;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.template-download {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.tabs {
+    margin-bottom: 1rem;
+}
+
+.tabs button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #1e293b;
+    color: white;
+    border: 1px solid #334155;
+}
+
+.bonus-tips {
+    padding: 2rem;
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+.pro-tip {
+    font-size: 1rem;
+    background: #4c51bf;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.routine {
+    list-style-type: decimal;
+    margin-left: 1.5rem;
+}
+
+.testimonials {
+    padding: 2rem;
+    background: #1e293b;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.testimonial-card {
+    background: #434c5e;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 200px;
+}
+
+.avatar {
+    background: #7B61FF;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto 0.5rem;
+}
+
+.faq {
+    padding: 2rem;
+    background: #0f172a;
+    margin-top: 2rem;
+    border-radius: 8px;
+    text-align: center;
+}

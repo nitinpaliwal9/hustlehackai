@@ -1603,57 +1603,22 @@ async function handleSignup(e) {
             return;
         }
 
-        // Step 2: Wait for session (for RLS insert)
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        const user = sessionData?.session?.user;
-        console.log("👤 Session user ID:", user?.id);
-
-        if (!user || sessionError) {
-            showNotification("⚠️ Signup succeeded, but login session not ready. Check your email.", 'warning');
-            console.error("Session Error:", sessionError);
-            return;
-        }
-
-        // Step 3: Insert user into 'users' table with plan defaults
-        const planStart = new Date();
-        const planExpiry = new Date(Date.now() + 30 * 86400000); // 30 days from now
+        // Step 2: Email signup successful - user will complete profile after email confirmation
+        showNotification('🎉 Account created successfully!', 'success');
         
-        const { error: dbError } = await supabase.from('users').insert([
-            {
-                id: user.id,
-                name,
-                email: user.email,
-                role,
-                device,
-                timestamp,
-                plan: "starter",
-                plan_start: planStart,
-                plan_expiry: planExpiry
-            }
-        ]);
-
-        if (dbError) {
-            showNotification('⚠️ Account created, but profile setup incomplete.', 'warning');
-            console.error('DB Error:', dbError);
-        } else {
-            showNotification('🎉 Account created successfully!', 'success');
-            
-            // Log to Google Apps Script for analytics
-            const analyticsData = {
-                type: 'signup',
-                name: name,
-                email: email,
-                role: role,
-                device: device,
-                timestamp: timestamp,
-                userId: user.id
-            };
-            
-            // Submit to Google Apps Script (async, non-blocking)
-            submitToGoogleSheets(analyticsData).catch(err => {
-                console.warn('⚠️ Analytics logging failed:', err);
-            });
-        }
+        // Log to Google Apps Script for analytics (without user ID since profile not created yet)
+        const analyticsData = {
+            type: 'signup_initiated',
+            email: email,
+            role: role,
+            device: device,
+            timestamp: timestamp
+        };
+        
+        // Submit to Google Apps Script (async, non-blocking)
+        submitToGoogleSheets(analyticsData).catch(err => {
+            console.warn('⚠️ Analytics logging failed:', err);
+        });
 
         // Cleanup
         document.getElementById('signupForm').reset();
@@ -1663,11 +1628,6 @@ async function handleSignup(e) {
         setTimeout(() => {
             showNotification('📧 Please check your email to verify your account.', 'info');
         }, 1500);
-        
-        setTimeout(() => {
-            showNotification('✨ Welcome to HustleHack AI! Redirecting to dashboard...', 'success');
-            window.location.href = '/pages/dashboard.html';
-        }, 3000);
     } catch (err) {
         console.error('Signup Error:', err);
         showNotification('❌ An unexpected error occurred.', 'error');

@@ -1213,6 +1213,25 @@ select.form-input:focus {
     display: none;
   }
   
+  /* Keep profile dropdown visible on mobile when user is logged in */
+  .nav-actions .profile-dropdown {
+    display: inline-block !important;
+  }
+  
+  /* Hide auth buttons on mobile but keep profile dropdown */
+  .nav-actions .btn:not(.profile-btn) {
+    display: none !important;
+  }
+  
+  .nav-actions .theme-toggle {
+    display: none !important;
+  }
+  
+  /* Show nav-actions when profile dropdown is present */
+  .nav-actions:has(.profile-dropdown[style*="inline-block"]) {
+    display: flex !important;
+  }
+  
   /* Improve mobile modal sizing */
   .modal-content {
     margin: 20px;

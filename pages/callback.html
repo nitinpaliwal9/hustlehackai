@@ -321,27 +321,28 @@
                 // Wait a moment for the auth state to settle
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Get current session
-                const { data: { session }, error } = await supabase.auth.getSession();
+                // Get current user (recommended approach for OAuth callbacks)
+                const { data: { user }, error } = await supabase.auth.getUser();
                 
                 if (error) {
-                    console.error('❌ Session error:', error);
+                    console.error('❌ Auth error:', error);
                     showError('Authentication failed. Please try again.');
                     return;
                 }
                 
-                if (session && session.user) {
-                    console.log('✅ User authenticated:', session.user.email);
+                if (user) {
+                    console.log('✅ User authenticated:', user.email);
+                    console.log('📋 User metadata:', user.user_metadata);
                     
                     // Save user to database
-                    const saved = await saveUserToDatabase(session.user);
+                    const saved = await saveUserToDatabase(user);
                     
                     if (!saved) {
                         console.warn('⚠️ User not saved to database, but proceeding with login');
                     }
                     
                     // Show success state
-                    showSuccess('Authentication successful!', session.user);
+                    showSuccess('Authentication successful!', user);
                     
                     // Redirect to dashboard/home after delay
                     setTimeout(() => {

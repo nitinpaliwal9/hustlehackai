@@ -1,43 +1,91 @@
-// ========================================
-//    HUSTLEHACK AI - DASHBOARD SCRIPT 2.0
-//    Enhanced, Mobile-First, Feature-Rich
-// ========================================
+// ====================================
+// HUSTLEHACK AI - DASHBOARD SCRIPT 3.0
+// Real-time Supabase Backend Integration
+// Dynamic User Data & Usage Tracking
+// ====================================
 
+// Initialize Supabase
+const supabase = window.supabase.createClient(
+    'https://bmgvtzwesdkitdjfszsh.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+);
+
+// Global state
 let currentUser = null;
 let userProfile = null;
+let usageStats = null;
+let availableResources = [];
+let recentActivity = [];
 let isLoading = true;
-let dashboardData = {
-    stats: {},
-    activity: [],
-    resources: [],
-    notifications: []
+
+// DOM Elements Cache
+const elements = {
+    // Loading and content areas
+    loadingScreen: document.getElementById('loadingScreen'),
+    
+    // User profile elements
+    sidebarUserName: document.getElementById('sidebarUserName'),
+    sidebarUserRole: document.getElementById('sidebarUserRole'),
+    userProfileName: document.getElementById('userProfileName'),
+    userPlanName: document.getElementById('userPlanName'),
+    userPlanBadge: document.getElementById('userPlanBadge'),
+    
+    // Plan status elements
+    planUsagePercent: document.getElementById('planUsagePercent'),
+    planProgressFill: document.getElementById('planProgressFill'),
+    planUsageText: document.getElementById('planUsageText'),
+    daysRemaining: document.getElementById('daysRemaining'),
+    planRenewal: document.getElementById('planRenewal'),
+    btnRenewPlan: document.getElementById('btnRenewPlan'),
+    
+    // Navigation and sections
+    sidebarLinks: document.querySelectorAll('.sidebar-link'),
+    dashboardSections: document.querySelectorAll('.dashboard-section'),
+    resourceCount: document.getElementById('resourceCount'),
+    activityDot: document.getElementById('activityDot'),
+    
+    // Mobile
+    mobileSidebarToggle: document.getElementById('mobileSidebarToggle'),
+    dashboardSidebar: document.getElementById('dashboardSidebar')
 };
 
 // Initialize Dashboard
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Initializing HustleHack AI Dashboard...');
-    
-    // Start loading sequence
-    showLoadingScreen();
-    
-    // Initialize components
     initializeDashboard();
 });
 
 async function initializeDashboard() {
     try {
-        // Check authentication
-        await checkAuthenticationStatus();
+        console.log('🔄 Starting dashboard initialization...');
+        
+        // Check authentication first
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error || !user) {
+            console.error('❌ Authentication failed:', error);
+            redirectToLogin();
+            return;
+        }
+        
+        currentUser = user;
+        console.log('✅ User authenticated:', user.email);
+        
+        // Load all dashboard data in parallel
+        await Promise.all([
+            loadUserProfile(),
+            loadUsageStats(),
+            loadAvailableResources(),
+            loadRecentActivity()
+        ]);
         
         // Initialize UI components
         initializeNavigation();
         initializeMobileMenu();
-        initializeNotifications();
-        initializeSearch();
         initializeRealTimeFeatures();
         
-        // Load dashboard data
-        await loadAllDashboardData();
+        // Update UI with loaded data
+        updateUserInterface();
         
         // Hide loading screen
         hideLoadingScreen();
@@ -52,6 +100,273 @@ async function initializeDashboard() {
     }
 }
 
+// ====================================
+// AUTHENTICATION & UTILITIES
+// ====================================
+
+function redirectToLogin() {
+    console.log('🔄 Redirecting to login...');
+    window.location.href = '/pages/login.html';
+}
+
+// ====================================
+// DATA LOADING FUNCTIONS
+// ====================================
+
+// Load user profile from database
+async function loadUserProfile() {
+    try {
+        console.log('👤 Loading user profile...');
+        
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+        
+        if (error) {
+            console.error('❌ Error loading user profile:', error);
+            if (error.code === 'PGRST116') {
+                console.log('📝 Profile not found, redirecting to complete profile');
+                window.location.href = '/complete-profile.html';
+                return;
+            }
+            throw error;
+        }
+        
+        userProfile = data;
+        console.log('✅ User profile loaded:', userProfile.name);
+        
+    } catch (error) {
+        console.error('❌ Failed to load user profile:', error);
+        throw error;
+    }
+}
+
+// Load usage statistics
+async function loadUsageStats() {
+    try {
+        console.log('📊 Loading usage statistics...');
+        
+        // Get total usage count
+        const { data: allUsage, error: totalError } = await supabase
+            .from('usage_logs')
+            .select('*')
+            .eq('user_id', currentUser.id);
+        
+        if (totalError) throw totalError;
+        
+        // Get usage for last 7 days
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        
+        const { data: recentUsage, error: recentError } = await supabase
+            .from('usage_logs')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .gte('timestamp', sevenDaysAgo.toISOString());
+        
+        if (recentError) throw recentError;
+        
+        // Group usage by type
+        const usageByType = allUsage.reduce((acc, log) => {
+            acc[log.action_type] = (acc[log.action_type] || 0) + 1;
+            return acc;
+        }, {});
+        
+        usageStats = {
+            total: allUsage.length,
+            recent: recentUsage.length,
+            byType: usageByType,
+            logs: allUsage
+        };
+        
+        console.log('✅ Usage statistics loaded:', usageStats);
+        
+    } catch (error) {
+        console.error('❌ Failed to load usage statistics:', error);
+        usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
+    }
+}
+
+// Load available resources based on user's plan
+async function loadAvailableResources() {
+    try {
+        console.log('🎁 Loading available resources...');
+        
+        const { data, error } = await supabase
+            .from('resources')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        // Filter resources based on user's plan
+        const userPlan = userProfile?.plan || 'starter';
+        const planHierarchy = { starter: 1, creator: 2, pro: 3 };
+        const userPlanLevel = planHierarchy[userPlan] || 1;
+        
+        availableResources = data.filter(resource => {
+            const resourcePlanLevel = planHierarchy[resource.plan_required] || 1;
+            return resourcePlanLevel <= userPlanLevel;
+        });
+        
+        console.log(`✅ Loaded ${availableResources.length} resources for ${userPlan} plan`);
+        
+        // Update resource count in sidebar
+        if (elements.resourceCount) {
+            elements.resourceCount.textContent = availableResources.length;
+        }
+        
+    } catch (error) {
+        console.error('❌ Failed to load resources:', error);
+        availableResources = [];
+    }
+}
+
+// Load recent activity
+async function loadRecentActivity() {
+    try {
+        console.log('⚡ Loading recent activity...');
+        
+        const { data, error } = await supabase
+            .from('usage_logs')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .order('timestamp', { ascending: false })
+            .limit(10);
+        
+        if (error) throw error;
+        
+        recentActivity = data;
+        console.log(`✅ Loaded ${data.length} recent activities`);
+        
+    } catch (error) {
+        console.error('❌ Failed to load recent activity:', error);
+        recentActivity = [];
+    }
+}
+
+// ====================================
+// UI UPDATE FUNCTIONS
+// ====================================
+
+// Update user interface with loaded data
+function updateUserInterface() {
+    updateUserProfile();
+    updatePlanStatus();
+    updateNavigationCounts();
+    updateOverviewSection();
+}
+
+// Update user profile display
+function updateUserProfile() {
+    if (!userProfile) return;
+    
+    // Update sidebar user info
+    if (elements.sidebarUserName) {
+        elements.sidebarUserName.textContent = userProfile.name || 'User';
+    }
+    
+    if (elements.sidebarUserRole) {
+        elements.sidebarUserRole.textContent = userProfile.role ? 
+            userProfile.role.charAt(0).toUpperCase() + userProfile.role.slice(1) : 
+            'Member';
+    }
+    
+    // Update navbar profile name
+    if (elements.userProfileName) {
+        elements.userProfileName.textContent = userProfile.name || 'User';
+    }
+    
+    // Update plan badge
+    if (elements.userPlanName) {
+        const planName = userProfile.plan || 'starter';
+        elements.userPlanName.textContent = planName.charAt(0).toUpperCase() + planName.slice(1);
+    }
+    
+    console.log('✅ User profile UI updated');
+}
+
+// Update plan status display
+function updatePlanStatus() {
+    if (!userProfile) return;
+    
+    const planExpiry = userProfile.plan_expiry ? new Date(userProfile.plan_expiry) : null;
+    const now = new Date();
+    
+    if (planExpiry) {
+        const daysRemaining = Math.ceil((planExpiry - now) / (1000 * 60 * 60 * 24));
+        const isExpired = daysRemaining <= 0;
+        const isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
+        
+        // Update days remaining
+        if (elements.daysRemaining) {
+            if (isExpired) {
+                elements.daysRemaining.textContent = 'Expired';
+                elements.daysRemaining.style.color = '#ef4444';
+            } else {
+                elements.daysRemaining.textContent = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left`;
+                elements.daysRemaining.style.color = isExpiringSoon ? '#f59e0b' : '#22c55e';
+            }
+        }
+        
+        // Update progress bar (based on usage)
+        const totalUsage = usageStats?.total || 0;
+        const mockMaxUsage = 100; // You can make this dynamic based on plan
+        const usagePercent = Math.min((totalUsage / mockMaxUsage) * 100, 100);
+        
+        if (elements.planUsagePercent) {
+            elements.planUsagePercent.textContent = `${Math.round(usagePercent)}%`;
+        }
+        if (elements.planProgressFill) {
+            elements.planProgressFill.style.width = `${usagePercent}%`;
+        }
+        if (elements.planUsageText) {
+            elements.planUsageText.textContent = `${totalUsage} resources accessed`;
+        }
+    }
+    
+    console.log('✅ Plan status UI updated');
+}
+
+// Update navigation counts and indicators
+function updateNavigationCounts() {
+    // Update activity indicator
+    if (elements.activityDot && usageStats?.recent > 0) {
+        elements.activityDot.style.display = 'block';
+    }
+    
+    console.log('✅ Navigation counts updated');
+}
+
+// Update overview section with stats
+function updateOverviewSection() {
+    // Update overview stats cards if they exist
+    const statsElements = {
+        totalUsage: document.querySelector('#stat-total-usage'),
+        recentActivity: document.querySelector('#stat-recent-activity'),
+        availableResources: document.querySelector('#stat-available-resources'),
+        planStatus: document.querySelector('#stat-plan-status')
+    };
+    
+    if (statsElements.totalUsage) {
+        statsElements.totalUsage.textContent = usageStats?.total || 0;
+    }
+    
+    if (statsElements.recentActivity) {
+        statsElements.recentActivity.textContent = usageStats?.recent || 0;
+    }
+    
+    if (statsElements.availableResources) {
+        statsElements.availableResources.textContent = availableResources.length;
+    }
+    
+    if (statsElements.planStatus && userProfile) {
+        statsElements.planStatus.textContent = userProfile.plan || 'starter';
+    }
+}
+
 // Loading Screen Management
 function showLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
@@ -62,6 +377,472 @@ function showLoadingScreen() {
 
 function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }, 1000);
+    }
+}
+
+// ====================================
+// USER ACTION LOGGING
+// ====================================
+
+// Log user action to database
+async function logUserAction(actionType, resourceName) {
+    try {
+        if (!currentUser) return;
+        
+        const { error } = await supabase
+            .from('usage_logs')
+            .insert([{
+                user_id: currentUser.id,
+                action_type: actionType,
+                resource_name: resourceName
+            }]);
+        
+        if (error) {
+            console.error('❌ Failed to log action:', error);
+            return;
+        }
+        
+        console.log(`✅ Logged action: ${actionType} - ${resourceName}`);
+        
+        // Update local usage stats
+        if (usageStats) {
+            usageStats.total += 1;
+            usageStats.recent += 1;
+            usageStats.byType[actionType] = (usageStats.byType[actionType] || 0) + 1;
+            
+            // Update UI counters
+            updateNavigationCounts();
+            updatePlanStatus();
+        }
+        
+    } catch (error) {
+        console.error('❌ Error logging action:', error);
+    }
+}
+
+// Helper functions for common actions
+async function logResourceView(resourceName) {
+    await logUserAction('viewed', resourceName);
+}
+
+async function logResourceDownload(resourceName) {
+    await logUserAction('downloaded', resourceName);
+}
+
+async function logButtonClick(buttonName) {
+    await logUserAction('clicked', buttonName);
+}
+
+// ====================================
+// NAVIGATION & SECTION MANAGEMENT
+// ====================================
+
+// Enhanced Navigation
+function initializeNavigation() {
+    const sidebarLinks = document.querySelectorAll('.sidebar-link[data-section]');
+    
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const section = this.getAttribute('data-section');
+            navigateToSection(section);
+        });
+    });
+    
+    // Quick action buttons
+    const quickAccessBtn = document.getElementById('quickAccessBtn');
+    const newContentBtn = document.getElementById('newContentBtn');
+    
+    if (quickAccessBtn) {
+        quickAccessBtn.addEventListener('click', async () => {
+            await logButtonClick('Quick Access');
+            showToast('🚀 Quick access feature coming soon!', 'info');
+        });
+    }
+    
+    if (newContentBtn) {
+        newContentBtn.addEventListener('click', async () => {
+            await logButtonClick('New Content');
+            showToast('🎨 Content creation tools coming soon!', 'info');
+        });
+    }
+}
+
+function navigateToSection(sectionName) {
+    console.log(`🔄 Navigating to section: ${sectionName}`);
+    
+    // Hide all sections
+    document.querySelectorAll('.dashboard-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Show target section
+    const targetSection = document.getElementById(`dash-${sectionName}`);
+    if (targetSection) {
+        targetSection.classList.add('active');
+        
+        // Update navigation state
+        updateNavigationState(sectionName);
+        
+        // Load section-specific data
+        loadSectionData(sectionName);
+        
+        // Log section view
+        logButtonClick(`Dashboard Section: ${sectionName}`);
+    }
+}
+
+function updateNavigationState(activeSection) {
+    // Update sidebar links
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    const activeLink = document.querySelector(`[data-section="${activeSection}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+}
+
+// Load data for specific section
+async function loadSectionData(sectionName) {
+    switch (sectionName) {
+        case 'resources':
+            await loadAndDisplayResources();
+            break;
+        case 'activity':
+            await loadAndDisplayActivity();
+            break;
+        case 'profile':
+            await loadAndDisplayProfile();
+            break;
+        case 'billing':
+            await loadAndDisplayBilling();
+            break;
+        default:
+            console.log(`📄 Loading overview section`);
+    }
+}
+
+// Load and display resources section
+async function loadAndDisplayResources() {
+    console.log('🎁 Loading resources section...');
+    
+    const resourcesContainer = document.querySelector('#dash-resources .resources-grid');
+    if (!resourcesContainer) return;
+    
+    if (availableResources.length === 0) {
+        resourcesContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <h3>No Resources Available</h3>
+                <p>Check back soon for new resources!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Render resources
+    resourcesContainer.innerHTML = availableResources.map(resource => `
+        <div class="resource-card" onclick="handleResourceClick('${resource.id}', '${resource.title}')">
+            <div class="resource-header">
+                <span class="resource-type">${resource.type}</span>
+                <span class="resource-plan">${resource.plan_required}</span>
+            </div>
+            <h4 class="resource-title">${resource.title}</h4>
+            <p class="resource-description">${resource.description || 'No description available'}</p>
+            <div class="resource-actions">
+                <button class="btn btn-primary" onclick="downloadResource('${resource.id}', '${resource.title}')">
+                    📥 Download
+                </button>
+                <button class="btn btn-ghost" onclick="viewResource('${resource.id}', '${resource.title}')">
+                    👁️ View
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Load and display activity section
+async function loadAndDisplayActivity() {
+    console.log('⚡ Loading activity section...');
+    
+    const activityContainer = document.querySelector('#dash-activity .activity-list');
+    if (!activityContainer) return;
+    
+    if (recentActivity.length === 0) {
+        activityContainer.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <h3>No Activity Yet</h3>
+                <p>Start exploring resources to see your activity here!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Render activity list
+    activityContainer.innerHTML = recentActivity.map(activity => {
+        const timeAgo = getTimeAgo(new Date(activity.timestamp));
+        const actionEmoji = {
+            viewed: '👁️',
+            downloaded: '📥',
+            clicked: '🖱️'
+        };
+        
+        return `
+            <div class="activity-item">
+                <div class="activity-icon">${actionEmoji[activity.action_type] || '📋'}</div>
+                <div class="activity-details">
+                    <span class="activity-action">${activity.action_type}</span>
+                    <span class="activity-resource">${activity.resource_name}</span>
+                    <span class="activity-time">${timeAgo}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Load and display profile section
+async function loadAndDisplayProfile() {
+    console.log('👤 Loading profile section...');
+    // Profile editing functionality can be added here
+}
+
+// Load and display billing section
+async function loadAndDisplayBilling() {
+    console.log('💳 Loading billing section...');
+    // Billing management functionality can be added here
+}
+
+// ====================================
+// RESOURCE INTERACTION HANDLERS
+// ====================================
+
+// Handle resource card click
+async function handleResourceClick(resourceId, resourceName) {
+    console.log(`🖱️ Resource clicked: ${resourceName}`);
+    await logResourceView(resourceName);
+    showToast(`Viewing: ${resourceName}`, 'info');
+}
+
+// Handle resource download
+async function downloadResource(resourceId, resourceName) {
+    console.log(`📥 Downloading resource: ${resourceName}`);
+    await logResourceDownload(resourceName);
+    showToast(`Downloaded: ${resourceName}`, 'success');
+}
+
+// Handle resource view
+async function viewResource(resourceId, resourceName) {
+    console.log(`👁️ Viewing resource: ${resourceName}`);
+    await logResourceView(resourceName);
+    showToast(`Viewing: ${resourceName}`, 'info');
+}
+
+// ====================================
+// MOBILE MENU MANAGEMENT
+// ====================================
+
+function initializeMobileMenu() {
+    const mobileToggle = document.getElementById('mobileSidebarToggle');
+    const sidebar = document.getElementById('dashboardSidebar');
+    
+    if (mobileToggle && sidebar) {
+        mobileToggle.addEventListener('click', async () => {
+            sidebar.classList.toggle('mobile-open');
+            document.body.classList.toggle('sidebar-open');
+            await logButtonClick('Mobile Sidebar Toggle');
+        });
+        
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+                document.body.classList.remove('sidebar-open');
+            }
+        });
+    }
+}
+
+// ====================================
+// REAL-TIME FEATURES
+// ====================================
+
+function initializeRealTimeFeatures() {
+    // Update time display
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 60000); // Update every minute
+    
+    // Plan renewal countdown
+    updatePlanCountdown();
+    setInterval(updatePlanCountdown, 3600000); // Update every hour
+}
+
+function updateCurrentTime() {
+    const timeElement = document.querySelector('.current-time .time');
+    const dateElement = document.querySelector('.current-time .date');
+    
+    if (timeElement && dateElement) {
+        const now = new Date();
+        const timeOptions = { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        };
+        const dateOptions = { 
+            weekday: 'long',
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        
+        timeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
+        dateElement.textContent = now.toLocaleDateString('en-US', dateOptions);
+    }
+}
+
+function updatePlanCountdown() {
+    if (!userProfile || !userProfile.plan_expiry) return;
+    
+    const planExpiry = new Date(userProfile.plan_expiry);
+    const now = new Date();
+    const daysRemaining = Math.ceil((planExpiry - now) / (1000 * 60 * 60 * 24));
+    
+    // Update any plan countdown displays
+    const countdownElements = document.querySelectorAll('.plan-countdown');
+    countdownElements.forEach(element => {
+        if (daysRemaining <= 0) {
+            element.textContent = 'Expired';
+            element.className = 'plan-countdown expired';
+        } else if (daysRemaining <= 7) {
+            element.textContent = `${daysRemaining} days left`;
+            element.className = 'plan-countdown warning';
+        } else {
+            element.textContent = `${daysRemaining} days left`;
+            element.className = 'plan-countdown active';
+        }
+    });
+}
+
+// ====================================
+// UTILITY FUNCTIONS
+// ====================================
+
+// Calculate time ago
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+}
+
+// Show notification toast
+function showToast(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+    
+    console.log(`📢 Toast: ${message} (${type})`);
+}
+
+// Show error message
+function showError(message) {
+    showToast(message, 'error');
+}
+
+// ====================================
+// AUTHENTICATION HANDLERS
+// ====================================
+
+// Handle user sign out
+async function handleUserSignOut() {
+    try {
+        console.log('👋 Signing out...');
+        await logButtonClick('Sign Out');
+        
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        
+        showToast('Signed out successfully', 'success');
+        
+        // Redirect to home page
+        setTimeout(() => {
+            window.location.href = '/index.html';
+        }, 1000);
+        
+    } catch (error) {
+        console.error('❌ Sign out error:', error);
+        showError('Failed to sign out. Please try again.');
+    }
+}
+
+// ====================================
+// EVENT LISTENERS & INITIALIZATION
+// ====================================
+
+// Plan renewal button
+if (elements.btnRenewPlan) {
+    elements.btnRenewPlan.addEventListener('click', async () => {
+        await logButtonClick('Renew Plan');
+        showToast('Plan renewal coming soon!', 'info');
+    });
+}
+
+// Listen for auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+    console.log('🔄 Auth state changed:', event);
+    
+    if (event === 'SIGNED_OUT') {
+        window.location.href = '/index.html';
+    }
+});
+
+// Make functions available globally
+window.showDashboardSection = navigateToSection;
+window.handleUserSignOut = handleUserSignOut;
+window.handleResourceClick = handleResourceClick;
+window.downloadResource = downloadResource;
+window.viewResource = viewResource;
+window.showToast = showToast;
+
+console.log('✅ Dashboard script loaded successfully!');
+
+// ====================================
+// WELCOME MESSAGE WITH USER DATA
+// ====================================
+
+// Add welcome message with real user data once loaded
+function showWelcomeMessage() {
+    if (userProfile && usageStats) {
+        const welcomeMessage = `Welcome back, ${userProfile.name}! You have ${usageStats.recent} recent activities and ${availableResources.length} resources available.`;
+        showToast(welcomeMessage, 'success');
+    }
+}
     if (loadingScreen) {
         setTimeout(() => {
             loadingScreen.classList.add('hidden');

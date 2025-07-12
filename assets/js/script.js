@@ -670,17 +670,11 @@ function initializeProfileDropdown() {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
                     if (profileDropdown.style.display === 'inline-block') {
-                        // Force show nav-actions on mobile when profile is visible
-                        const navActions = document.querySelector('.nav-actions');
-                        if (navActions) {
-                            navActions.classList.add('show-profile');
-                        }
+                        // Show profile dropdown on mobile when visible
+                        profileDropdown.classList.add('mobile-visible');
                     } else if (profileDropdown.style.display === 'none') {
-                        // Hide nav-actions on mobile when profile is hidden
-                        const navActions = document.querySelector('.nav-actions');
-                        if (navActions) {
-                            navActions.classList.remove('show-profile');
-                        }
+                        // Hide profile dropdown on mobile when hidden
+                        profileDropdown.classList.remove('mobile-visible');
                     }
                 }
             });
@@ -1334,10 +1328,9 @@ function updateUIForAuthenticatedUser(user) {
             dashboardLink.style.display = 'flex';
         }
         
-        // Force show nav-actions on mobile when profile dropdown is shown
-        const navActions = document.querySelector('.nav-actions');
-        if (navActions && isMobileDevice()) {
-            navActions.classList.add('show-profile');
+        // Show profile dropdown on mobile when user is authenticated
+        if (isMobileDevice()) {
+            profileDropdown.classList.add('mobile-visible');
         }
     }
     
@@ -1386,10 +1379,12 @@ function updateUIForUnauthenticatedUser() {
         profileDropdown.style.display = 'none';
     }
     
-    // Hide nav-actions on mobile when no profile dropdown
-    const navActions = document.querySelector('.nav-actions');
-    if (navActions && isMobileDevice()) {
-        navActions.classList.remove('show-profile');
+    // Hide profile dropdown on mobile when not authenticated
+    if (isMobileDevice()) {
+        const profileDropdown = document.getElementById('profileDropdown');
+        if (profileDropdown) {
+            profileDropdown.classList.remove('mobile-visible');
+        }
     }
     
     // Reset hero actions

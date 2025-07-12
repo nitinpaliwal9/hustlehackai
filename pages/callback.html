@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Login - HustleHack AI</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../logo (2).png"/>
+    
+    <style>
+        :root {
+            --primary: #7F5AF0;
+            --accent: #00FFC2;
+            --gradient: linear-gradient(135deg, #7F5AF0, #00FFC2);
+            --bg-primary: #0F0F1B;
+            --text-primary: #E5E7EB;
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-display: 'Poppins', sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .callback-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem auto;
+            border-radius: 12px;
+        }
+        
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+        
+        .processing-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        .processing-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .processing-subtitle {
+            color: var(--text-primary);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .error-message {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .success-message {
+            color: var(--accent);
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(127, 90, 240, 0.3);
+        }
+        
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--gradient);
+            opacity: 0.05;
+        }
+        
+        @media (max-width: 480px) {
+            .callback-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .processing-icon {
+                font-size: 3rem;
+            }
+            
+            .processing-text {
+                font-size: 1.125rem;
+            }
+            
+            .brand-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    
+    <div class="callback-container">
+        <img src="../logo (2).png" alt="HustleHack AI Logo" class="logo" onerror="this.style.display='none'">
+        <h1 class="brand-title">HustleHack AI</h1>
+        
+        <div class="processing-icon">🚀</div>
+        <h2 class="processing-text">Processing your login...</h2>
+        <p class="processing-subtitle">Please wait while we complete your authentication</p>
+        
+        <div class="spinner"></div>
+        
+        <div id="error-message" class="error-message">
+            <strong>Login Failed</strong><br>
+            <span id="error-text">Something went wrong. Please try again.</span>
+            <br><br>
+            <a href="../login.html" class="btn">← Back to Login</a>
+        </div>
+        
+        <div id="success-message" class="success-message">
+            <strong>Login Successful!</strong><br>
+            <span id="success-text">Welcome to HustleHack AI. Redirecting...</span>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    
+    <script>
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(
+            'https://bmgvtzwesdkitdjfszsh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+        );
+        
+        // DOM Elements
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const errorText = document.getElementById('error-text');
+        const successText = document.getElementById('success-text');
+        const spinner = document.querySelector('.spinner');
+        const processingIcon = document.querySelector('.processing-icon');
+        const processingText = document.querySelector('.processing-text');
+        
+        // Save user to database
+        async function saveUserToDatabase(user) {
+            try {
+                console.log('💾 Saving user to database:', user.id);
+                
+                // Check if user already exists
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (!existingUser) {
+                    // Create new user record with plan defaults
+                    const planStart = new Date();
+                    const planExpiry = new Date(Date.now() + 30 * 86400000); // 30 days from now
+                    
+                    const { data, error } = await supabase
+                        .from('users')
+                        .insert([{
+                            id: user.id,
+                            name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                            email: user.email,
+                            role: 'Google User',
+                            device: navigator.userAgent,
+                            timestamp: new Date().toISOString(),
+                            provider: user.app_metadata?.provider || 'google',
+                            plan: "starter",
+                            plan_start: planStart,
+                            plan_expiry: planExpiry
+                        }]);
+
+                    if (error) {
+                        console.error('❌ Error saving user:', error);
+                        return false;
+                    }
+                    
+                    console.log('✅ User saved successfully:', data);
+                } else {
+                    console.log('✅ User already exists in database');
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Error in saveUserToDatabase:', error);
+                return false;
+            }
+        }
+        
+        // Show error state
+        function showError(message) {
+            console.error('❌ Callback error:', message);
+            
+            spinner.style.display = 'none';
+            processingIcon.textContent = '❌';
+            processingText.textContent = 'Login Failed';
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        // Show success state
+        function showSuccess(message, user) {
+            console.log('✅ Callback success:', message);
+            
+            spinner.style.display = 'none';
+            processingIcon.textContent = '✅';
+            processingText.textContent = 'Login Successful!';
+            successText.textContent = `Welcome ${user?.user_metadata?.full_name || user?.email || 'back'}! Redirecting...`;
+            successMessage.style.display = 'block';
+        }
+        
+        // Process authentication callback
+        async function processCallback() {
+            try {
+                console.log('🔄 Processing authentication callback...');
+                
+                // Wait a moment for the auth state to settle
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Get current session
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    console.error('❌ Session error:', error);
+                    showError('Authentication failed. Please try again.');
+                    return;
+                }
+                
+                if (session && session.user) {
+                    console.log('✅ User authenticated:', session.user.email);
+                    
+                    // Save user to database
+                    const saved = await saveUserToDatabase(session.user);
+                    
+                    if (!saved) {
+                        console.warn('⚠️ User not saved to database, but proceeding with login');
+                    }
+                    
+                    // Show success state
+                    showSuccess('Authentication successful!', session.user);
+                    
+                    // Redirect to dashboard/home after delay
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 2000);
+                    
+                } else {
+                    console.error('❌ No session found');
+                    showError('No authentication session found. Please try signing in again.');
+                }
+                
+            } catch (error) {
+                console.error('❌ Callback processing error:', error);
+                showError('An unexpected error occurred. Please try again.');
+            }
+        }
+        
+        // Check for URL fragments or hash changes
+        function checkForAuthData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            // Check for error in URL
+            const error = urlParams.get('error') || hashParams.get('error');
+            const errorDescription = urlParams.get('error_description') || hashParams.get('error_description');
+            
+            if (error) {
+                console.error('❌ URL error:', error, errorDescription);
+                showError(errorDescription || error);
+                return;
+            }
+            
+            // Check for access token in hash
+            const accessToken = hashParams.get('access_token');
+            if (accessToken) {
+                console.log('✅ Access token found in URL');
+            }
+            
+            // Process the callback
+            processCallback();
+        }
+        
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔄 Auth state changed:', event, session?.user?.email);
+            
+            if (event === 'SIGNED_IN' && session?.user) {
+                console.log('✅ User signed in via state change:', session.user.email);
+                
+                // If we haven't already shown success, do it now
+                if (successMessage.style.display === 'none' && errorMessage.style.display === 'none') {
+                    saveUserToDatabase(session.user).then(() => {
+                        showSuccess('Authentication successful!', session.user);
+                        
+                        setTimeout(() => {
+                            window.location.href = '../index.html';
+                        }, 2000);
+                    });
+                }
+            }
+            
+            if (event === 'SIGNED_OUT') {
+                console.log('👋 User signed out');
+            }
+        });
+        
+        // Start processing when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Callback page loaded');
+            
+            // Small delay to ensure everything is ready
+            setTimeout(checkForAuthData, 500);
+            
+            // Fallback timeout - if nothing happens in 10 seconds, show error
+            setTimeout(() => {
+                if (successMessage.style.display === 'none' && errorMessage.style.display === 'none') {
+                    showError('Authentication timeout. Please try signing in again.');
+                }
+            }, 10000);
+        });
+        
+        // Handle any unhandled errors
+        window.addEventListener('error', function(e) {
+            console.error('❌ Unhandled error:', e.error);
+            showError('An unexpected error occurred. Please try again.');
+        });
+        
+        // Prevent back navigation during processing
+        window.addEventListener('beforeunload', function(e) {
+            if (successMessage.style.display === 'none' && errorMessage.style.display === 'none') {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>

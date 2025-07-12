@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Debug - HustleHack AI</title>
+    <link rel="icon" type="image/png" href="logo (2).png"/>
+    
+    <style>
+        :root {
+            --primary: #7F5AF0;
+            --accent: #00FFC2;
+            --gradient: linear-gradient(135deg, #7F5AF0, #00FFC2);
+            --bg-primary: #0F0F1B;
+            --text-primary: #E5E7EB;
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+        }
+        
+        .debug-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .debug-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(127, 90, 240, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .test-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-size: 1.125rem;
+        }
+        
+        .status {
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .status.info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+            white-space: pre-wrap;
+        }
+        
+        .warning {
+            background: rgba(251, 188, 5, 0.1);
+            border: 1px solid rgba(251, 188, 5, 0.3);
+            color: #fbbf05;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1 class="debug-title">🔧 Database Debug Tool</h1>
+            <p>Debug Supabase connection, RLS policies, and user table inserts</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔍 Connection Test</h3>
+            <button id="test-connection-btn" class="btn">Test Supabase Connection</button>
+            <div id="connection-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>👤 Authentication Test</h3>
+            <button id="test-auth-btn" class="btn btn-secondary">Test Authentication</button>
+            <div id="auth-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Table Access Test</h3>
+            <button id="test-table-btn" class="btn btn-secondary">Test Users Table Access</button>
+            <div id="table-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🛡️ RLS Policy Test</h3>
+            <button id="test-rls-btn" class="btn btn-secondary">Test RLS Policies</button>
+            <div id="rls-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>✨ Manual Insert Test</h3>
+            <button id="test-insert-btn" class="btn btn-secondary">Test Manual Insert</button>
+            <div id="insert-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Google OAuth Test</h3>
+            <button id="test-oauth-btn" class="btn">Start OAuth Test</button>
+            <div id="oauth-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Debug Log</h3>
+            <button id="clear-log-btn" class="btn btn-secondary">Clear Log</button>
+            <div id="debug-log"></div>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Common Issues to Check:</strong><br>
+            1. RLS policies must allow INSERT for authenticated users<br>
+            2. User must be authenticated when inserting<br>
+            3. Column names must match exactly<br>
+            4. Check browser console for detailed errors
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    
+    <script>
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(
+            'https://bmgvtzwesdkitdjfszsh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+        );
+        
+        // Debug log
+        let debugLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.push({ timestamp, message, type });
+            updateDebugLog();
+            console.log(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+        }
+        
+        function updateDebugLog() {
+            const debugLogElement = document.getElementById('debug-log');
+            debugLogElement.innerHTML = debugLog.map(log => 
+                `<div class="status ${log.type}">[${log.timestamp}] ${log.message}</div>`
+            ).join('');
+        }
+        
+        // Test 1: Connection Test
+        async function testConnection() {
+            const resultDiv = document.getElementById('connection-result');
+            log('🔍 Testing Supabase connection...', 'info');
+            
+            try {
+                // Test basic connection
+                const { data, error } = await supabase.from('users').select('count').limit(1);
+                
+                if (error) {
+                    resultDiv.innerHTML = `<div class="status error">❌ Connection Failed: ${error.message}</div>`;
+                    log(`❌ Connection failed: ${error.message}`, 'error');
+                    log(`Error code: ${error.code}`, 'error');
+                    log(`Error details: ${error.details}`, 'error');
+                } else {
+                    resultDiv.innerHTML = `<div class="status success">✅ Connection successful</div>`;
+                    log('✅ Supabase connection working', 'success');
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="status error">❌ Unexpected error: ${err.message}</div>`;
+                log(`❌ Unexpected connection error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Test 2: Authentication Test
+        async function testAuth() {
+            const resultDiv = document.getElementById('auth-result');
+            log('👤 Testing authentication...', 'info');
+            
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) {
+                    resultDiv.innerHTML = `<div class="status error">❌ Auth Error: ${error.message}</div>`;
+                    log(`❌ Auth error: ${error.message}`, 'error');
+                } else if (user) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ User authenticated</div>
+                        <div class="code-block">
+User ID: ${user.id}
+Email: ${user.email}
+Provider: ${user.app_metadata?.provider || 'Unknown'}
+                        </div>
+                    `;
+                    log(`✅ User authenticated: ${user.email}`, 'success');
+                    log(`User ID: ${user.id}`, 'info');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status info">ℹ️ No user authenticated</div>
+                        <div class="warning">You need to be authenticated to test database inserts. Use the OAuth test below.</div>
+                    `;
+                    log('ℹ️ No user authenticated', 'info');
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="status error">❌ Unexpected error: ${err.message}</div>`;
+                log(`❌ Auth test error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Test 3: Table Access Test
+        async function testTable() {
+            const resultDiv = document.getElementById('table-result');
+            log('📊 Testing users table access...', 'info');
+            
+            try {
+                // Test SELECT access
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Table access failed: ${error.message}</div>
+                        <div class="code-block">Error Code: ${error.code}
+Error Details: ${error.details || 'No details available'}</div>
+                    `;
+                    log(`❌ Table access failed: ${error.message}`, 'error');
+                    log(`Error code: ${error.code}`, 'error');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Table access successful</div>
+                        <div class="code-block">Found ${data.length} existing users</div>
+                    `;
+                    log(`✅ Table access working, found ${data.length} users`, 'success');
+                    
+                    if (data.length > 0) {
+                        log('Sample user data:', 'info');
+                        console.log('Sample user:', data[0]);
+                    }
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="status error">❌ Unexpected error: ${err.message}</div>`;
+                log(`❌ Table test error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Test 4: RLS Policy Test
+        async function testRLS() {
+            const resultDiv = document.getElementById('rls-result');
+            log('🛡️ Testing RLS policies...', 'info');
+            
+            try {
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                
+                if (authError || !user) {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Cannot test RLS: No authenticated user</div>
+                        <div class="warning">You must be authenticated to test RLS policies</div>
+                    `;
+                    log('❌ Cannot test RLS: No authenticated user', 'error');
+                    return;
+                }
+                
+                // Test if user can select their own record
+                const { data: selectData, error: selectError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id);
+                
+                if (selectError) {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ RLS SELECT failed: ${selectError.message}</div>
+                        <div class="code-block">This suggests RLS policies may be too restrictive</div>
+                    `;
+                    log(`❌ RLS SELECT failed: ${selectError.message}`, 'error');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ RLS SELECT working</div>
+                        <div class="code-block">User can read their own data (found ${selectData.length} records)</div>
+                    `;
+                    log(`✅ RLS SELECT working, found ${selectData.length} user records`, 'success');
+                }
+                
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="status error">❌ RLS test error: ${err.message}</div>`;
+                log(`❌ RLS test error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Test 5: Manual Insert Test
+        async function testInsert() {
+            const resultDiv = document.getElementById('insert-result');
+            log('✨ Testing manual insert...', 'info');
+            
+            try {
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                
+                if (authError || !user) {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Cannot test insert: No authenticated user</div>
+                        <div class="warning">You must be authenticated to test database inserts</div>
+                    `;
+                    log('❌ Cannot test insert: No authenticated user', 'error');
+                    return;
+                }
+                
+                // Check if user already exists
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (existingUser) {
+                    resultDiv.innerHTML = `
+                        <div class="status info">ℹ️ User already exists in database</div>
+                        <div class="code-block">User ID: ${existingUser.id}
+Cannot test insert because user already exists.</div>
+                        <button onclick="deleteUserAndRetry()" class="btn" style="margin-top: 0.5rem;">Delete User & Retry Insert</button>
+                    `;
+                    log('ℹ️ User already exists, cannot test insert', 'info');
+                    return;
+                }
+                
+                // Try to insert the user
+                const planStart = new Date();
+                const planExpiry = new Date(Date.now() + 30 * 86400000);
+                
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: user.id,
+                        name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Test User',
+                        email: user.email,
+                        plan: "starter",
+                        plan_start: planStart,
+                        plan_expiry: planExpiry,
+                        role: user.app_metadata?.provider === 'google' ? 'Google User' : 'Email User',
+                        provider: user.app_metadata?.provider || 'google',
+                        device: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    }])
+                    .select();
+                
+                if (error) {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Insert failed: ${error.message}</div>
+                        <div class="code-block">Error Code: ${error.code}
+Error Details: ${error.details || 'No details'}
+Error Hint: ${error.hint || 'No hint'}</div>
+                    `;
+                    log(`❌ Insert failed: ${error.message}`, 'error');
+                    log(`Error code: ${error.code}`, 'error');
+                    log(`Error details: ${error.details}`, 'error');
+                    log(`Error hint: ${error.hint}`, 'error');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Insert successful!</div>
+                        <div class="code-block">Successfully created user profile with plan data</div>
+                    `;
+                    log('✅ Manual insert successful!', 'success');
+                    log('User profile created with plan data', 'success');
+                }
+                
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="status error">❌ Insert test error: ${err.message}</div>`;
+                log(`❌ Insert test error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Delete user and retry (for testing)
+        async function deleteUserAndRetry() {
+            log('🗑️ Deleting user for retry test...', 'info');
+            
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                const { error } = await supabase
+                    .from('users')
+                    .delete()
+                    .eq('id', user.id);
+                
+                if (error) {
+                    log(`❌ Delete failed: ${error.message}`, 'error');
+                } else {
+                    log('✅ User deleted, retrying insert...', 'success');
+                    setTimeout(testInsert, 500);
+                }
+            } catch (err) {
+                log(`❌ Delete error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Test 6: OAuth Test
+        async function testOAuth() {
+            const resultDiv = document.getElementById('oauth-result');
+            log('🚀 Starting OAuth test...', 'info');
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: `${window.location.origin}/auth/callback.html`,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent',
+                        }
+                    }
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML = `<div class="status error">❌ OAuth failed: ${error.message}</div>`;
+                    log(`❌ OAuth failed: ${error.message}`, 'error');
+                } else {
+                    resultDiv.innerHTML = `<div class="status success">✅ OAuth initiated (redirecting...)</div>`;
+                    log('✅ OAuth flow initiated', 'success');
+                }
+                
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="status error">❌ OAuth error: ${err.message}</div>`;
+                log(`❌ OAuth error: ${err.message}`, 'error');
+            }
+        }
+        
+        // Clear debug log
+        function clearDebugLog() {
+            debugLog = [];
+            updateDebugLog();
+            log('🧹 Debug log cleared', 'info');
+        }
+        
+        // Event listeners
+        document.getElementById('test-connection-btn').addEventListener('click', testConnection);
+        document.getElementById('test-auth-btn').addEventListener('click', testAuth);
+        document.getElementById('test-table-btn').addEventListener('click', testTable);
+        document.getElementById('test-rls-btn').addEventListener('click', testRLS);
+        document.getElementById('test-insert-btn').addEventListener('click', testInsert);
+        document.getElementById('test-oauth-btn').addEventListener('click', testOAuth);
+        document.getElementById('clear-log-btn').addEventListener('click', clearDebugLog);
+        
+        // Make delete function available globally
+        window.deleteUserAndRetry = deleteUserAndRetry;
+        
+        // Auto-run basic tests on load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Debug tool loaded', 'info');
+            setTimeout(() => {
+                testConnection();
+                setTimeout(testAuth, 1000);
+            }, 500);
+        });
+        
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            log(`🔄 Auth state changed: ${event}`, 'info');
+            if (event === 'SIGNED_IN' && session?.user) {
+                log(`✅ User signed in: ${session.user.email}`, 'success');
+            }
+        });
+    </script>
+</body>
+</html>

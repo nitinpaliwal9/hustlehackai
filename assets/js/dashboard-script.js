@@ -1,19 +1,29 @@
 // ====================================
-// HUSTLEHACK AI - DASHBOARD SCRIPT 3.0
+// HUSTLEHACK AI - PERSONALIZED DASHBOARD 4.0
 // Real-time Supabase Backend Integration
-// Dynamic User Data & Usage Tracking
+// Production-Ready with Fallbacks
 // ====================================
-
-// Use the already-created Supabase client from window.supabase
-const supabase = window.supabase;
 
 // Global state
 let currentUser = null;
 let userProfile = null;
-let usageStats = null;
+let usageLogs = [];
 let availableResources = [];
-let recentActivity = [];
 let isLoading = true;
+
+// Initialize Supabase client
+const supabase = window.supabase;
+
+// Plan hierarchy for resource filtering
+const PLAN_HIERARCHY = {
+    'free': 1,
+    'starter': 2,
+    'pro': 3,
+    'premium': 4
+};
+
+// Loading timeout (15 seconds)
+const LOADING_TIMEOUT = 15000;
 
 // DOM Elements Cache
 const elements = {
@@ -69,67 +79,378 @@ function debugLog(level, message, data = null) {
 }
 
 // Initialize Dashboard with extensive logging
-window.addEventListener('load', function() {
-    debugLog('info', '🚀 DASHBOARD LOAD EVENT TRIGGERED');
-    debugLog('info', 'Window location:', window.location.href);
-    debugLog('info', 'User agent:', navigator.userAgent);
-    debugLog('info', 'Document readyState:', document.readyState);
-    
-    // Check if critical elements exist
-    debugLog('info', 'Checking critical DOM elements...');
+window.addEventListener('load', initializeDashboard);
+
+async function initializeDashboard() {
+    const loadingTimeout = setTimeout(() => {
+        console.warn('Loading timeout after 15 seconds');
+        hideLoadingScreen();
+        showToast('Loading is taking longer than expected. Please check your connection.', 'warning');
+    }, 15000);
+
+    try {
+        showLoadingScreen();
+        updateLoadingProgress(10, 'Initializing...');
+
+        // Authenticate and identify user
+        updateLoadingProgress(25, 'Verifying credentials...');
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            console.error('Authentication error:', authError);
+            return redirectToLogin();
+        }
+
+        currentUser = user;
+        console.log('User authenticated:', user.email);
+
+        // Fetch profile
+        updateLoadingProgress(40, 'Loading profile...');
+        const profile = await fetchUserProfile(user.id);
+        renderProfileSection(profile);
+
+        // Fetch usage statistics
+        updateLoadingProgress(60, 'Loading usage statistics...');
+        const logs = await fetchUsageLogs(user.id);
+        renderUsageStats(logs);
+
+        // Fetch available resources
+        updateLoadingProgress(80, 'Loading resources...');
+        const resources = await fetchFilteredResources(profile.plan);
+        renderResourcesGrid(resources);
+
+        // Finalize
+        updateLoadingProgress(100, 'Complete!');
+        clearTimeout(loadingTimeout);
+        
+        setTimeout(() => {
+            hideLoadingScreen();
+            showDashboard();
+            showToast(`Welcome back, ${profile.name || 'Hustler'}!`, 'success');
+        }, 500);
+
+    } catch (error) {
+        console.error('Initialization failed:', error);
+        clearTimeout(loadingTimeout);
+        showErrorScreen('Failed to initialize dashboard. Please try again.');
+    }
+}
+
+function updateLoadingProgress(percent, statusText) {
+    const progressBar = document.querySelector('.progress-fill');
+    const statusElement = document.getElementById('loadingStatus');
+
+    if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+    }
+    if (statusElement) {
+        statusElement.textContent = statusText;
+    }
+}
+
+async function fetchUserProfile(userId) {
+    try {
+        const { data: profile, error } = await supabase
+            .from('users')
+            .select('name, email, role, plan, plan_expiry')
+            .eq('id', userId)
+            .single();
+
+        if (error) throw error;
+        return profile || { name: 'User', role: 'Member', plan: 'None', plan_expiry: 'N/A' };
+
+    } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+        return { name: 'User', role: 'Member', plan: 'None', plan_expiry: 'N/A' };
+    }
+}
+
+async function fetchUsageLogs(userId) {
+    try {
+        const { data: logs = [] } = await supabase
+            .from('usage_logs')
+            .select('*')
+            .eq('user_id', userId);
+
+        return logs;
+    } catch (error) {
+        console.error('Failed to fetch usage logs:', error);
+        return [];
+    }
+}
+
+async function fetchFilteredResources(userPlan) {
+    try {
+        const { data: allResources = [] } = await supabase
+            .from('resources')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        // Filter resources based on user's plan
+        const planHierarchy = { starter: 1, creator: 2, pro: 3 };
+        const userPlanLevel = planHierarchy[userPlan] || 1;
+
+        return allResources.filter(resource =>
+            planHierarchy[resource.plan_required] <= userPlanLevel
+        );
+
+    } catch (error) {
+        console.error('Failed to fetch resources:', error);
+        return [];
+    }
+}
+
+function showLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'flex';
+    }
+}
+
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+    }
+}
+
+function showDashboard() {
     const dashboardContainer = document.getElementById('dashboardContainer');
-    const errorScreen = document.getElementById('errorScreen');
+    if (dashboardContainer) {
+        dashboardContainer.style.display = 'block';
+    }
+}
+
+function renderProfileSection(profile) {
+    userProfile = profile;
     
-    debugLog('info', 'Loading screen exists:', !!loadingScreen);
-    debugLog('info', 'Dashboard container exists:', !!dashboardContainer);
-    debugLog('info', 'Error screen exists:', !!errorScreen);
-    
-    // Check Supabase availability
-    debugLog('info', 'Checking Supabase availability...');
-    debugLog('info', 'Window.supabase exists:', !!window.supabase);
-    if (window.supabase) {
-        debugLog('info', 'Supabase client type:', typeof window.supabase);
+    // Update welcome message
+    const welcomeElement = document.getElementById('mainUserName');
+    if (welcomeElement) {
+        welcomeElement.textContent = profile.name || 'Hustler';
     }
     
-    updateLoadingProgress(30, 'Connecting to services...');
-    debugLog('info', 'Loading progress updated to 30%');
+    // Update sidebar profile
+    const sidebarUserName = document.getElementById('sidebarUserName');
+    const sidebarUserRole = document.getElementById('sidebarUserRole');
+    const userPlanName = document.getElementById('userPlanName');
     
-    // Enhanced safety net with detailed logging
-    setTimeout(() => {
-        debugLog('warn', 'Safety timeout triggered after 8 seconds');
-        debugLog('warn', 'Dashboard loaded status:', window.dashboardLoaded);
-        
-        if (!window.dashboardLoaded) {
-            debugLog('warn', '⚠️ Loading system delay detected, attempting recovery...');
-            updateLoadingProgress(70, 'Attempting to recover...');
-            
-            // Log current state
-            debugLog('warn', 'Current user:', currentUser);
-            debugLog('warn', 'User profile:', userProfile);
-            debugLog('warn', 'Usage stats:', usageStats);
-            
-            setTimeout(() => {
-                debugLog('error', 'Final recovery timeout reached');
-                updateLoadingProgress(100, 'Loading failed...');
-                hideLoadingScreen();
-                const errorScreen = document.getElementById('errorScreen');
-                if (errorScreen) {
-                    errorScreen.style.display = 'flex';
-                    debugLog('error', 'Error screen displayed');
-                } else {
-                    debugLog('error', 'Error screen not found!');
-                }
-                debugLog('error', '❌ FINAL ERROR: Unable to fully load dashboard!');
-            }, 3000);
+    if (sidebarUserName) sidebarUserName.textContent = profile.name || 'User';
+    if (sidebarUserRole) sidebarUserRole.textContent = profile.role || 'Member';
+    if (userPlanName) userPlanName.textContent = profile.plan || 'Free Plan';
+    
+    // Update plan status
+    const planNameElement = document.getElementById('planName');
+    if (planNameElement) {
+        planNameElement.textContent = profile.plan || 'Free Plan';
+    }
+    
+    // Update days remaining
+    const daysRemainingElement = document.getElementById('daysRemaining');
+    if (daysRemainingElement) {
+        if (profile.plan_expiry) {
+            const daysLeft = Math.ceil((new Date(profile.plan_expiry) - new Date()) / (1000 * 60 * 60 * 24));
+            daysRemainingElement.textContent = daysLeft > 0 ? `${daysLeft} days left` : 'Expired';
+        } else {
+            daysRemainingElement.textContent = 'N/A';
         }
-    }, 8000);
+    }
     
-    debugLog('info', 'Starting dashboard initialization...');
-    initializeDashboard().catch(error => {
-        debugLog('error', 'Dashboard initialization promise rejected:', error);
-    });
-});
+    // Update current plan display
+    const currentPlanElement = document.getElementById('currentPlan');
+    if (currentPlanElement) {
+        currentPlanElement.textContent = `${profile.plan || 'Free'} Plan`;
+    }
+}
+
+function renderUsageStats(logs) {
+    const totalUsage = logs.length;
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const recentUsage = logs.filter(log => new Date(log.timestamp) > sevenDaysAgo).length;
+    
+    // Update stats cards
+    const resourcesUsedElement = document.getElementById('resourcesUsed');
+    if (resourcesUsedElement) {
+        resourcesUsedElement.textContent = totalUsage;
+    }
+    
+    // Update plan usage
+    const planUsageElement = document.getElementById('planUsageText');
+    if (planUsageElement) {
+        planUsageElement.textContent = totalUsage === 0 ? '0 resources accessed' : `${totalUsage} resources accessed`;
+    }
+    
+    // Update plan usage percentage
+    const planUsagePercent = Math.min((totalUsage / 100) * 100, 100);
+    const planUsagePercentElement = document.getElementById('planUsagePercent');
+    const planProgressFill = document.getElementById('planProgressFill');
+    
+    if (planUsagePercentElement) {
+        planUsagePercentElement.textContent = `${Math.round(planUsagePercent)}%`;
+    }
+    if (planProgressFill) {
+        planProgressFill.style.width = `${planUsagePercent}%`;
+    }
+    
+    // Update activity indicator
+    const activityDot = document.getElementById('activityDot');
+    if (activityDot) {
+        activityDot.style.display = recentUsage > 0 ? 'block' : 'none';
+    }
+    
+    // Update recent activity list
+    const recentActivityElement = document.getElementById('recentActivity');
+    if (recentActivityElement) {
+        if (logs.length === 0) {
+            recentActivityElement.innerHTML = '<li>No recent activity</li>';
+        } else {
+            recentActivityElement.innerHTML = logs.slice(-3).map(log => `
+                <div class="activity-item">
+                    <div class="activity-icon">📊</div>
+                    <div class="activity-content">
+                        <p><strong>${log.resource_name}</strong> ${log.action_type}</p>
+                        <span class="activity-time">${getTimeAgo(new Date(log.timestamp))}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+function renderResourcesGrid(resources) {
+    availableResources = resources;
+    
+    // Update total resources count
+    const totalResourcesElement = document.getElementById('totalResources');
+    if (totalResourcesElement) {
+        totalResourcesElement.textContent = resources.length;
+    }
+    
+    // Update resource count in sidebar
+    const resourceCountElement = document.getElementById('resourceCount');
+    if (resourceCountElement) {
+        resourceCountElement.textContent = resources.length;
+    }
+    
+    // Update resources grid
+    const resourcesContainer = document.getElementById('userResources');
+    if (resourcesContainer) {
+        if (resources.length === 0) {
+            resourcesContainer.innerHTML = `
+                <div class="resource-card placeholder">
+                    <div class="resource-header">
+                        <span class="resource-icon">📦</span>
+                        <span class="resource-status">No data available</span>
+                    </div>
+                    <h3>No resources unlocked yet</h3>
+                    <p>Upgrade your plan to access more resources</p>
+                    <div class="resource-actions">
+                        <button class="btn btn-primary btn-sm" onclick="showDashboardSection('billing')">
+                            Upgrade Plan
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            resourcesContainer.innerHTML = resources.map(resource => `
+                <div class="resource-card unlocked">
+                    <div class="resource-header">
+                        <span class="resource-icon">📄</span>
+                        <span class="resource-status unlocked">✅ Unlocked</span>
+                    </div>
+                    <h3>${resource.title}</h3>
+                    <p>${resource.description || 'No description available'}</p>
+                    <div class="resource-actions">
+                        <button class="btn btn-primary btn-sm" onclick="accessResource('${resource.id}', '${resource.title}')">
+                            Access Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+function showErrorScreen(message) {
+    const errorScreen = document.getElementById('errorScreen');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    if (errorScreen) {
+        errorScreen.style.display = 'flex';
+    }
+    if (errorMessage) {
+        errorMessage.textContent = message;
+    }
+    
+    hideLoadingScreen();
+}
+
+function redirectToLogin() {
+    console.log('Redirecting to login...');
+    window.location.href = '/pages/login.html';
+}
+
+function accessResource(resourceId, resourceTitle) {
+    console.log(`Accessing resource: ${resourceTitle}`);
+    // Log the action
+    logResourceAccess(resourceId, resourceTitle);
+    // Show success message
+    showToast(`Accessing ${resourceTitle}`, 'success');
+}
+
+async function logResourceAccess(resourceId, resourceTitle) {
+    try {
+        if (!currentUser) return;
+        
+        await supabase
+            .from('usage_logs')
+            .insert([{
+                user_id: currentUser.id,
+                action_type: 'viewed',
+                resource_name: resourceTitle
+            }]);
+        
+        console.log(`Logged access to ${resourceTitle}`);
+    } catch (error) {
+        console.error('Error logging resource access:', error);
+    }
+}
+
+// Time ago helper function
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffInMs = now - date;
+    const diffInSec = Math.floor(diffInMs / 1000);
+    const diffInMin = Math.floor(diffInSec / 60);
+    const diffInHour = Math.floor(diffInMin / 60);
+    const diffInDay = Math.floor(diffInHour / 24);
+    
+    if (diffInDay > 0) return `${diffInDay} day${diffInDay > 1 ? 's' : ''} ago`;
+    if (diffInHour > 0) return `${diffInHour} hour${diffInHour > 1 ? 's' : ''} ago`;
+    if (diffInMin > 0) return `${diffInMin} minute${diffInMin > 1 ? 's' : ''} ago`;
+    return 'Just now';
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
 
 function updateLoadingProgress(percent, statusText) {
     debugLog('info', `Updating loading progress: ${percent}% - ${statusText}`);
@@ -191,214 +512,101 @@ function updateCurrentTime() {
     }
 }
 
-async function initializeDashboard() {
-    debugLog('info', '=== STARTING DASHBOARD INITIALIZATION ===');
-    window.dashboardLoaded = false;
-    let attempts = 0;
-    const maxAttempts = 3;
-    
-    async function attemptInitialization() {
-        attempts++;
-        debugLog('info', `🚀 Dashboard initialization attempt ${attempts}/${maxAttempts}`);
-        debugLog('info', 'Current window.dashboardLoaded status:', window.dashboardLoaded);
-        
-        updateLoadingProgress(40, `Loading attempt ${attempts}...`);
-        
-        try {
-            // Check Supabase client availability first
-            debugLog('info', 'Verifying Supabase client...');
-            if (!window.supabase) {
-                throw new Error('Supabase client not available');
-            }
-            debugLog('info', 'Supabase client confirmed available');
-            
-            // Check authentication with improved error handling
-            debugLog('info', '🔍 Starting authentication check...');
-            updateLoadingProgress(50, 'Verifying credentials...');
-            
-            let user = null;
-            let authError = null;
-            
-            try {
-                debugLog('info', 'Calling supabase.auth.getUser()...');
-                const authPromise = window.supabase.auth.getUser();
-                const timeoutPromise = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Auth timeout after 4 seconds')), 4000)
-                );
-                
-                debugLog('info', 'Waiting for auth result with 4s timeout...');
-                const authResult = await Promise.race([authPromise, timeoutPromise]);
-                
-                debugLog('info', 'Auth result received:', {
-                    hasData: !!authResult.data,
-                    hasUser: !!authResult.data?.user,
-                    hasError: !!authResult.error
-                });
-                
-                user = authResult.data?.user;
-                authError = authResult.error;
-                
-                if (user) {
-                    debugLog('info', 'User data:', {
-                        id: user.id,
-                        email: user.email,
-                        created_at: user.created_at
-                    });
-                } else {
-                    debugLog('warn', 'No user data in auth result');
-                }
-                
-                if (authError) {
-                    debugLog('error', 'Auth error details:', authError);
-                }
-                
-            } catch (timeoutError) {
-                debugLog('error', '❌ Auth check timed out:', timeoutError);
-                throw new Error('Authentication service timeout: ' + timeoutError.message);
-            }
-            
-            if (authError || !user) {
-                debugLog('error', '❌ Authentication failed');
-                debugLog('error', 'Auth error:', authError);
-                debugLog('error', 'User exists:', !!user);
-                throw new Error('Authentication failed: ' + (authError?.message || 'No user found'));
-            }
-            
-            currentUser = user;
-            debugLog('info', '✅ User authenticated successfully:', user.email);
-            updateLoadingProgress(60, 'Loading user profile...');
-            
-            // Check and auto-initialize user profile
-            debugLog('info', '👤 Starting user profile check...');
-            
-            let profileResult;
-            try {
-                profileResult = await checkAndInitializeUser(user, true);
-                debugLog('info', 'Profile check result:', {
-                    needsRedirect: profileResult.needsRedirect,
-                    isNewUser: profileResult.isNewUser,
-                    hasProfile: !!profileResult.userProfile
-                });
-            } catch (profileError) {
-                debugLog('error', 'Profile check failed:', profileError);
-                throw new Error('Failed to load user profile: ' + profileError.message);
-            }
-            
-            if (profileResult.needsRedirect) {
-                debugLog('info', '📝 Profile incomplete, redirecting to complete profile...');
-                window.location.href = '/complete-profile.html';
-                return;
-            }
-            
-            userProfile = profileResult.userProfile;
-            debugLog('info', 'User profile loaded:', {
-                name: userProfile?.name,
-                email: userProfile?.email,
-                plan: userProfile?.plan
-            });
-            
-            updateLoadingProgress(70, 'Loading dashboard data...');
-            
-            // Load dashboard data with error handling
-            debugLog('info', 'Starting parallel data loading...');
-            const dataPromises = [
-                loadUsageStats().catch(err => {
-                    debugLog('warn', '⚠️ Usage stats load failed:', err);
-                    usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
-                    return 'usage_stats_failed';
-                }),
-                loadAvailableResources().catch(err => {
-                    debugLog('warn', '⚠️ Resources load failed:', err);
-                    availableResources = [];
-                    return 'resources_failed';
-                }),
-                loadRecentActivity().catch(err => {
-                    debugLog('warn', '⚠️ Activity load failed:', err);
-                    recentActivity = [];
-                    return 'activity_failed';
-                })
-            ];
-            
-            const dataResults = await Promise.all(dataPromises);
-            debugLog('info', 'Data loading results:', dataResults);
-            
-            updateLoadingProgress(85, 'Finalizing setup...');
-            
-            // Initialize UI components
-            debugLog('info', 'Initializing UI components...');
-            try {
-                initializeNavigation();
-                debugLog('info', 'Navigation initialized');
-                
-                initializeMobileMenu();
-                debugLog('info', 'Mobile menu initialized');
-                
-                initializeRealTimeFeatures();
-                debugLog('info', 'Real-time features initialized');
-                
-                updateUserInterface();
-                debugLog('info', 'User interface updated');
-            } catch (uiError) {
-                debugLog('error', 'UI initialization error:', uiError);
-                // Continue anyway, UI errors shouldn't stop the dashboard
-            }
-            
-            updateLoadingProgress(100, 'Complete!');
-            
-            // Mark as loaded and show dashboard
-            window.dashboardLoaded = true;
-            debugLog('info', '✅ Dashboard marked as loaded!');
-            
-            setTimeout(() => {
-                debugLog('info', 'Showing dashboard after 500ms delay...');
-                hideLoadingScreen();
-                showDashboard();
-                
-                // Show appropriate welcome message
-                if (profileResult.isNewUser) {
-                    debugLog('info', 'Showing welcome message for new user');
-                    if (profileResult.isProfileComplete) {
-                        showWelcomeCompletedUser(userProfile);
-                    } else {
-                        showWelcomeNewUser(userProfile);
-                    }
-                } else {
-                    debugLog('info', 'Showing welcome back message');
-                    showToast('Welcome back! Dashboard loaded successfully.', 'success');
-                }
-            }, 500);
-            
-            debugLog('info', '✅ DASHBOARD INITIALIZATION COMPLETED SUCCESSFULLY!');
-            
-        } catch (error) {
-            debugLog('error', `❌ Dashboard initialization failed (Attempt ${attempts}):`, error);
-            debugLog('error', 'Error stack:', error.stack);
-            
-            if (attempts < maxAttempts) {
-                debugLog('info', `🔄 Retrying in 2 seconds... (${maxAttempts - attempts} attempts left)`);
-                updateLoadingProgress(20, `Retrying... (${attempts}/${maxAttempts})`);
-                setTimeout(() => attemptInitialization(), 2000);
-            } else {
-                debugLog('error', '❌ ALL INITIALIZATION ATTEMPTS FAILED!');
-                debugLog('error', 'Showing error screen with message:', error.message);
-                hideLoadingScreen();
-                showErrorScreen(error.message);
-            }
-        }
+// Old initialization code removed and replaced with new streamlined version above
+
+// Retry dashboard functionality
+function retryDashboard() {
+    console.log('User requested dashboard retry');
+    const errorScreen = document.getElementById('errorScreen');
+    if (errorScreen) {
+        errorScreen.style.display = 'none';
     }
-    
-    // Start the initialization process
-    debugLog('info', 'Calling attemptInitialization()...');
-    try {
-        await attemptInitialization();
-    } catch (finalError) {
-        debugLog('error', 'FINAL CATCH: Dashboard initialization completely failed:', finalError);
-    }
-    debugLog('info', '=== DASHBOARD INITIALIZATION PROCESS ENDED ===');
+    initializeDashboard();
 }
 
+// Show offline mode
+function showOfflineMode() {
+    console.log('Loading offline mode');
+    hideLoadingScreen();
+    const errorScreen = document.getElementById('errorScreen');
+    if (errorScreen) {
+        errorScreen.style.display = 'none';
+    }
+    loadOfflineDashboard();
+}
+
+// Load offline dashboard with fallback data
+function loadOfflineDashboard() {
+    const fallbackProfile = {
+        name: 'User',
+        email: 'user@example.com',
+        role: 'Member',
+        plan: 'Offline Mode',
+        plan_expiry: null
+    };
+    
+    renderProfileSection(fallbackProfile);
+    renderUsageStats([]);
+    renderResourcesGrid([]);
+    
+    showDashboard();
+    showToast('Running in offline mode. Some features may be limited.', 'warning');
+}
+
+// Section navigation function
+function showDashboardSection(sectionName) {
+    console.log(`Navigating to section: ${sectionName}`);
+    
+    // Hide all sections
+    document.querySelectorAll('.dashboard-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Show target section
+    const targetSection = document.getElementById(`dash-${sectionName}`);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // Update sidebar navigation state
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    const activeLink = document.querySelector(`[data-section="${sectionName}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+}
+
+// Sign out handler
+async function handleUserSignOut() {
+    try {
+        console.log('Signing out...');
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        
+        showToast('Signed out successfully', 'success');
+        setTimeout(() => {
+            window.location.href = '/index.html';
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Sign out error:', error);
+        showToast('Failed to sign out. Please try again.', 'error');
+    }
+}
+
+// Make functions globally available
+window.retryDashboard = retryDashboard;
+window.showOfflineMode = showOfflineMode;
+window.showDashboardSection = showDashboardSection;
+window.handleUserSignOut = handleUserSignOut;
+window.accessResource = accessResource;
+window.showToast = showToast;
+
 // ====================================
-// NEW USER ONBOARDING
+// NEW USER ONBOARDING (Legacy)
 // ====================================
 
 // Welcome new users with onboarding

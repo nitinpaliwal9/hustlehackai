@@ -450,6 +450,7 @@ p {
   min-height: 44px;
   align-items: center;
   justify-content: center;
+  z-index: 1002;
 }
 
 .mobile-menu-toggle:hover {
@@ -1242,11 +1243,16 @@ select.form-input:focus {
     padding: 0 16px;
     gap: 8px;
     min-height: 70px;
+    position: relative;
   }
   
   /* Hide nav-actions by default on mobile */
   .nav-actions {
     display: none;
+    position: absolute;
+    right: 60px; /* Leave space for mobile menu toggle */
+    top: 50%;
+    transform: translateY(-50%);
   }
   
   /* Show nav-actions when it contains a visible profile dropdown */
@@ -1266,6 +1272,10 @@ select.form-input:focus {
   /* Always show mobile menu toggle */
   .mobile-menu-toggle {
     display: flex !important;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
   }
   
   /* Improve mobile modal sizing */

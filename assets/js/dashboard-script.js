@@ -4,14 +4,8 @@
 // Dynamic User Data & Usage Tracking
 // ====================================
 
-// Initialize Supabase
-if (!window.supabase) {
-    window.supabase = { createClient: () => { /* Supabase client stub */ } };
-}
-const supabase = window.supabase.createClient(
-    'https://bmgvtzwesdkitdjfszsh.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
-);
+// Use the already-created Supabase client from window.supabase
+const supabase = window.supabase;
 
 // Global state
 let currentUser = null;
@@ -140,53 +134,30 @@ const { data: { user }, error } = await window.supabase.auth.getUser();
             // We'll show a special welcome message later
         }
         
-        // Load remaining dashboard data in parallel with individual error handling
-        console.log('📊 Loading dashboard data...');
-        const dataPromises = [
+        // 3. Fetch all dashboard data in parallel
+        await Promise.all([
             loadUsageStats().catch(err => {
                 console.warn('⚠️ Usage stats load failed:', err);
                 usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
-                return null;
             }),
             loadAvailableResources().catch(err => {
                 console.warn('⚠️ Resources load failed:', err);
                 availableResources = [];
-                return null;
             }),
-// Using Promise.allSettled to handle individual errors gracefully
-Promise.allSettled([loadUsageStats(), loadAvailableResources(), loadRecentActivity()]).then(results => {
-    results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-            console.warn('Error loading data', result.reason);
-            if (index === 0) usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
-            if (index === 1) availableResources = [];
-            if (index === 2) recentActivity = [];
-        }
-    });
-}).catch(err => {
-    console.error('Data loading error:', err);
-});
+            loadRecentActivity().catch(err => {
                 console.warn('⚠️ Activity load failed:', err);
                 recentActivity = [];
-                return null;
             })
-        ];
+        ]);
         
-await Promise.all(dataPromises);
-    
-    // Ensure the dashboard can still load
-    if (!dashboardLoaded) {
-        setTimeout(() => {
-            displayFallbackUI();
-            if (!dashboardLoaded) {
-                showError('Dashboard took too long to load. Try refreshing.');
-            }
-        }, 10000);
-    }
-
-dashboardLoaded = true;
-dashboardContainer.style.display = 'block';
         console.log('✅ Dashboard data loaded');
+        
+        // Mark as loaded and show dashboard
+        dashboardLoaded = true;
+        const dashboardContainer = document.getElementById('dashboardContainer');
+        if (dashboardContainer) {
+            dashboardContainer.style.display = 'block';
+        }
         
         // Initialize UI components
         console.log('🎨 Initializing UI components...');
@@ -570,7 +541,7 @@ async function loadUsageStats() {
         console.log('📊 Loading usage statistics...');
         
         // Get total usage count
-        const { data: allUsage, error: totalError } = await supabase
+const { data: allUsage = [], error: totalError } = await supabase
             .from('usage_logs')
             .select('*')
             .eq('user_id', currentUser.id);
@@ -581,7 +552,7 @@ async function loadUsageStats() {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         
-        const { data: recentUsage, error: recentError } = await supabase
+const { data: recentUsage = [], error: recentError } = await supabase
             .from('usage_logs')
             .select('*')
             .eq('user_id', currentUser.id)
@@ -615,7 +586,7 @@ async function loadAvailableResources() {
     try {
         console.log('🎁 Loading available resources...');
         
-        const { data, error } = await supabase
+const { data = [], error } = await supabase
             .from('resources')
             .select('*')
             .order('created_at', { ascending: false });
@@ -651,7 +622,7 @@ async function loadRecentActivity() {
     try {
         console.log('⚡ Loading recent activity...');
 
-        const { data, error } = await supabase
+const { data = [], error } = await supabase
             .from('usage_logs')
             .select('*')
             .eq('user_id', currentUser.id)
@@ -670,11 +641,21 @@ async function loadRecentActivity() {
 
 // Fallback UI logic
 function displayFallbackUI() {
-    document.getElementById("planName").textContent = userProfile?.plan || "N/A";
-    document.getElementById("expiry").textContent = userProfile?.plan_expiry
-        ? formatDate(userProfile.plan_expiry)
-        : "Not started";
+    // Plan name
+    const planNameEl = document.getElementById("planName");
+    if (planNameEl) {
+        planNameEl.textContent = userProfile?.plan || "N/A";
+    }
+    
+    // Plan expiry
+    const expiryEl = document.getElementById("expiry");
+    if (expiryEl) {
+        expiryEl.textContent = userProfile?.plan_expiry
+            ? formatDate(userProfile.plan_expiry)
+            : "N/A";
+    }
 
+    // Recent activity
     if (recentActivity.length === 0) {
         const activityLog = document.getElementById("activityLog");
         if (activityLog) {
@@ -723,17 +704,23 @@ function updateUserInterface() {
 
 // Update user profile display
 function updateUserProfile() {
-    if (!userProfile) return;
+    if (!userProfile) {
+        // Set default values when no profile exists
+        if (elements.sidebarUserName) elements.sidebarUserName.textContent = 'User';
+        if (elements.sidebarUserRole) elements.sidebarUserRole.textContent = 'Member';
+        if (elements.userProfileName) elements.userProfileName.textContent = 'User';
+        if (elements.userPlanName) elements.userPlanName.textContent = 'Starter';
+        return;
+    }
     
-    // Update sidebar user info
+    // Update sidebar user info with fallbacks
     if (elements.sidebarUserName) {
         elements.sidebarUserName.textContent = userProfile.name || 'User';
     }
     
     if (elements.sidebarUserRole) {
-        elements.sidebarUserRole.textContent = userProfile.role ? 
-            userProfile.role.charAt(0).toUpperCase() + userProfile.role.slice(1) : 
-            'Member';
+        const role = userProfile.role || 'member';
+        elements.sidebarUserRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
     }
     
     // Update navbar profile name
@@ -752,18 +739,16 @@ function updateUserProfile() {
 
 // Update plan status display
 function updatePlanStatus() {
-    if (!userProfile) return;
-    
-    const planExpiry = userProfile.plan_expiry ? new Date(userProfile.plan_expiry) : null;
+    const planExpiry = userProfile?.plan_expiry ? new Date(userProfile.plan_expiry) : null;
     const now = new Date();
     
-    if (planExpiry) {
-        const daysRemaining = Math.ceil((planExpiry - now) / (1000 * 60 * 60 * 24));
-        const isExpired = daysRemaining <= 0;
-        const isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
-        
-        // Update days remaining
-        if (elements.daysRemaining) {
+    // Update days remaining with fallback
+    if (elements.daysRemaining) {
+        if (planExpiry) {
+            const daysRemaining = Math.ceil((planExpiry - now) / (1000 * 60 * 60 * 24));
+            const isExpired = daysRemaining <= 0;
+            const isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
+            
             if (isExpired) {
                 elements.daysRemaining.textContent = 'Expired';
                 elements.daysRemaining.style.color = '#ef4444';
@@ -771,22 +756,25 @@ function updatePlanStatus() {
                 elements.daysRemaining.textContent = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left`;
                 elements.daysRemaining.style.color = isExpiringSoon ? '#f59e0b' : '#22c55e';
             }
+        } else {
+            elements.daysRemaining.textContent = 'N/A';
+            elements.daysRemaining.style.color = '#6b7280';
         }
-        
-        // Update progress bar (based on usage)
-        const totalUsage = usageStats?.total || 0;
-        const mockMaxUsage = 100; // You can make this dynamic based on plan
-        const usagePercent = Math.min((totalUsage / mockMaxUsage) * 100, 100);
-        
-        if (elements.planUsagePercent) {
-            elements.planUsagePercent.textContent = `${Math.round(usagePercent)}%`;
-        }
-        if (elements.planProgressFill) {
-            elements.planProgressFill.style.width = `${usagePercent}%`;
-        }
-        if (elements.planUsageText) {
-            elements.planUsageText.textContent = `${totalUsage} resources accessed`;
-        }
+    }
+    
+    // Update progress bar (based on usage) with safe defaults
+    const totalUsage = usageStats?.total || 0;
+    const mockMaxUsage = 100;
+    const usagePercent = Math.min((totalUsage / mockMaxUsage) * 100, 100);
+    
+    if (elements.planUsagePercent) {
+        elements.planUsagePercent.textContent = `${Math.round(usagePercent)}%`;
+    }
+    if (elements.planProgressFill) {
+        elements.planProgressFill.style.width = `${usagePercent}%`;
+    }
+    if (elements.planUsageText) {
+        elements.planUsageText.textContent = `${totalUsage} resources accessed`;
     }
     
     console.log('✅ Plan status UI updated');
@@ -809,9 +797,14 @@ function updateOverviewSection() {
         totalUsage: document.querySelector('#stat-total-usage'),
         recentActivity: document.querySelector('#stat-recent-activity'),
         availableResources: document.querySelector('#stat-available-resources'),
-        planStatus: document.querySelector('#stat-plan-status')
+        planStatus: document.querySelector('#stat-plan-status'),
+        resourcesUsed: document.getElementById('resourcesUsed'),
+        totalResources: document.getElementById('totalResources'),
+        currentPlan: document.getElementById('currentPlan'),
+        daysSinceJoin: document.getElementById('daysSinceJoin')
     };
     
+    // Safe updates with fallbacks
     if (statsElements.totalUsage) {
         statsElements.totalUsage.textContent = usageStats?.total || 0;
     }
@@ -821,11 +814,30 @@ function updateOverviewSection() {
     }
     
     if (statsElements.availableResources) {
-        statsElements.availableResources.textContent = availableResources.length;
+        statsElements.availableResources.textContent = availableResources?.length || 0;
     }
     
-    if (statsElements.planStatus && userProfile) {
-        statsElements.planStatus.textContent = userProfile.plan || 'starter';
+    if (statsElements.planStatus) {
+        statsElements.planStatus.textContent = userProfile?.plan || 'starter';
+    }
+    
+    if (statsElements.resourcesUsed) {
+        statsElements.resourcesUsed.textContent = usageStats?.total || 0;
+    }
+    
+    if (statsElements.totalResources) {
+        statsElements.totalResources.textContent = availableResources?.length || 0;
+    }
+    
+    if (statsElements.currentPlan) {
+        const plan = userProfile?.plan || 'Starter';
+        statsElements.currentPlan.textContent = plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+    }
+    
+    if (statsElements.daysSinceJoin) {
+        const joinDate = userProfile?.created_at || new Date().toISOString();
+        const daysSince = Math.floor((new Date() - new Date(joinDate)) / (1000 * 60 * 60 * 24));
+        statsElements.daysSinceJoin.textContent = Math.max(daysSince, 0);
     }
 }
 

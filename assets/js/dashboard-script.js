@@ -49,6 +49,17 @@ const elements = {
 // Initialize Dashboard
 window.addEventListener('load', function() {
     console.log('🚀 Initializing HustleHack AI Dashboard...');
+    
+    // Backup safety net - force hide loading screen after 5 seconds no matter what
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen && loadingScreen.style.display !== 'none') {
+            console.warn('🚨 EMERGENCY: Force hiding stuck loading screen');
+            hideLoadingScreen();
+            loadFallbackDashboard();
+        }
+    }, 5000);
+    
     initializeDashboard();
 });
 
@@ -93,21 +104,51 @@ async function initializeDashboard() {
     try {
         console.log('🔄 Starting dashboard initialization...');
         
-        // Set a timeout to force-hide loading screen if it takes too long
+        // Shorter timeout for better UX
         const timeoutId = setTimeout(() => {
-            console.warn('⚠️ Dashboard loading timed out, hiding loading screen');
-            hideLoadingScreen();
-            showToast('Dashboard loaded with some delays. Please check your connection.', 'warning');
-        }, 15000); // 15 second timeout
+            if (!dashboardLoaded) {
+                console.warn('⚠️ Dashboard loading timed out, showing fallback');
+                hideLoadingScreen();
+                loadFallbackDashboard();
+                showToast('Dashboard loaded with limited functionality. Please refresh if needed.', 'warning');
+            }
+        }, 8000); // 8 second timeout
         
-        // Check authentication first
+        // Check authentication with better error handling
         console.log('🔍 Checking authentication...');
-const { data: { user }, error } = await window.supabase.auth.getUser();
+        let user = null;
+        let authError = null;
         
-        if (error || !user) {
-            console.error('❌ Authentication failed:', error);
-            console.log('🔄 Redirecting to login...');
-            window.location.href = '/pages/login.html';
+        try {
+            const authResult = await Promise.race([
+                window.supabase.auth.getUser(),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Auth timeout')), 3000)
+                )
+            ]);
+            
+            user = authResult.data?.user;
+            authError = authResult.error;
+            
+            console.log('Auth result:', { user: !!user, error: authError });
+        } catch (timeoutError) {
+            console.error('❌ Auth check timed out:', timeoutError);
+            authError = timeoutError;
+        }
+        
+        if (authError || !user) {
+            console.error('❌ Authentication failed:', authError);
+            clearTimeout(timeoutId);
+            
+            // Don't redirect immediately - show fallback first
+            hideLoadingScreen();
+            loadFallbackDashboard();
+            showToast('Authentication required. Please sign in.', 'warning');
+            
+            // Delayed redirect to avoid jarring experience
+            setTimeout(() => {
+                window.location.href = '/pages/login.html';
+            }, 3000);
             return;
         }
         
@@ -154,10 +195,8 @@ const { data: { user }, error } = await window.supabase.auth.getUser();
         
         // Mark as loaded and show dashboard
         dashboardLoaded = true;
-        const dashboardContainer = document.getElementById('dashboardContainer');
-        if (dashboardContainer) {
-            dashboardContainer.style.display = 'block';
-        }
+        clearTimeout(timeoutId);
+        showDashboard();
         
         // Initialize UI components
         console.log('🎨 Initializing UI components...');
@@ -190,8 +229,10 @@ const { data: { user }, error } = await window.supabase.auth.getUser();
         
     } catch (error) {
         console.error('❌ Dashboard initialization failed:', error);
-        showToast('Failed to load dashboard. Please refresh the page.', 'error');
+        dashboardLoaded = false;
         hideLoadingScreen();
+        loadFallbackDashboard();
+        showToast('Dashboard initialization failed. Running in fallback mode.', 'error');
     }
 }
 

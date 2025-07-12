@@ -1249,39 +1249,35 @@ select.form-input:focus {
     padding: 0 16px;
     gap: 8px;
     min-height: 70px;
-    position: relative;
-  }
-  
-  /* Hide nav-actions by default on mobile */
-  .nav-actions {
-    display: none;
-    position: absolute;
-    right: 60px; /* Leave space for mobile menu toggle */
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  
-  /* Show nav-actions when it contains a visible profile dropdown */
-  .nav-actions.show-profile {
-    display: flex !important;
-  }
-  
-  /* Hide auth buttons on mobile but keep profile dropdown */
-  .nav-actions .btn:not(.profile-btn) {
-    display: none !important;
-  }
-  
-  .nav-actions .theme-toggle {
-    display: none !important;
+    justify-content: space-between;
+    align-items: center;
   }
   
   /* Always show mobile menu toggle */
   .mobile-menu-toggle {
     display: flex !important;
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
+    order: 3;
+  }
+  
+  /* Hide theme toggle and auth buttons on mobile */
+  .nav-actions .theme-toggle,
+  .nav-actions .btn:not(.profile-btn) {
+    display: none !important;
+  }
+  
+  /* Keep profile dropdown visible when present */
+  .nav-actions {
+    order: 2;
+  }
+  
+  /* Profile dropdown specific mobile styling */
+  .profile-dropdown {
+    display: none; /* Hidden by default */
+  }
+  
+  /* Show profile dropdown when user is authenticated */
+  .profile-dropdown.mobile-visible {
+    display: inline-block !important;
   }
   
   /* Improve mobile modal sizing */
@@ -1332,9 +1328,6 @@ select.form-input:focus {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  .mobile-menu-toggle {
-    display: flex;
-  }
   
   .hero {
     padding-top: 80px;

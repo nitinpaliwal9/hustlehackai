@@ -1249,25 +1249,37 @@ select.form-input:focus {
     padding: 0 16px;
     gap: 8px;
     min-height: 70px;
-    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  /* Logo takes available space */
+  .logo {
+    flex: 1;
+  }
+  
+  /* Nav actions positioned in center-right */
+  .nav-actions {
+    position: absolute;
+    right: 60px; /* Leave space for hamburger menu */
+    display: flex;
     align-items: center;
   }
   
-  /* Always show mobile menu toggle */
+  /* Always show mobile menu toggle - highest priority */
   .mobile-menu-toggle {
     display: flex !important;
-    order: 3;
+    position: absolute;
+    right: 16px;
+    z-index: 1004;
+    order: 999; /* Ensure it's always last */
   }
   
   /* Hide theme toggle and auth buttons on mobile */
   .nav-actions .theme-toggle,
   .nav-actions .btn:not(.profile-btn) {
     display: none !important;
-  }
-  
-  /* Keep profile dropdown visible when present */
-  .nav-actions {
-    order: 2;
   }
   
   /* Profile dropdown specific mobile styling */

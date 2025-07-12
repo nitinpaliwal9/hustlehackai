@@ -1303,6 +1303,12 @@ function updateUIForAuthenticatedUser(user) {
         if (dashboardLink) {
             dashboardLink.style.display = 'flex';
         }
+        
+        // Force show nav-actions on mobile when profile dropdown is shown
+        const navActions = document.querySelector('.nav-actions');
+        if (navActions) {
+            navActions.style.display = 'flex';
+        }
     }
     
     // Update hero actions - replace login buttons with dashboard button

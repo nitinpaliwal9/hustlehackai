@@ -59,11 +59,20 @@ async function initializeDashboard() {
     try {
         console.log('🔄 Starting dashboard initialization...');
         
+        // Set a timeout to force-hide loading screen if it takes too long
+        const timeoutId = setTimeout(() => {
+            console.warn('⚠️ Dashboard loading timed out, hiding loading screen');
+            hideLoadingScreen();
+            showToast('Dashboard loaded with some delays. Please check your connection.', 'warning');
+        }, 15000); // 15 second timeout
+        
         // Check authentication first
+        console.log('🔍 Checking authentication...');
         const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error || !user) {
             console.error('❌ Authentication failed:', error);
+            clearTimeout(timeoutId);
             redirectToLogin();
             return;
         }
@@ -71,23 +80,42 @@ async function initializeDashboard() {
         currentUser = user;
         console.log('✅ User authenticated:', user.email);
         
-        // Load all dashboard data in parallel
-        await Promise.all([
-            loadUserProfile(),
-            loadUsageStats(),
-            loadAvailableResources(),
-            loadRecentActivity()
-        ]);
+        // Load all dashboard data in parallel with individual error handling
+        console.log('📊 Loading dashboard data...');
+        const dataPromises = [
+            loadUserProfile().catch(err => {
+                console.error('❌ Profile load failed:', err);
+                throw err; // Re-throw to handle in main catch
+            }),
+            loadUsageStats().catch(err => {
+                console.warn('⚠️ Usage stats load failed:', err);
+                return null; // Don't fail entire initialization
+            }),
+            loadAvailableResources().catch(err => {
+                console.warn('⚠️ Resources load failed:', err);
+                return null; // Don't fail entire initialization
+            }),
+            loadRecentActivity().catch(err => {
+                console.warn('⚠️ Activity load failed:', err);
+                return null; // Don't fail entire initialization
+            })
+        ];
+        
+        await Promise.all(dataPromises);
+        console.log('✅ Dashboard data loaded');
         
         // Initialize UI components
+        console.log('🎨 Initializing UI components...');
         initializeNavigation();
         initializeMobileMenu();
         initializeRealTimeFeatures();
         
         // Update UI with loaded data
+        console.log('🔄 Updating user interface...');
         updateUserInterface();
         
-        // Hide loading screen
+        // Clear timeout and hide loading screen
+        clearTimeout(timeoutId);
         hideLoadingScreen();
         
         console.log('✅ Dashboard initialized successfully!');

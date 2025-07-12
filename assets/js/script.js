@@ -1121,7 +1121,10 @@ async function saveUserToDatabase(user) {
             .single();
 
         if (!existingUser) {
-            // Create new user record
+            // Create new user record with plan defaults
+            const planStart = new Date();
+            const planExpiry = new Date(Date.now() + 30 * 86400000); // 30 days from now
+            
             const { data, error } = await supabase
                 .from('users')
                 .insert([{
@@ -1131,7 +1134,10 @@ async function saveUserToDatabase(user) {
                     role: user.app_metadata?.provider === 'google' ? 'Google User' : 'Email User',
                     device: navigator.userAgent,
                     timestamp: new Date().toISOString(),
-                    provider: user.app_metadata?.provider || 'email'
+                    provider: user.app_metadata?.provider || 'email',
+                    plan: "starter",
+                    plan_start: planStart,
+                    plan_expiry: planExpiry
                 }]);
 
             if (error) {
@@ -1612,14 +1618,21 @@ async function handleSignup(e) {
             return;
         }
 
-        // Step 3: Insert user into 'users' table
+        // Step 3: Insert user into 'users' table with plan defaults
+        const planStart = new Date();
+        const planExpiry = new Date(Date.now() + 30 * 86400000); // 30 days from now
+        
         const { error: dbError } = await supabase.from('users').insert([
             {
                 id: user.id,
                 name,
+                email: user.email,
                 role,
                 device,
-                timestamp
+                timestamp,
+                plan: "starter",
+                plan_start: planStart,
+                plan_expiry: planExpiry
             }
         ]);
 

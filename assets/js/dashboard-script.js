@@ -92,6 +92,7 @@ function updateCurrentTime() {
 }
 
 async function initializeDashboard() {
+    let dashboardLoaded = false;
     try {
         console.log('🔄 Starting dashboard initialization...');
         
@@ -156,7 +157,19 @@ async function initializeDashboard() {
             })
         ];
         
-        await Promise.all(dataPromises);
+await Promise.all(dataPromises);
+    
+    // Ensure the dashboard can still load
+    if (!dashboardLoaded) {
+        setTimeout(() => {
+            displayFallbackUI();
+            if (!dashboardLoaded) {
+                showError('Dashboard took too long to load. Try refreshing.');
+            }
+        }, 10000);
+    }
+
+    dashboardLoaded = true;
         console.log('✅ Dashboard data loaded');
         
         // Initialize UI components
@@ -617,6 +630,42 @@ async function loadAvailableResources() {
 }
 
 // Load recent activity
+// Enhanced Version: Fault-tolerant loading
+async function loadRecentActivity() {
+    try {
+        console.log('⚡ Loading recent activity...');
+
+        const { data, error } = await supabase
+            .from('usage_logs')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .order('timestamp', { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        recentActivity = data || [];
+        console.log(`✅ Loaded ${recentActivity.length} recent activities`);
+    } catch (error) {
+        console.error('❌ Failed to load recent activity:', error);
+        recentActivity = [];
+    }
+}
+
+// Fallback UI logic
+function displayFallbackUI() {
+    document.getElementById("planName").textContent = userProfile?.plan || "N/A";
+    document.getElementById("expiry").textContent = userProfile?.plan_expiry
+        ? formatDate(userProfile.plan_expiry)
+        : "Not started";
+
+    if (recentActivity.length === 0) {
+        const activityLog = document.getElementById("activityLog");
+        if (activityLog) {
+            activityLog.innerHTML = "<li>No recent activity</li>";
+        }
+    }
+}
 async function loadRecentActivity() {
     try {
         console.log('⚡ Loading recent activity...');

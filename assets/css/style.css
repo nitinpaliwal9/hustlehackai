@@ -368,6 +368,7 @@ p {
     min-width: auto;
     transform: translateY(-10px);
     max-width: calc(100vw - 32px);
+    z-index: 1003; /* Higher than mobile menu toggle */
   }
   
   .profile-dropdown.active .profile-menu {
@@ -389,6 +390,11 @@ p {
   
   .profile-arrow {
     font-size: 0.7rem;
+  }
+  
+  /* Ensure profile dropdown doesn't interfere with mobile menu */
+  .profile-dropdown {
+    z-index: 1002;
   }
 }
 

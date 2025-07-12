@@ -984,16 +984,57 @@
     
     <!-- Debug Console -->
     <div id="debugConsole" class="debug-console"></div>
-    <button id="debugToggle" class="debug-toggle" onclick="toggleDebugConsole()">Debug</button>
+    <button id="debugToggle" onclick="toggleDebugConsole()" style="position: fixed; bottom: 10px; right: 10px; background: #333; color: white; border: none; padding: 8px 12px; border-radius: 5px; z-index: 10002; cursor: pointer; font-size: 12px; font-weight: bold;">🐛 Debug</button>
     
     <script>
-        // Debug console functionality
+        // Initialize debug system immediately
+        console.log('🔧 DEBUG SYSTEM INITIALIZING...');
         window.showDebugConsole = false;
+        window.debugLogs = [];
+        
+        // Immediate debug logging function
+        window.debugLog = function(level, message, data = null) {
+            const timestamp = new Date().toISOString();
+            const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
+            
+            if (level === 'error') {
+                console.error(logMessage, data || '');
+            } else if (level === 'warn') {
+                console.warn(logMessage, data || '');
+            } else {
+                console.log(logMessage, data || '');
+            }
+            
+            if (!window.debugLogs) window.debugLogs = [];
+            window.debugLogs.push({ timestamp, level, message, data });
+        };
+        
+        // Test debug logging
+        window.debugLog('info', 'Debug system initialized');
+        window.debugLog('info', 'Page URL: ' + window.location.href);
+        window.debugLog('info', 'User agent: ' + navigator.userAgent);
+        window.debugLog('info', 'Document ready state: ' + document.readyState);
+        
+        // Check if debug button exists
+        setTimeout(() => {
+            const debugBtn = document.getElementById('debugToggle');
+            window.debugLog('info', 'Debug button found: ' + !!debugBtn);
+            if (debugBtn) {
+                window.debugLog('info', 'Debug button visible: ' + (debugBtn.offsetParent !== null));
+            }
+        }, 100);
         
         function toggleDebugConsole() {
+            window.debugLog('info', 'Debug console toggle clicked');
             const console = document.getElementById('debugConsole');
+            if (!console) {
+                window.debugLog('error', 'Debug console element not found!');
+                return;
+            }
+            
             window.showDebugConsole = !window.showDebugConsole;
             console.classList.toggle('show', window.showDebugConsole);
+            window.debugLog('info', 'Debug console visibility: ' + window.showDebugConsole);
             
             if (window.showDebugConsole && window.debugLogs) {
                 updateDebugConsole();
@@ -1018,26 +1059,66 @@
             }
         }, 2000);
         
-        // Global debug functions
+        // Global debug functions - available in browser console
         window.getDashboardStatus = function() {
-            return {
+            const status = {
                 dashboardLoaded: window.dashboardLoaded,
-                currentUser: window.currentUser,
-                userProfile: window.userProfile,
+                currentUser: !!window.currentUser,
+                userProfile: !!window.userProfile,
                 debugLogs: window.debugLogs?.length || 0,
-                supabaseAvailable: !!window.supabase
+                supabaseAvailable: !!window.supabase,
+                debugButtonVisible: !!document.getElementById('debugToggle'),
+                loadingScreen: !!document.getElementById('loadingScreen'),
+                errorScreen: !!document.getElementById('errorScreen'),
+                dashboardContainer: !!document.getElementById('dashboardContainer')
             };
+            console.table(status);
+            return status;
         };
         
         window.showLastErrors = function() {
-            if (!window.debugLogs) return 'No debug logs available';
-            return window.debugLogs.filter(log => log.level === 'error').slice(-10);
+            if (!window.debugLogs) {
+                console.log('No debug logs available');
+                return 'No debug logs available';
+            }
+            const errors = window.debugLogs.filter(log => log.level === 'error').slice(-10);
+            console.group('Last 10 Errors:');
+            errors.forEach(err => console.error(err.message, err.data));
+            console.groupEnd();
+            return errors;
+        };
+        
+        window.showAllLogs = function() {
+            if (!window.debugLogs) {
+                console.log('No debug logs available');
+                return;
+            }
+            console.group('All Debug Logs:');
+            window.debugLogs.forEach(log => {
+                const method = log.level === 'error' ? 'error' : log.level === 'warn' ? 'warn' : 'log';
+                console[method](`[${log.timestamp.split('T')[1].split('.')[0]}] ${log.message}`, log.data || '');
+            });
+            console.groupEnd();
+        };
+        
+        window.toggleDebugConsoleViaConsole = function() {
+            window.debugLog('info', 'Debug console toggled via browser console');
+            toggleDebugConsole();
         };
         
         window.retryDashboardInit = function() {
             console.log('Manual dashboard retry requested');
             location.reload();
         };
+        
+        // Log available debug functions
+        console.log('🔧 DEBUG FUNCTIONS AVAILABLE:');
+        console.log('- getDashboardStatus() - Show current status');
+        console.log('- showLastErrors() - Show recent errors');
+        console.log('- showAllLogs() - Show all debug logs');
+        console.log('- toggleDebugConsoleViaConsole() - Toggle debug console');
+        console.log('- retryDashboardInit() - Reload page');
+        console.log('- Look for 🐛 Debug button in bottom right corner');
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>

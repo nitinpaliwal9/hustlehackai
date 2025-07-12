@@ -5,6 +5,9 @@
 // ====================================
 
 // Initialize Supabase
+if (!window.supabase) {
+    window.supabase = { createClient: () => { /* Supabase client stub */ } };
+}
 const supabase = window.supabase.createClient(
     'https://bmgvtzwesdkitdjfszsh.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
@@ -50,7 +53,7 @@ const elements = {
 };
 
 // Initialize Dashboard
-document.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('load', function() {
     console.log('🚀 Initializing HustleHack AI Dashboard...');
     initializeDashboard();
 });
@@ -105,7 +108,7 @@ async function initializeDashboard() {
         
         // Check authentication first
         console.log('🔍 Checking authentication...');
-        const { data: { user }, error } = await supabase.auth.getUser();
+const { data: { user }, error } = await window.supabase.auth.getUser();
         
         if (error || !user) {
             console.error('❌ Authentication failed:', error);
@@ -150,7 +153,19 @@ async function initializeDashboard() {
                 availableResources = [];
                 return null;
             }),
-            loadRecentActivity().catch(err => {
+// Using Promise.allSettled to handle individual errors gracefully
+Promise.allSettled([loadUsageStats(), loadAvailableResources(), loadRecentActivity()]).then(results => {
+    results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+            console.warn('Error loading data', result.reason);
+            if (index === 0) usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
+            if (index === 1) availableResources = [];
+            if (index === 2) recentActivity = [];
+        }
+    });
+}).catch(err => {
+    console.error('Data loading error:', err);
+});
                 console.warn('⚠️ Activity load failed:', err);
                 recentActivity = [];
                 return null;
@@ -169,7 +184,8 @@ await Promise.all(dataPromises);
         }, 10000);
     }
 
-    dashboardLoaded = true;
+dashboardLoaded = true;
+dashboardContainer.style.display = 'block';
         console.log('✅ Dashboard data loaded');
         
         // Initialize UI components

@@ -405,12 +405,16 @@ function showLoadingScreen() {
 
 function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
+    const dashboardContainer = document.getElementById('dashboardContainer');
+    
     if (loadingScreen) {
         setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
+            loadingScreen.style.display = 'none';
+            
+            // Show dashboard container
+            if (dashboardContainer) {
+                dashboardContainer.style.display = 'block';
+            }
         }, 1000);
     }
 }

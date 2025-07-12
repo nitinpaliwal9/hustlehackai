@@ -537,6 +537,11 @@ function updateUserInterface() {
     updatePlanStatus();
     updateNavigationCounts();
     updateOverviewSection();
+    
+    // Check if profile needs completion
+    setTimeout(() => {
+        checkProfileCompletion();
+    }, 3000); // Show reminder after 3 seconds
 }
 
 // Update user profile display
@@ -1113,6 +1118,12 @@ window.handleResourceClick = handleResourceClick;
 window.downloadResource = downloadResource;
 window.viewResource = viewResource;
 window.showToast = showToast;
+window.completeProfile = completeProfile;
+window.skipOnboarding = skipOnboarding;
+window.closeOnboardingModal = closeOnboardingModal;
+window.dismissReminder = dismissReminder;
+window.autoInitializeNewUser = autoInitializeNewUser;
+window.checkAndInitializeUser = checkAndInitializeUser;
 
 console.log('✅ Dashboard script loaded successfully!');
 

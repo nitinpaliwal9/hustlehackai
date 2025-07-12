@@ -108,75 +108,69 @@ async function initializeDashboard() {
         
         if (error || !user) {
             console.error('❌ Authentication failed:', error);
-            console.log('⚠️ Loading dashboard in demo mode...');
-            
-            // Create mock user for demo
-            currentUser = {
-                id: 'demo-user',
-                email: 'demo@hustlehackai.com',
-                created_at: new Date().toISOString()
-            };
-            
-            // Create mock profile
-            userProfile = {
-                id: 'demo-user',
-                name: 'Demo User',
-                email: 'demo@hustlehackai.com',
-                role: 'Content Creator',
-                plan: 'Pro',
-                timestamp: new Date().toISOString()
-            };
-            
-            // Create mock usage stats
-            usageStats = {
-                total: 47,
-                recent: 5,
-                byType: { viewed: 30, downloaded: 12, clicked: 5 },
-                logs: []
-            };
-            
-            // Skip authentication and continue with demo data
-            console.log('✅ Demo mode activated');
-        } else {
-            currentUser = user;
-            console.log('✅ User authenticated:', user.email);
-            
-            // Load all dashboard data in parallel with individual error handling
-            console.log('📊 Loading dashboard data...');
-            const dataPromises = [
-                loadUserProfile().catch(err => {
-                    console.error('❌ Profile load failed:', err);
-                    // Use fallback profile
-                    userProfile = {
-                        id: currentUser.id,
-                        name: currentUser.email?.split('@')[0] || 'User',
-                        email: currentUser.email,
-                        role: 'User',
-                        plan: 'Pro',
-                        timestamp: currentUser.created_at
-                    };
-                    return null;
-                }),
-                loadUsageStats().catch(err => {
-                    console.warn('⚠️ Usage stats load failed:', err);
-                    usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
-                    return null;
-                }),
-                loadAvailableResources().catch(err => {
-                    console.warn('⚠️ Resources load failed:', err);
-                    availableResources = [];
-                    return null;
-                }),
-                loadRecentActivity().catch(err => {
-                    console.warn('⚠️ Activity load failed:', err);
-                    recentActivity = [];
-                    return null;
-                })
-            ];
-            
-            await Promise.all(dataPromises);
-            console.log('✅ Dashboard data loaded');
+            console.log('🔄 Redirecting to login...');
+            window.location.href = '/pages/login.html';
+            return;
         }
+        
+        currentUser = user;
+        console.log('✅ User authenticated:', user.email);
+        
+        // 🚨 NEW: Check if user profile exists BEFORE loading dashboard
+        console.log('👤 Checking if user profile exists...');
+        const { data: userRow, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+        
+        if (profileError) {
+            if (profileError.code === 'PGRST116') {
+                // No profile found - redirect to complete profile
+                console.log('📝 No profile found, redirecting to complete profile');
+                clearTimeout(timeoutId);
+                window.location.href = '/complete-profile.html';
+                return;
+            } else {
+                // Other database error - try to continue with fallback
+                console.error('❌ Profile check failed:', profileError);
+                userProfile = {
+                    id: currentUser.id,
+                    name: currentUser.email?.split('@')[0] || 'User',
+                    email: currentUser.email,
+                    role: 'User',
+                    plan: 'Pro',
+                    timestamp: currentUser.created_at
+                };
+            }
+        } else {
+            // Profile exists, use it
+            userProfile = userRow;
+            console.log('✅ User profile loaded:', userProfile.name);
+        }
+        
+        // Load remaining dashboard data in parallel with individual error handling
+        console.log('📊 Loading dashboard data...');
+        const dataPromises = [
+            loadUsageStats().catch(err => {
+                console.warn('⚠️ Usage stats load failed:', err);
+                usageStats = { total: 0, recent: 0, byType: {}, logs: [] };
+                return null;
+            }),
+            loadAvailableResources().catch(err => {
+                console.warn('⚠️ Resources load failed:', err);
+                availableResources = [];
+                return null;
+            }),
+            loadRecentActivity().catch(err => {
+                console.warn('⚠️ Activity load failed:', err);
+                recentActivity = [];
+                return null;
+            })
+        ];
+        
+        await Promise.all(dataPromises);
+        console.log('✅ Dashboard data loaded');
         
         // Initialize UI components
         console.log('🎨 Initializing UI components...');
@@ -215,34 +209,12 @@ function redirectToLogin() {
 // DATA LOADING FUNCTIONS
 // ====================================
 
-// Load user profile from database
+// Profile loading is now handled directly in initializeDashboard()
+// This function is kept for backwards compatibility but redirects to main flow
 async function loadUserProfile() {
-    try {
-        console.log('👤 Loading user profile...');
-        
-        const { data, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', currentUser.id)
-            .single();
-        
-        if (error) {
-            console.error('❌ Error loading user profile:', error);
-            if (error.code === 'PGRST116') {
-                console.log('📝 Profile not found, redirecting to complete profile');
-                window.location.href = '/complete-profile.html';
-                return;
-            }
-            throw error;
-        }
-        
-        userProfile = data;
-        console.log('✅ User profile loaded:', userProfile.name);
-        
-    } catch (error) {
-        console.error('❌ Failed to load user profile:', error);
-        throw error;
-    }
+    // This function is now deprecated - profile loading happens in initializeDashboard()
+    console.warn('⚠️ loadUserProfile() is deprecated - profile loading handled in initializeDashboard()');
+    return userProfile;
 }
 
 // Load usage statistics

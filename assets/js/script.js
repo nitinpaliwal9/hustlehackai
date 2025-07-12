@@ -40,7 +40,26 @@ async function checkAuthStateOnLoad() {
         
         if (session && session.user) {
             console.log('✅ Existing session found:', session.user.email);
-            updateUIForAuthenticatedUser(session.user);
+            
+            // Check user profile status for existing sessions
+            checkUserProfileStatus(session.user).then(status => {
+                console.log('📊 Existing session profile status:', status);
+                
+                if (status === 'incomplete') {
+                    // Redirect to profile completion
+                    console.log('📝 Existing user needs to complete profile');
+                    showNotification('📝 Please complete your profile to continue.', 'info');
+                    setTimeout(() => {
+                        window.location.href = '/complete-profile.html';
+                    }, 1500);
+                } else {
+                    // Profile complete or error - proceed normally
+                    updateUIForAuthenticatedUser(session.user);
+                }
+            }).catch(error => {
+                console.error('❌ Error checking existing session profile:', error);
+                updateUIForAuthenticatedUser(session.user);
+            });
         } else {
             console.log('ℹ️ No existing session found');
             updateUIForUnauthenticatedUser();
@@ -1028,26 +1047,30 @@ return button;
 }
 
 // Update UI based on authentication state
-function updateAuthUI() {
-    const user = supabase.auth.user();
-    const isAuthenticated = !!user;
+async function updateAuthUI() {
+    try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        const isAuthenticated = !!user && !error;
 
-    // Toggle visibility of Google buttons and other auth elements
-    document.querySelectorAll('.btn-google').forEach(btn => {
-        btn.style.display = isAuthenticated ? 'none' : 'inline-block';
-    });
+        // Toggle visibility of Google buttons and other auth elements
+        document.querySelectorAll('.btn-google').forEach(btn => {
+            btn.style.display = isAuthenticated ? 'none' : 'inline-block';
+        });
 
-    // Example: Toggle visibility of nav buttons
-    const navSignIn = document.getElementById('nav-sign-in');
-    const navGetStarted = document.getElementById('nav-get-started');
-    const navProfile = document.getElementById('nav-profile');
+        // Example: Toggle visibility of nav buttons
+        const navSignIn = document.getElementById('nav-sign-in');
+        const navGetStarted = document.getElementById('nav-get-started');
+        const navProfile = document.getElementById('nav-profile');
 
-    if (navSignIn && navGetStarted) {
-        navSignIn.style.display = isAuthenticated ? 'none' : 'inline-block';
-        navGetStarted.style.display = isAuthenticated ? 'none' : 'inline-block';
-    }
-    if (navProfile) {
-        navProfile.style.display = isAuthenticated ? 'inline-block' : 'none';
+        if (navSignIn && navGetStarted) {
+            navSignIn.style.display = isAuthenticated ? 'none' : 'inline-block';
+            navGetStarted.style.display = isAuthenticated ? 'none' : 'inline-block';
+        }
+        if (navProfile) {
+            navProfile.style.display = isAuthenticated ? 'inline-block' : 'none';
+        }
+    } catch (error) {
+        console.error('Error updating auth UI:', error);
     }
 }
 
@@ -1192,21 +1215,33 @@ function initializeAuthSystem() {
             
             // Check user profile status and redirect accordingly
             checkUserProfileStatus(session.user).then(status => {
+                console.log('📊 Profile status:', status);
+                
                 if (status === 'incomplete') {
                     // Redirect to profile completion
                     console.log('📝 Redirecting to profile completion');
-                    window.location.href = '/complete-profile.html';
+                    showNotification('📝 Please complete your profile to continue.', 'info');
+                    setTimeout(() => {
+                        window.location.href = '/complete-profile.html';
+                    }, 1500);
                 } else if (status === 'complete') {
                     // Profile exists, show welcome message and update UI
+                    console.log('✅ Profile complete, updating UI');
                     showNotification('✅ Welcome back! Login successful.', 'success');
                     updateUIForAuthenticatedUser(session.user);
                     closeAllModals();
                 } else {
                     // Error occurred, show generic welcome
-                    showNotification('✅ Welcome! Please complete your profile.', 'info');
+                    console.log('⚠️ Profile check error, proceeding with caution');
+                    showNotification('✅ Welcome! Please complete your profile if needed.', 'info');
                     updateUIForAuthenticatedUser(session.user);
                     closeAllModals();
                 }
+            }).catch(error => {
+                console.error('❌ Error checking profile status:', error);
+                showNotification('✅ Welcome! Please complete your profile.', 'info');
+                updateUIForAuthenticatedUser(session.user);
+                closeAllModals();
             });
         }
         

@@ -1108,52 +1108,35 @@ function setButtonLoading(button, isLoading) {
     }
 }
 
-// Save user to database
-async function saveUserToDatabase(user) {
+// Check user profile status and redirect appropriately
+async function checkUserProfileStatus(user) {
     try {
-        console.log('💾 Saving user to database:', user.id);
+        console.log('🔍 Checking user profile status:', user.id);
         
-        // Check if user already exists
-        const { data: existingUser } = await supabase
+        // Check if user profile exists in users table
+        const { data: existingUser, error } = await supabase
             .from('users')
-            .select('*')
+            .select('id')
             .eq('id', user.id)
             .single();
 
-        if (!existingUser) {
-            // Create new user record with plan defaults
-            const planStart = new Date();
-            const planExpiry = new Date(Date.now() + 30 * 86400000); // 30 days from now
-            
-            const { data, error } = await supabase
-                .from('users')
-                .insert([{
-                    id: user.id,
-                    name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-                    email: user.email,
-                    role: user.app_metadata?.provider === 'google' ? 'Google User' : 'Email User',
-                    device: navigator.userAgent,
-                    timestamp: new Date().toISOString(),
-                    provider: user.app_metadata?.provider || 'email',
-                    plan: "starter",
-                    plan_start: planStart,
-                    plan_expiry: planExpiry
-                }]);
-
-            if (error) {
-                console.error('❌ Error saving user:', error);
-                return false;
-            }
-            
-            console.log('✅ User saved successfully:', data);
-        } else {
-            console.log('✅ User already exists in database');
+        if (error && error.code !== 'PGRST116') {
+            // PGRST116 is "no rows found" - expected for new users
+            console.error('❌ Error checking user profile:', error);
+            return 'error';
         }
         
-        return true;
+        if (existingUser) {
+            console.log('✅ User profile exists');
+            return 'complete';
+        } else {
+            console.log('📝 User profile missing');
+            return 'incomplete';
+        }
+        
     } catch (error) {
-        console.error('❌ Error in saveUserToDatabase:', error);
-        return false;
+        console.error('❌ Error in checkUserProfileStatus:', error);
+        return 'error';
     }
 }
 
@@ -1206,12 +1189,25 @@ function initializeAuthSystem() {
         
         if (event === 'SIGNED_IN' && session?.user) {
             console.log('✅ User signed in:', session.user.email);
-            saveUserToDatabase(session.user);
-            showNotification('✅ Welcome back! Login successful.', 'success');
-            updateUIForAuthenticatedUser(session.user);
             
-            // Close any open modals
-            closeAllModals();
+            // Check user profile status and redirect accordingly
+            checkUserProfileStatus(session.user).then(status => {
+                if (status === 'incomplete') {
+                    // Redirect to profile completion
+                    console.log('📝 Redirecting to profile completion');
+                    window.location.href = '/complete-profile.html';
+                } else if (status === 'complete') {
+                    // Profile exists, show welcome message and update UI
+                    showNotification('✅ Welcome back! Login successful.', 'success');
+                    updateUIForAuthenticatedUser(session.user);
+                    closeAllModals();
+                } else {
+                    // Error occurred, show generic welcome
+                    showNotification('✅ Welcome! Please complete your profile.', 'info');
+                    updateUIForAuthenticatedUser(session.user);
+                    closeAllModals();
+                }
+            });
         }
         
         if (event === 'SIGNED_OUT') {

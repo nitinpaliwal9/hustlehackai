@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Test - HustleHack AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #0F0F1B;
+            color: #E5E7EB;
+        }
+        .btn {
+            background: linear-gradient(135deg, #7F5AF0, #00FFC2);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .result {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+        .error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    </style>
+</head>
+<body>
+    <h1>🧪 Simple Authentication Test</h1>
+    
+    <button class="btn" onclick="testAuth()">1. Test Authentication</button>
+    <div id="auth-result" class="result"></div>
+    
+    <button class="btn" onclick="signInWithGoogle()">2. Sign In with Google</button>
+    <div id="signin-result" class="result"></div>
+    
+    <button class="btn" onclick="insertUser()">3. Insert User Profile</button>
+    <div id="insert-result" class="result"></div>
+    
+    <button class="btn" onclick="checkDatabase()">4. Check Database</button>
+    <div id="db-result" class="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const supabase = window.supabase.createClient(
+            'https://bmgvtzwesdkitdjfszsh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+        );
+
+        let currentUser = null;
+
+        async function testAuth() {
+            const result = document.getElementById('auth-result');
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) {
+                    result.textContent = `❌ Auth Error: ${error.message}`;
+                    result.className = 'result error';
+                } else if (user) {
+                    currentUser = user;
+                    result.textContent = `✅ User authenticated!\nID: ${user.id}\nEmail: ${user.email}\nProvider: ${user.app_metadata?.provider || 'unknown'}`;
+                    result.className = 'result success';
+                } else {
+                    result.textContent = '❌ No authenticated user found';
+                    result.className = 'result error';
+                }
+            } catch (err) {
+                result.textContent = `❌ Unexpected error: ${err.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        async function signInWithGoogle() {
+            const result = document.getElementById('signin-result');
+            try {
+                result.textContent = '🔄 Initiating Google sign-in...';
+                result.className = 'result';
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: `${window.location.origin}/auth/callback.html`
+                    }
+                });
+                
+                if (error) {
+                    result.textContent = `❌ OAuth Error: ${error.message}`;
+                    result.className = 'result error';
+                } else {
+                    result.textContent = '✅ OAuth initiated - redirecting to Google...';
+                    result.className = 'result success';
+                }
+            } catch (err) {
+                result.textContent = `❌ OAuth Error: ${err.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        async function insertUser() {
+            const result = document.getElementById('insert-result');
+            try {
+                if (!currentUser) {
+                    result.textContent = '❌ No authenticated user. Please sign in first.';
+                    result.className = 'result error';
+                    return;
+                }
+
+                result.textContent = '🔄 Inserting user profile...';
+                result.className = 'result';
+
+                const planStart = new Date();
+                const planExpiry = new Date(Date.now() + 30 * 86400000);
+
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: currentUser.id,
+                        name: currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'Test User',
+                        email: currentUser.email,
+                        plan: "starter",
+                        plan_start: planStart,
+                        plan_expiry: planExpiry,
+                        role: 'Google User',
+                        provider: currentUser.app_metadata?.provider || 'google',
+                        device: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    }])
+                    .select();
+
+                if (error) {
+                    result.textContent = `❌ Insert failed: ${error.message}\nCode: ${error.code}\nDetails: ${error.details || 'None'}`;
+                    result.className = 'result error';
+                } else {
+                    result.textContent = `✅ User profile created successfully!\nData: ${JSON.stringify(data, null, 2)}`;
+                    result.className = 'result success';
+                }
+            } catch (err) {
+                result.textContent = `❌ Insert error: ${err.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        async function checkDatabase() {
+            const result = document.getElementById('db-result');
+            try {
+                if (!currentUser) {
+                    result.textContent = '❌ No authenticated user. Please sign in first.';
+                    result.className = 'result error';
+                    return;
+                }
+
+                result.textContent = '🔄 Checking database...';
+                result.className = 'result';
+
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', currentUser.id);
+
+                if (error) {
+                    result.textContent = `❌ Database check failed: ${error.message}`;
+                    result.className = 'result error';
+                } else if (data.length === 0) {
+                    result.textContent = '❌ No user profile found in database';
+                    result.className = 'result error';
+                } else {
+                    result.textContent = `✅ User profile found!\n${JSON.stringify(data[0], null, 2)}`;
+                    result.className = 'result success';
+                }
+            } catch (err) {
+                result.textContent = `❌ Database check error: ${err.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔄 Auth state changed:', event);
+            if (event === 'SIGNED_IN' && session?.user) {
+                console.log('✅ User signed in:', session.user.email);
+                currentUser = session.user;
+                // Auto-test authentication
+                setTimeout(testAuth, 1000);
+            }
+        });
+
+        // Auto-test on load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testAuth, 500);
+        });
+    </script>
+</body>
+</html>

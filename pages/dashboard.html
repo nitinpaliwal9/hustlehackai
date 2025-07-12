@@ -945,15 +945,115 @@
         .toast-error { background: #ef4444; }
         .toast-warning { background: #f59e0b; }
         .toast-info { background: #3b82f6; }
+        
+        /* Debug console styles */
+        .debug-console {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 10px;
+            overflow-y: auto;
+            z-index: 10001;
+            display: none;
+            border-top: 2px solid #333;
+        }
+        .debug-console.show { display: block; }
+        .debug-log { margin-bottom: 5px; }
+        .debug-log.error { color: #ff6b6b; }
+        .debug-log.warn { color: #ffd93d; }
+        .debug-log.info { color: #74c0fc; }
+        .debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            z-index: 10002;
+            cursor: pointer;
+        }
     </style>
+    
+    <!-- Debug Console -->
+    <div id="debugConsole" class="debug-console"></div>
+    <button id="debugToggle" class="debug-toggle" onclick="toggleDebugConsole()">Debug</button>
+    
+    <script>
+        // Debug console functionality
+        window.showDebugConsole = false;
+        
+        function toggleDebugConsole() {
+            const console = document.getElementById('debugConsole');
+            window.showDebugConsole = !window.showDebugConsole;
+            console.classList.toggle('show', window.showDebugConsole);
+            
+            if (window.showDebugConsole && window.debugLogs) {
+                updateDebugConsole();
+            }
+        }
+        
+        function updateDebugConsole() {
+            const console = document.getElementById('debugConsole');
+            if (!console || !window.debugLogs) return;
+            
+            const logs = window.debugLogs.slice(-50); // Show last 50 logs
+            console.innerHTML = logs.map(log => 
+                `<div class="debug-log ${log.level}">[${log.timestamp.split('T')[1].split('.')[0]}] ${log.message} ${log.data ? JSON.stringify(log.data) : ''}</div>`
+            ).join('');
+            console.scrollTop = console.scrollHeight;
+        }
+        
+        // Update debug console every 2 seconds if visible
+        setInterval(() => {
+            if (window.showDebugConsole) {
+                updateDebugConsole();
+            }
+        }, 2000);
+        
+        // Global debug functions
+        window.getDashboardStatus = function() {
+            return {
+                dashboardLoaded: window.dashboardLoaded,
+                currentUser: window.currentUser,
+                userProfile: window.userProfile,
+                debugLogs: window.debugLogs?.length || 0,
+                supabaseAvailable: !!window.supabase
+            };
+        };
+        
+        window.showLastErrors = function() {
+            if (!window.debugLogs) return 'No debug logs available';
+            return window.debugLogs.filter(log => log.level === 'error').slice(-10);
+        };
+        
+        window.retryDashboardInit = function() {
+            console.log('Manual dashboard retry requested');
+            location.reload();
+        };
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        window.supabase = supabase.createClient(
-            'https://bmgvtzwesdkitdjfszsh.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
-        );
+        console.log('Loading Supabase client...');
+        try {
+            window.supabase = supabase.createClient(
+                'https://bmgvtzwesdkitdjfszsh.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+            );
+            console.log('Supabase client loaded successfully:', !!window.supabase);
+        } catch (error) {
+            console.error('Failed to load Supabase client:', error);
+        }
     </script>
-    <script src="/assets/js/script.js"></script>
-    <script src="/assets/js/dashboard-script.js"></script>
+    <script src="/assets/js/script.js" defer></script>
+    <script src="/assets/js/dashboard-script.js" defer></script>
 </body>
 </html>

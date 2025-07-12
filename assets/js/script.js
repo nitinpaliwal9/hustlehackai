@@ -662,6 +662,30 @@ function initializeProfileDropdown() {
             handleUserSignOut();
         });
     }
+    
+    // Mobile-specific: Ensure profile dropdown is visible on mobile when user is authenticated
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileDropdown && isMobileDevice()) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    if (profileDropdown.style.display === 'inline-block') {
+                        // Force show nav-actions on mobile when profile is visible
+                        const navActions = document.querySelector('.nav-actions');
+                        if (navActions) {
+                            navActions.style.display = 'flex';
+                        }
+                    }
+                }
+            });
+        });
+        observer.observe(profileDropdown, { attributes: true });
+    }
+}
+
+// Check if device is mobile
+function isMobileDevice() {
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 // Open User Profile/Dashboard
@@ -1354,6 +1378,12 @@ function updateUIForUnauthenticatedUser() {
     const profileDropdown = document.getElementById('profileDropdown');
     if (profileDropdown) {
         profileDropdown.style.display = 'none';
+    }
+    
+    // Hide nav-actions on mobile when no profile dropdown
+    const navActions = document.querySelector('.nav-actions');
+    if (navActions && isMobileDevice()) {
+        navActions.style.display = 'none';
     }
     
     // Reset hero actions

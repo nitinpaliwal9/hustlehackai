@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Check Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #0F0F1B;
+            color: #E5E7EB;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #7F5AF0, #00FFC2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .result {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Profile Check Test</h1>
+    
+    <div class="test-section">
+        <h3>Authentication Status</h3>
+        <button class="btn" onclick="checkAuth()">Check Authentication</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Profile Status</h3>
+        <button class="btn" onclick="checkProfile()">Check Profile Status</button>
+        <div id="profile-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Manual Redirect Test</h3>
+        <button class="btn" onclick="testRedirect()">Test Redirect Logic</button>
+        <div id="redirect-result" class="result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const supabase = window.supabase.createClient(
+            'https://bmgvtzwesdkitdjfszsh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtZ3Z0endlc2RraXRkamZzenNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODExNjksImV4cCI6MjA2NzY1NzE2OX0.55QH6xY6nvvRs17WbHfMiVT6Yh3MWcuKtOVQ7vuEVvU'
+        );
+
+        async function checkAuth() {
+            const result = document.getElementById('auth-result');
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) {
+                    result.textContent = `❌ Auth Error: ${error.message}`;
+                } else if (user) {
+                    result.textContent = `✅ User authenticated:
+ID: ${user.id}
+Email: ${user.email}
+Provider: ${user.app_metadata?.provider || 'unknown'}`;
+                } else {
+                    result.textContent = '❌ No authenticated user found';
+                }
+            } catch (err) {
+                result.textContent = `❌ Error: ${err.message}`;
+            }
+        }
+
+        async function checkProfile() {
+            const result = document.getElementById('profile-result');
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error || !user) {
+                    result.textContent = '❌ No authenticated user to check';
+                    return;
+                }
+
+                // Check if user profile exists
+                const { data: existingUser, error: dbError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (dbError && dbError.code !== 'PGRST116') {
+                    result.textContent = `❌ Database error: ${dbError.message}`;
+                } else if (existingUser) {
+                    result.textContent = `✅ Profile exists:
+Name: ${existingUser.name}
+Email: ${existingUser.email}
+Phone: ${existingUser.phone}
+Role: ${existingUser.role}
+Created: ${existingUser.created_at}`;
+                } else {
+                    result.textContent = '📝 Profile does not exist - user needs to complete profile';
+                }
+            } catch (err) {
+                result.textContent = `❌ Error: ${err.message}`;
+            }
+        }
+
+        async function testRedirect() {
+            const result = document.getElementById('redirect-result');
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error || !user) {
+                    result.textContent = '❌ No authenticated user for redirect test';
+                    return;
+                }
+
+                // Check profile status
+                const { data: existingUser, error: dbError } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('id', user.id)
+                    .single();
+
+                if (dbError && dbError.code !== 'PGRST116') {
+                    result.textContent = `❌ Database error: ${dbError.message}`;
+                } else if (existingUser) {
+                    result.textContent = '✅ Profile exists - would redirect to dashboard';
+                } else {
+                    result.textContent = `📝 Profile missing - would redirect to complete-profile.html
+
+Redirecting in 3 seconds...`;
+                    
+                    setTimeout(() => {
+                        window.location.href = '/complete-profile.html';
+                    }, 3000);
+                }
+            } catch (err) {
+                result.textContent = `❌ Error: ${err.message}`;
+            }
+        }
+
+        // Auto-check on load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

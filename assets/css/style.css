@@ -357,6 +357,41 @@ p {
   transform: translateY(0);
 }
 
+/* Mobile-specific fixes for profile dropdown */
+@media (max-width: 768px) {
+  .profile-menu {
+    position: fixed;
+    top: 70px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    min-width: auto;
+    transform: translateY(-10px);
+    max-width: calc(100vw - 32px);
+  }
+  
+  .profile-dropdown.active .profile-menu {
+    transform: translateY(0);
+  }
+  
+  .profile-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .profile-name {
+    font-size: 0.8rem;
+  }
+  
+  .profile-avatar {
+    font-size: 1.1rem;
+  }
+  
+  .profile-arrow {
+    font-size: 0.7rem;
+  }
+}
+
 .profile-menu-item {
   display: flex;
   align-items: center;

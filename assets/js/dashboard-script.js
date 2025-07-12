@@ -1629,15 +1629,6 @@ function showWelcomeMessage() {
         showToast(welcomeMessage, 'success');
     }
 }
-    if (loadingScreen) {
-        setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
-        }, 1000);
-    }
-}
 
 // Enhanced Navigation
 function initializeNavigation() {
@@ -1713,6 +1704,39 @@ function onSectionChange(sectionName) {
             initializeSupportFeatures();
             break;
     }
+}
+
+// Add missing section data loading functions
+async function loadResourcesData() {
+    debugLog('info', 'Loading resources data for section...');
+    // Resources are already loaded in availableResources
+    if (availableResources && availableResources.length > 0) {
+        debugLog('info', `Resources section loaded with ${availableResources.length} items`);
+    } else {
+        debugLog('warn', 'No resources available for section');
+    }
+}
+
+async function loadActivityData() {
+    debugLog('info', 'Loading activity data for section...');
+    // Activity is already loaded in recentActivity
+    if (recentActivity && recentActivity.length > 0) {
+        debugLog('info', `Activity section loaded with ${recentActivity.length} items`);
+    } else {
+        debugLog('warn', 'No activity data available for section');
+    }
+}
+
+async function loadBillingData() {
+    debugLog('info', 'Loading billing data for section...');
+    // Billing data would be loaded here
+    debugLog('info', 'Billing section loaded');
+}
+
+async function loadNotifications() {
+    debugLog('info', 'Loading notifications...');
+    // Notifications loading placeholder
+    return [];
 }
 
 // Mobile Menu Management

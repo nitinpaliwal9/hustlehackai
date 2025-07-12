@@ -177,7 +177,13 @@ async function initializeDashboard() {
         
         // Show appropriate welcome message
         if (profileResult.isNewUser) {
-            showWelcomeNewUser(userProfile);
+            if (profileResult.isProfileComplete) {
+                // User just completed their profile manually
+                showWelcomeCompletedUser(userProfile);
+            } else {
+                // User was auto-initialized
+                showWelcomeNewUser(userProfile);
+            }
         } else {
             showToast('Welcome back! Dashboard loaded successfully.', 'success');
         }
@@ -204,6 +210,22 @@ function showWelcomeNewUser(userProfile) {
     setTimeout(() => {
         showOnboardingModal(userProfile);
     }, 2000);
+}
+
+// Welcome users who just completed their profile manually
+function showWelcomeCompletedUser(userProfile) {
+    console.log('🎉 Showing welcome message for completed profile user:', userProfile.name);
+    
+    // Show congratulations toast
+    showToast(`🎉 Perfect! Welcome to your HustleHack AI dashboard, ${userProfile.name}!`, 'success');
+    
+    // Show a simpler welcome modal focused on getting started
+    setTimeout(() => {
+        showGettingStartedModal(userProfile);
+    }, 2000);
+    
+    // Update last login to mark this user as no longer "new"
+    updateLastLogin(userProfile.id);
 }
 
 // Show onboarding modal for new users
@@ -273,11 +295,87 @@ function skipOnboarding() {
     showToast('You can complete your profile anytime from the Profile section.', 'info');
 }
 
+// Show getting started modal for users who completed profile
+function showGettingStartedModal(userProfile) {
+    const modal = document.createElement('div');
+    modal.id = 'gettingStartedModal';
+    modal.className = 'modal onboarding-modal';
+    modal.style.display = 'block';
+    
+    modal.innerHTML = `
+        <div class="modal-content onboarding-content">
+            <div class="onboarding-header">
+                <div class="onboarding-icon">🎉</div>
+                <h2>You're All Set!</h2>
+                <p>Great job completing your profile, ${userProfile.name}! Ready to explore?</p>
+            </div>
+            
+            <div class="onboarding-steps">
+                <div class="onboarding-step">
+                    <div class="step-icon">📁</div>
+                    <div class="step-content">
+                        <h3>Browse Resources</h3>
+                        <p>Discover ${userProfile.role} tools and templates in your library.</p>
+                    </div>
+                </div>
+                
+                <div class="onboarding-step">
+                    <div class="step-icon">🚀</div>
+                    <div class="step-content">
+                        <h3>Start Creating</h3>
+                        <p>Use our AI-powered tools to boost your productivity.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="onboarding-actions">
+                <button class="btn btn-primary" onclick="exploreResources()">
+                    📁 Explore Resources
+                </button>
+                <button class="btn btn-ghost" onclick="closeGettingStartedModal()">
+                    Got it!
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
 // Close onboarding modal
 function closeOnboardingModal() {
     const modal = document.getElementById('onboardingModal');
     if (modal) {
         modal.remove();
+    }
+}
+
+// Close getting started modal
+function closeGettingStartedModal() {
+    const modal = document.getElementById('gettingStartedModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Explore resources action
+function exploreResources() {
+    closeGettingStartedModal();
+    navigateToSection('resources');
+    showToast('Exploring your personalized resources!', 'info');
+}
+
+// Update last login timestamp
+async function updateLastLogin(userId) {
+    try {
+        await supabase
+            .from('users')
+            .update({ last_login: new Date().toISOString() })
+            .eq('id', userId);
+        
+        console.log('✅ Last login updated');
+    } catch (error) {
+        console.warn('⚠️ Failed to update last login:', error);
     }
 }
 
@@ -407,7 +505,21 @@ async function checkAndInitializeUser(user, autoInitialize = true) {
         } else {
             // Profile exists
             console.log('✅ User profile found:', userRow.name);
-            return { userProfile: userRow, isNewUser: false };
+            
+            // Check if this is a recently completed profile (has all required fields)
+            const isRecentlyCompleted = userRow.profile_completed === true && 
+                                      userRow.phone && 
+                                      userRow.name && 
+                                      userRow.role;
+            
+            // Consider it a "new" user experience if profile was just completed
+            const wasJustCompleted = isRecentlyCompleted && !userRow.last_login;
+            
+            return { 
+                userProfile: userRow, 
+                isNewUser: wasJustCompleted,
+                isProfileComplete: isRecentlyCompleted
+            };
         }
     } catch (error) {
         console.error('❌ User check failed:', error);
@@ -1121,9 +1233,12 @@ window.showToast = showToast;
 window.completeProfile = completeProfile;
 window.skipOnboarding = skipOnboarding;
 window.closeOnboardingModal = closeOnboardingModal;
+window.closeGettingStartedModal = closeGettingStartedModal;
+window.exploreResources = exploreResources;
 window.dismissReminder = dismissReminder;
 window.autoInitializeNewUser = autoInitializeNewUser;
 window.checkAndInitializeUser = checkAndInitializeUser;
+window.updateLastLogin = updateLastLogin;
 
 console.log('✅ Dashboard script loaded successfully!');
 
